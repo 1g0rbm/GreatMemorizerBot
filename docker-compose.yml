@@ -1,0 +1,42 @@
+version: '3'
+services:
+  memo-nginx:
+    build:
+      context: ./docker/development
+      dockerfile: nginx.dockerfile
+    volumes:
+      - memo-sync:/app
+    depends_on:
+      - memo-php-fpm
+    ports:
+      - '8080:80'
+  memo-php-fpm:
+    build:
+      context: ./docker/development
+      dockerfile: php-fpm.dockerfile
+    environment:
+      APP_DEBUG: 1
+    volumes:
+      - memo-sync:/app
+  memo-php-cli:
+    build:
+      context: ./docker/development
+      dockerfile: php-cli.dockerfile
+    environment:
+      APP_DEBUG: 1
+    volumes:
+      - ./:/app
+      - composer:/root/.composer/cache
+  memo-postgres:
+    image: postgres:11.2-alpine
+    volumes:
+      - memo-postgres:/var/lib/postgresql/data
+    env_file: .env
+    ports:
+      - "54321:5432"
+
+volumes:
+  memo-postgres:
+  composer:
+  memo-sync:
+    external: true
