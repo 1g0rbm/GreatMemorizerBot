@@ -1,0 +1,23 @@
+version: '3'
+services:
+  memo-nginx:
+    image: ${REGISTRY_HOST}/memo-nginx:${REGISTRY_PRODUCTION_TAG}
+    restart: always
+    depends_on:
+      - memo-php-fpm
+    ports:
+      - "23001:80"
+    env_file: .env
+  memo-php-fpm:
+    image: ${REGISTRY_HOST}/memo-php-fpm:${REGISTRY_PRODUCTION_TAG}
+    restart: always
+    env_file: .env
+  memo-postgres:
+    image: ${REGISTRY_HOST}/memo-postgres:${REGISTRY_PRODUCTION_TAG}
+    restart: always
+    volumes:
+      - memo-postgres:/var/lib/postgresql/data
+    env_file: .env
+
+volumes:
+  memo-postgres:

@@ -9,7 +9,7 @@ services:
     depends_on:
       - memo-php-fpm
     ports:
-      - '8080:80'
+      - '42001:80'
   memo-php-fpm:
     build:
       context: ./docker/development

@@ -34,18 +34,19 @@ run-production-build:
 stop-production-build:
 	docker-compose -f docker-compose-production.yml down --remove-orphans
 
-build-production:
-	docker build --pull --file=./docker/production/nginx.dockerfile --tag registry.1g0rbm.com/memo-nginx .
-	docker build --pull --file=./docker/production/php-fpm.dockerfile --tag registry.1g0rbm.com/memo-php-fpm .
-	docker build --pull --file=./docker/production/postgres.dockerfile --tag registry.1g0rbm.com/postgres .
+build-image:
+	docker build --pull --file=./docker/production/nginx.dockerfile --tag ${REGISTRY_HOST}/memo-nginx:${REGISTRY_PRODUCTION_TAG} .
+	docker build --pull --file=./docker/production/php-fpm.dockerfile --tag ${REGISTRY_HOST}/memo-php-fpm:${REGISTRY_PRODUCTION_TAG} .
+	docker build --pull --file=./docker/production/postgres.dockerfile --tag ${REGISTRY_HOST}/memo-postgres:${REGISTRY_PRODUCTION_TAG} .
 
-push-production:
-	docker push registry.1g0rbm.com/memo-nginx
-	docker push registry.1g0rbm.com/memo-php-fpm
-	docker push registry.1g0rbm.com/postgres
+push-registry:
+	docker push ${REGISTRY_HOST}/memo-nginx:${REGISTRY_PRODUCTION_TAG}
+	docker push ${REGISTRY_HOST}/memo-php-fpm:${REGISTRY_PRODUCTION_TAG}
+	docker push ${REGISTRY_HOST}/memo-postgres:${REGISTRY_PRODUCTION_TAG}
 
 deploy-production:
-	ssh igor@104.248.132.228 'cd /var/www/dev.1g0rbm.com; rm -rf docker-compose.yml'
-	scp docker-compose-production.yml igor@104.248.132.228:/var/www/dev.1g0rbm.com/docker-compose.yml
-	ssh igor@104.248.132.228 'cd /var/www/dev.1g0rbm.com; docker-compose pull'
-	ssh igor@104.248.132.228 'cd /var/www/dev.1g0rbm.com; docker-compose up --build -d'
+	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${STAGING_HOST}; rm -rf docker-compose.yml'
+	scp docker-compose-production.yml ${PRODUCTION_USER}@${PRODUCTION_IP}:/var/www/${PRODUCTION_HOST}/docker-compose.yml
+	scp .env.prod ${PRODUCTION_USER}@${PRODUCTION_IP}:/var/www/${PRODUCTION_HOST}/.env
+	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${PRODUCTION_HOST}; docker-compose pull'
+	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${PRODUCTION_HOST}; docker-compose up --build -d'
