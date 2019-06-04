@@ -31,6 +31,15 @@ memo-cli:
 run-production-build:
 	docker-compose -f docker-compose-production.yml up -d
 
+docker-up-staging:
+	docker-compose -f docker-compose-staging.yml up -d
+
+docker-down-staging:
+	docker-compose -f docker-compose-staging.yml down --remove-orphans
+
+memo-composer-install-staging:
+	docker-compose -f docker-compose-staging.yml run --rm memo-php-cli composer install
+
 stop-production-build:
 	docker-compose -f docker-compose-production.yml down --remove-orphans
 
