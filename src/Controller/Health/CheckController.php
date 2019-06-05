@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/health")
- * @package App\Controller\Health
+ * @package Ig0rbm\Memo\Controller\Health
  */
 class CheckController
 {
@@ -19,7 +19,7 @@ class CheckController
     public function indexAction(): JsonResponse
     {
         return new JsonResponse([
-            'status' => 'ok'
+            'status' => 'okay'
         ]);
     }
 }

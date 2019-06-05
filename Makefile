@@ -12,6 +12,7 @@ docker-up:
 docker-down:
 	docker-compose down --remove-orphans
 	docker-sync stop
+	docker-sync clean
 
 docker-pull:
 	docker-compose pull
