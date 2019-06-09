@@ -48,6 +48,10 @@ class WebhookControllerFunctionalTest extends WebTestCase
 
     private function getTestBotRequest(): string
     {
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $username = $this->faker->userName;
+
         return json_encode([
             'update_id' => $this->faker->unique()->randomNumber(8),
             'message' => [
@@ -55,16 +59,16 @@ class WebhookControllerFunctionalTest extends WebTestCase
                 'from' => [
                     'id' => $this->faker->unique()->randomNumber(9),
                     'is_bot' => false,
-                    'first_name' => $this->faker->firstName,
-                    'last_name' => $this->faker->lastName,
-                    'username' => $this->faker->userName,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'username' => $username,
                     'language_code' => $this->faker->languageCode
                 ],
                 'chat' => [
                     'id' => $this->faker->unique()->randomNumber(9),
-                    'first_name' => $this->faker->firstName,
-                    'last_name' => $this->faker->lastName,
-                    'username' => $this->faker->userName,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'username' => $username,
                     'type' => 'private'
                 ],
                 'date' => $this->faker->dateTime->getTimestamp(),
