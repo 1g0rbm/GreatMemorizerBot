@@ -4,7 +4,7 @@ namespace Ig0rbm\Memo\Service\Telegram;
 
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Telegram\Message\From;
-use Ig0rbm\Memo\Entity\Telegram\Message\Message;
+use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Exception\Telegram\Message\ParseMessageException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -18,7 +18,7 @@ class MessageParser
         $this->validator = $validator;
     }
 
-    public function createMessage(string $message): Message
+    public function createMessage(string $message): MessageFrom
     {
         $messageRaw = json_decode($message, true);
         $messageRaw = $messageRaw['message'];
@@ -26,7 +26,7 @@ class MessageParser
         $chat = $this->createChat($messageRaw['chat']);
         $from = $this->createFrom($messageRaw['from']);
 
-        $message = new Message();
+        $message = new MessageFrom();
         $message->setMessageId($messageRaw['message_id']);
         $message->setChat($chat);
         $message->setFrom($from);
@@ -72,7 +72,7 @@ class MessageParser
     }
 
     /**
-     * @param Chat|From|Message $value
+     * @param Chat|From|MessageFrom $value
      */
     private function validate($value)
     {

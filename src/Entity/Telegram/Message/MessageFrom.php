@@ -9,7 +9,7 @@ use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
 /**
  * @package Ig0rbm\Memo\Entity\Telegram\Message
  */
-class Message
+class MessageFrom
 {
     /**
      * @Assert\NotBlank

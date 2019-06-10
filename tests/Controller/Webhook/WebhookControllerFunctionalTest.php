@@ -26,7 +26,26 @@ class WebhookControllerFunctionalTest extends WebTestCase
         $this->faker = Factory::create();
     }
 
-    public function testWebhookTelegramBot(): void
+    public function testWebhookTelegramBotReturnStatus401(): void
+    {
+        $client = static::createClient();
+        $client->request(
+            'POST',
+            sprintf('/webhook/bot/memo/%s', 'wrong_secret'),
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json'
+            ],
+            $this->getTestBotRequest()
+        );
+
+        $response = $client->getResponse();
+
+        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
+    }
+
+    public function testWebhookTelegramBotReturnStatus200(): void
     {
         $client = static::createClient();
         $client->request(
@@ -41,8 +60,10 @@ class WebhookControllerFunctionalTest extends WebTestCase
         );
 
         $response = $client->getResponse();
-        var_dump($response->getContent());
+        $content = json_decode($response->getContent(), true);
 
+        $this->assertArrayHasKey('token', $content);
+        $this->assertSame($content['token'], $this->secret);
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
     }
 

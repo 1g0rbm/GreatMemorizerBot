@@ -17,7 +17,5 @@ class BotService
     public function handle(string $raw): void
     {
         $message = $this->parser->createMessage($raw);
-        dump($message);
-        die;
     }
 }
