@@ -4,8 +4,47 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0539e771dbb3405fb6a8e683ff686255",
+    "content-hash": "ffecda49e4a54f52f8e67c416e9141f7",
     "packages": [
+        {
+            "name": "1g0rbm/handybag",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/1g0rbm/handybag.git",
+                "reference": "2c4ae40cac350fc4464eacb6aa6df26c50f4f460"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/1g0rbm/handybag/zipball/2c4ae40cac350fc4464eacb6aa6df26c50f4f460",
+                "reference": "2c4ae40cac350fc4464eacb6aa6df26c50f4f460",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "6.*.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ig0rbm\\HandyBag\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "1g0rbm",
+                    "email": "m1g0rb89@gmail.com"
+                }
+            ],
+            "description": "Handy container for key/value pair",
+            "time": "2018-01-21T10:20:37+00:00"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.6.1",
@@ -4320,7 +4359,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "1g0rbm/handybag": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

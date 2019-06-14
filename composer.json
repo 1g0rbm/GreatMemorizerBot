@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "1g0rbm/handybag": "dev-master",
         "doctrine/doctrine-bundle": "^1.11",
         "sensio/framework-extra-bundle": "^5.3",
         "symfony/console": "4.2.*",

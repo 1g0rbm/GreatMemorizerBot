@@ -1,4 +1,7 @@
 {
+    "1g0rbm/handybag": {
+        "version": "dev-master"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
