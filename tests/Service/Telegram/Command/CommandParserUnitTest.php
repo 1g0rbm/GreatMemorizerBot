@@ -78,10 +78,12 @@ class CommandParserUnitTest extends TestCase
     {
         return [
             '/hello' => [
-                'text_response' => 'Hello you too!'
+                'text_response' => 'Hello you too!',
+                'action_class' => 'Test/ClassName'
             ],
             'default' => [
-                'text_response' => 'undefined command'
+                'text_response' => 'undefined command',
+                'action_class' => 'Test/ClassName'
             ]
         ];
     }

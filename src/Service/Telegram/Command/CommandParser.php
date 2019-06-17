@@ -31,8 +31,12 @@ class CommandParser
                 throw ParseCommandException::becauseInvalidCommandName($commandName);
             }
 
-            if (!isset($value[self::KEY_TEXT_RESPONSE], $value[self::KEY_ACTION_CLASS])) {
+            if (!isset($value[self::KEY_TEXT_RESPONSE])) {
                 throw ParseCommandException::becauseNoNecessaryParam(self::KEY_TEXT_RESPONSE);
+            }
+
+            if (!isset($value[self::KEY_ACTION_CLASS])) {
+                throw ParseCommandException::becauseNoNecessaryParam(self::KEY_ACTION_CLASS);
             }
 
             $command = new Command();
