@@ -7,8 +7,10 @@ parameters:
     telegram_commands:
         /hello:
             text_response: 'Hello!'
+            action_class: Ig0rbm\Memo\TelegramAction\HelloAction
         default:
             text_response: 'Undefined command'
+            action_class: Ig0rbm\Memo\TelegramAction\DefaultAction
 
 services:
     # default configuration for services in *this* file
@@ -29,9 +31,20 @@ services:
         tags: ['controller.service_arguments']
 
     Ig0rbm\Memo\Service\Telegram\TokenChecker:
+        public: true
         arguments:
             $telegramSecretKey: '%env(TELEGRAM_SECRET)%'
 
     Ig0rbm\Memo\Service\Telegram\Command\CommandParser:
         arguments:
             $rawCommands: '%telegram_commands%'
+
+    ###########################
+    #  telegram actions here  #
+    ###########################
+
+    Ig0rbm\Memo\TelegramAction\HelloAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\DefaultAction:
+        public: true

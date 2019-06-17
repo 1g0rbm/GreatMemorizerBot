@@ -15,4 +15,9 @@ class ParseCommandException extends Exception
     {
         return new self(sprintf('There is no param: "%s"', $param), 500);
     }
+
+    public static function becauseActionClassNotExist(string $actionName): self
+    {
+        return new self(sprintf('There is no action with name: "%s"', $actionName));
+    }
 }

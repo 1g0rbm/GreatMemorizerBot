@@ -9,6 +9,7 @@ use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 class CommandParser
 {
     public const KEY_TEXT_RESPONSE = 'text_response';
+    public const KEY_ACTION_CLASS = 'action_class';
 
     /** @var array */
     private $rawCommands;
@@ -30,12 +31,13 @@ class CommandParser
                 throw ParseCommandException::becauseInvalidCommandName($commandName);
             }
 
-            if (!isset($value[self::KEY_TEXT_RESPONSE])) {
+            if (!isset($value[self::KEY_TEXT_RESPONSE], $value[self::KEY_ACTION_CLASS])) {
                 throw ParseCommandException::becauseNoNecessaryParam(self::KEY_TEXT_RESPONSE);
             }
 
             $command = new Command();
-            $command->setTextResponse($value['text_response']);
+            $command->setTextResponse($value[self::KEY_TEXT_RESPONSE]);
+            $command->setActionClass($value[self::KEY_ACTION_CLASS]);
             $command->setCommand($commandName);
 
             $bag->set($commandName, $command);

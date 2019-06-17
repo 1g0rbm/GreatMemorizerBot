@@ -24,6 +24,13 @@ class Command
     private $textResponse;
 
     /**
+     * @Assert\Type("string")
+     *
+     * @var string
+     */
+    private $actionClass;
+
+    /**
      * @return bool
      */
     public function isDefault(): bool
@@ -61,5 +68,21 @@ class Command
     public function setTextResponse(string $textResponse): void
     {
         $this->textResponse = $textResponse;
+    }
+
+    /**
+     * @return string
+     */
+    public function getActionClass(): string
+    {
+        return $this->actionClass;
+    }
+
+    /**
+     * @param string $actionClass
+     */
+    public function setActionClass(string $actionClass): void
+    {
+        $this->actionClass = $actionClass;
     }
 }
