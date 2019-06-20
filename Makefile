@@ -33,7 +33,7 @@ run-production-build:
 	docker-compose -f docker-compose-production.yml up -d
 
 docker-up-staging:
-	docker-compose -f docker-compose-staging.yml up -d
+	docker-compose -f docker-compose-staging.yml up
 
 docker-down-staging:
 	docker-compose -f docker-compose-staging.yml down --remove-orphans

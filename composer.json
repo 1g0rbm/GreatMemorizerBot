@@ -7,7 +7,7 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "1g0rbm/handybag": "dev-master",
-        "doctrine/doctrine-bundle": "^1.11",
+        "guzzlehttp/guzzle": "^6.3@dev",
         "sensio/framework-extra-bundle": "^5.3",
         "symfony/console": "4.2.*",
         "symfony/debug-pack": "^1.0",
@@ -15,6 +15,7 @@
         "symfony/flex": "^1.1",
         "symfony/framework-bundle": "4.2.*",
         "symfony/monolog-bundle": "^3.3",
+        "symfony/orm-pack": "^1.0",
         "symfony/serializer": "4.2.*",
         "symfony/validator": "4.2.*",
         "symfony/yaml": "4.2.*"
@@ -65,6 +66,7 @@
         }
     },
     "require-dev": {
+        "fzaninotto/faker": "^1.8",
         "symfony/browser-kit": "4.2.*",
         "symfony/phpunit-bridge": "4.2.*"
     }

@@ -93,7 +93,7 @@ class WebhookControllerFunctionalTest extends WebTestCase
                     'type' => 'private'
                 ],
                 'date' => $this->faker->dateTime->getTimestamp(),
-                'text' => $this->faker->text(100)
+                'text' => '/hello'//$this->faker->text(100)
             ]
         ]);
     }

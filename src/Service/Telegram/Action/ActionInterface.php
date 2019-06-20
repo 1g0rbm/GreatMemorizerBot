@@ -2,6 +2,9 @@
 
 namespace Ig0rbm\Memo\Service\Telegram\Action;
 
+use Ig0rbm\Memo\Entity\Telegram\Command\Command;
+use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
+
 /**
  * All telegram actions must implements this interface
  *
@@ -9,5 +12,5 @@ namespace Ig0rbm\Memo\Service\Telegram\Action;
  */
 interface ActionInterface
 {
-    public function run(string $text): void;
+    public function run(MessageFrom $messageFrom, Command $command): void;
 }

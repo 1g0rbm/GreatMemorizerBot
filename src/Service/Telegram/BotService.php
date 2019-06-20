@@ -37,7 +37,7 @@ class BotService
         /** @var ActionInterface $action */
         $action = $actionCollection->get($command->getActionClass());
 
-        $action->run($command->getTextResponse());
+        $action->run($message, $command);
     }
 
     private function defineCommand(string $command): Command

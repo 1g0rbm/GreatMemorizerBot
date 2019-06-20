@@ -2,13 +2,18 @@
 
 namespace Ig0rbm\Memo\TelegramAction;
 
-use Ig0rbm\Memo\Service\Telegram\Action\ActionInterface;
+use Ig0rbm\Memo\Entity\Telegram\Command\Command;
+use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
+use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 
-class DefaultAction implements ActionInterface
+class DefaultAction extends AbstractTelegramAction
 {
-    public function run(string $text): void
+    public function run(MessageFrom $from, Command $command): void
     {
-        // TODO: Implement run() method.
-        echo 'DefaultAction';
+        $messageTo = new MessageTo();
+        $messageTo->setText($command->getTextResponse());
+        $messageTo->setChatId($from->getChat()->getId());
+
+        $this->api->sendMessage($messageTo);
     }
 }

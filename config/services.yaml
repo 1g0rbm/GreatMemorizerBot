@@ -39,6 +39,11 @@ services:
         arguments:
             $rawCommands: '%telegram_commands%'
 
+    Ig0rbm\Memo\Service\Telegram\TelegramApiService:
+        arguments:
+            $domain: '%env(TELEGRAM_API_PROXY_URL)%'
+            $token: '%env(TELEGRAM_SECRET)%'
+
     ###########################
     #  telegram actions here  #
     ###########################
