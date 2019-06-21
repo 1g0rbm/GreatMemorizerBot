@@ -62,7 +62,7 @@ class WebhookController
         $this->logger->error('HERE IT IS!');
 
         try {
-//            $this->bot->handle($request->getContent());
+            $this->bot->handle($request->getContent());
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage());
             die;

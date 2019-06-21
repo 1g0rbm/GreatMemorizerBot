@@ -32,6 +32,9 @@ memo-cli:
 run-production-build:
 	docker-compose -f docker-compose-production.yml up -d
 
+stop-production-build:
+	docker-compose -f docker-compose-production.yml down --remove-orphans
+
 docker-up-staging:
 	docker-compose -f docker-compose-staging.yml up
 
@@ -40,9 +43,6 @@ docker-down-staging:
 
 memo-composer-install-staging:
 	docker-compose -f docker-compose-staging.yml run --rm memo-php-cli composer install
-
-stop-production-build:
-	docker-compose -f docker-compose-production.yml down --remove-orphans
 
 build-image:
 	docker build --pull --file=./docker/production/nginx.dockerfile --tag ${REGISTRY_HOST}/memo-nginx:${REGISTRY_PRODUCTION_TAG} .
