@@ -2,16 +2,18 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
-use GuzzleHttp\Client;
+use Ig0rbm\Memo\Exception\Telegram\SendMessageException;
+use Symfony\Component\HttpFoundation\Request;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Service\Telegram\TelegramApiService;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Faker\Factory;
 use Faker\Generator;
+use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Exception;
 
 class TelegramApiServiceUnitTest extends TestCase
 {
@@ -34,6 +36,30 @@ class TelegramApiServiceUnitTest extends TestCase
         $this->client = $this->createMock(Client::class);
 
         $this->service = new TelegramApiService($this->client, self::TEST_TOKEN);
+    }
+
+    public function testSendMessageThrowSendMessageException(): void
+    {
+        $message = $this->getMessage();
+        $exceptionMessage = 'test_message';
+
+        $this->client->expects($this->once())
+            ->method('request')
+            ->with(
+                Request::METHOD_POST,
+                '/bot' . self::TEST_TOKEN . '/sendMessage',
+                [
+                    'form_params' => [
+                        'chat_id' => $message->getChatId(),
+                        'text' => $message->getText()
+                    ]
+                ]
+            )->will($this->throwException(new Exception($exceptionMessage)));
+
+        $this->expectException(SendMessageException::class);
+        $this->expectExceptionMessage($exceptionMessage);
+
+        $this->service->sendMessage($message);
     }
 
     public function testSendMessageReturnContent(): void
