@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class WebhookControllerFunctionalTest extends WebTestCase
 {
+    private const CHAT_ID = 233575306;
+
     /** @var string */
     private $secret;
 
@@ -62,8 +64,8 @@ class WebhookControllerFunctionalTest extends WebTestCase
         $response = $client->getResponse();
         $content = json_decode($response->getContent(), true);
 
-        $this->assertArrayHasKey('token', $content);
-        $this->assertSame($content['token'], $this->secret);
+        $this->assertArrayHasKey('ok', $content);
+        $this->assertTrue($content['ok']);
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
     }
 
@@ -86,14 +88,14 @@ class WebhookControllerFunctionalTest extends WebTestCase
                     'language_code' => $this->faker->languageCode
                 ],
                 'chat' => [
-                    'id' => $this->faker->unique()->randomNumber(9),
+                    'id' => self::CHAT_ID,
                     'first_name' => $firstName,
                     'last_name' => $lastName,
                     'username' => $username,
                     'type' => 'private'
                 ],
                 'date' => $this->faker->dateTime->getTimestamp(),
-                'text' => '/hello'//$this->faker->text(100)
+                'text' => '/hello'
             ]
         ]);
     }

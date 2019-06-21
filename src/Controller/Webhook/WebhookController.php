@@ -59,6 +59,8 @@ class WebhookController
             );
         }
 
+        $this->logger->debug('Message: ', ['message' => $request->getContent()]);
+
         try {
             $this->bot->handle($request->getContent());
         } catch (Throwable $e) {
