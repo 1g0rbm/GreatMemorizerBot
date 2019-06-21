@@ -59,15 +59,13 @@ class WebhookController
             );
         }
 
-        $this->logger->error('HERE IT IS!');
-
         try {
             $this->bot->handle($request->getContent());
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage());
-            die;
+            return new JsonResponse(['ok' => false], $e->getCode());
         }
 
-        return new JsonResponse(['ok' => true, 'token' => $token]);
+        return new JsonResponse(['ok' => true]);
     }
 }
