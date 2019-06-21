@@ -41,12 +41,14 @@ services:
 
     Ig0rbm\Memo\Service\Telegram\TelegramApiService:
         arguments:
-            $domain: '%env(TELEGRAM_API_PROXY_URL)%'
+            $client: '@eight_points_guzzle.client.telegram_api'
             $token: '%env(TELEGRAM_SECRET)%'
 
-    ###########################
-    #  telegram actions here  #
-    ###########################
+    ##############################################################################################################
+    #∨                                                                                                          ∨#
+    #∨                                         telegram actions is here                                         ∨#
+    #∨                                                                                                          ∨#
+    ##############################################################################################################
 
     Ig0rbm\Memo\TelegramAction\HelloAction:
         public: true

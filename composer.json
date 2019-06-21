@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "ext-json": "*",
         "1g0rbm/handybag": "dev-master",
+        "eightpoints/guzzle-bundle": "^7.5",
         "guzzlehttp/guzzle": "^6.3@dev",
         "sensio/framework-extra-bundle": "^5.3",
         "symfony/console": "4.2.*",

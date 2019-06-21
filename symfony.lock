@@ -102,6 +102,18 @@
             "config/packages/dev/easy_log_handler.yaml"
         ]
     },
+    "eightpoints/guzzle-bundle": {
+        "version": "7.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "7.0",
+            "ref": "e5e657ce5a4ebc99f3c76916938aa0a5f8ef7736"
+        },
+        "files": [
+            "config/packages/eight_points_guzzle.yaml"
+        ]
+    },
     "fzaninotto/faker": {
         "version": "v1.8.0"
     },
@@ -213,6 +225,9 @@
     },
     "symfony/event-dispatcher": {
         "version": "v4.2.8"
+    },
+    "symfony/expression-language": {
+        "version": "v4.2.9"
     },
     "symfony/filesystem": {
         "version": "v4.2.8"

@@ -16,9 +16,9 @@ class TelegramApiService
     /** @var string */
     private $token;
 
-    public function __construct(string $domain, string $token)
+    public function __construct(Client $client, string $token)
     {
-        $this->client = new Client(['base_uri' => $domain]);
+        $this->client = $client;
         $this->token = $token;
     }
 
