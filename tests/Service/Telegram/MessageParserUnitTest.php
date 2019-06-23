@@ -2,6 +2,8 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
+use Ig0rbm\Memo\Entity\Telegram\Message\Text;
+use Ig0rbm\Memo\Service\Telegram\TextParser;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Telegram\Message\From;
@@ -23,13 +25,17 @@ class MessageParserUnitTest extends TestCase
     /** @var Generator */
     private $faker;
 
+    /** @var MockObject|TextParser */
+    private $textParser;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->validator = $this->getMockBuilder(ValidatorInterface::class)->getMock();
+        $this->textParser = $this->createMock(TextParser::class);
         $this->faker = Factory::create();
 
-        $this->service = new MessageParser($this->validator);
+        $this->service = new MessageParser($this->validator, $this->textParser);
     }
 
     public function testCreateChatReturnValidChat(): void
@@ -86,7 +92,7 @@ class MessageParserUnitTest extends TestCase
 
         $this->assertSame($rawMessage['message']['message_id'], $message->getMessageId());
         $this->assertSame($rawMessage['message']['date'], $message->getDate());
-        $this->assertSame($rawMessage['message']['text'], $message->getText());
+        $this->assertInstanceOf(Text::class, $message->getText());
         $this->assertInstanceOf(From::class, $message->getFrom());
         $this->assertInstanceOf(Chat::class, $message->getChat());
     }

@@ -45,7 +45,7 @@ class MessageFrom
 
     /**
      * @Assert\NotBlank
-     * @Assert\Type("string")
+     * @TelegramMessageAssert\Text
      *
      * @var string
      */
@@ -116,17 +116,17 @@ class MessageFrom
     }
 
     /**
-     * @return string
+     * @return Text
      */
-    public function getText(): string
+    public function getText(): Text
     {
         return $this->text;
     }
 
     /**
-     * @param string $text
+     * @param Text $text
      */
-    public function setText(string $text): void
+    public function setText(Text $text): void
     {
         $this->text = $text;
     }

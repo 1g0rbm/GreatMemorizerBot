@@ -13,9 +13,13 @@ class MessageParser
     /** @var ValidatorInterface */
     private $validator;
 
-    public function __construct(ValidatorInterface $validator)
+    /** @var TextParser */
+    private $textParser;
+
+    public function __construct(ValidatorInterface $validator, TextParser $textParser)
     {
         $this->validator = $validator;
+        $this->textParser = $textParser;
     }
 
     public function createMessage(string $message): MessageFrom
@@ -31,7 +35,7 @@ class MessageParser
         $message->setChat($chat);
         $message->setFrom($from);
         $message->setDate($messageRaw['date']);
-        $message->setText($messageRaw['text']);
+        $message->setText($this->textParser->parse($messageRaw['text']));
 
         $this->validate($message);
 

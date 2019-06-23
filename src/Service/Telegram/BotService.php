@@ -31,7 +31,7 @@ class BotService
     public function handle(string $raw): void
     {
         $message = $this->messageParser->createMessage($raw);
-        $command = $this->defineCommand($message->getText());
+        $command = $this->defineCommand($message->getText()->getCommand());
         $actionCollection = $this->actionParser->createActionList();
 
         /** @var ActionInterface $action */
@@ -40,7 +40,7 @@ class BotService
         $action->run($message, $command);
     }
 
-    private function defineCommand(string $command): Command
+    private function defineCommand(?string $command): Command
     {
         $commandsBag = $this->commandParser->createCommandCollection();
         if (!$commandsBag->has($command)) {
