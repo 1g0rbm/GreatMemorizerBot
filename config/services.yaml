@@ -5,6 +5,9 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     telegram_commands:
+        /translate:
+            text_response: 'What word you want to translate?'
+            action_class: Ig0rbm\Memo\TelegramAction\TranslationAction
         /hello:
             text_response: 'Hello!'
             action_class: Ig0rbm\Memo\TelegramAction\HelloAction
@@ -44,11 +47,19 @@ services:
             $client: '@eight_points_guzzle.client.telegram_api'
             $token: '%env(TELEGRAM_SECRET)%'
 
+    Ig0rbm\Memo\Service\Translation\Yandex\YandexDictionaryApiService:
+        arguments:
+            $client: '@eight_points_guzzle.client.yandex_dictionary_api'
+            $token: '%env(YANDEX_DICTIONARY_API_KEY)%'
+
     ##############################################################################################################
     #∨                                                                                                          ∨#
     #∨                                         telegram actions is here                                         ∨#
     #∨                                                                                                          ∨#
     ##############################################################################################################
+
+    Ig0rbm\Memo\TelegramAction\TranslationAction:
+        public: true
 
     Ig0rbm\Memo\TelegramAction\HelloAction:
         public: true
