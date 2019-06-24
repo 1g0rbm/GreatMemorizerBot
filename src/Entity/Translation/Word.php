@@ -4,7 +4,7 @@
 namespace Ig0rbm\Memo\Entity\Translation;
 
 
-class Translation
+class Word
 {
     /**
      * @var string
@@ -16,5 +16,8 @@ class Translation
      */
     private $pos;
 
+    /**
+     * @var Translation[]
+     */
     private $ts;
 }
