@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Translation\Yandex;
 
+use Ig0rbm\Memo\Entity\Translation\Word;
 use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Exception\Translation\Yandex\TranslationException;
 use Ig0rbm\Memo\Service\Translation\ApiTranslationInterface;
@@ -18,13 +19,17 @@ class YandexDictionaryApiService implements ApiTranslationInterface
     /** @var Client */
     private $client;
 
-    public function __construct(string $token, Client $client)
+    /** @var DictionaryParser */
+    private $parser;
+
+    public function __construct(string $token, Client $client, DictionaryParser $parser)
     {
         $this->token = $token;
         $this->client = $client;
+        $this->parser = $parser;
     }
 
-    public function getTranslate(string $translateDirection, string $phrase): string
+    public function getTranslate(string $translateDirection, string $phrase): Word
     {
         try {
             $response = $this->client->request(
@@ -42,6 +47,6 @@ class YandexDictionaryApiService implements ApiTranslationInterface
             throw TranslationException::becauseBadRequestToYandexDictionary($e->getMessage());
         }
 
-        return $response->getBody()->getContents();
+        return $this->parser->parse($response->getBody()->getContents());
     }
 }
