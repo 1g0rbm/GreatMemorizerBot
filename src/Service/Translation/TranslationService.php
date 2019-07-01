@@ -9,13 +9,17 @@ class TranslationService
     /** @var ApiTranslationInterface */
     private $apiTranslation;
 
-    public function __construct(ApiTranslationInterface $apiTranslation)
+    /** @var DirectionParser */
+    private $directionParser;
+
+    public function __construct(ApiTranslationInterface $apiTranslation, DirectionParser $directionParser)
     {
         $this->apiTranslation = $apiTranslation;
+        $this->directionParser = $directionParser;
     }
 
     public function translate(string $translateDirection, string $word): Word
     {
-        return $this->apiTranslation->getTranslate($translateDirection, $word);
+        return $this->apiTranslation->getTranslate($this->directionParser->parse($translateDirection), $word);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Ig0rbm\Memo\Entity\Translation\Yandex;
+namespace Ig0rbm\Memo\Entity\Translation;
 
 
 class Direction

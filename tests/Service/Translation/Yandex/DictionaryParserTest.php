@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Yandex;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Translation\Yandex\DictionaryParser;
@@ -19,12 +20,32 @@ class DictionaryParserTest extends TestCase
 
     public function testParseReturnWord(): void
     {
-        $this->assertInstanceOf(Word::class, $this->service->parse($this->getDictionary()));
+        $dictionary = $this->getDictionary();
+        $word = $this->service->parse(json_encode($dictionary));
+
+        $this->assertInstanceOf(Word::class, $word);
+        $this->assertSame($dictionary['def'][0]['text'], $word->getText());
+        $this->assertSame($dictionary['def'][0]['pos'], $word->getPos());
+        $this->assertSame($dictionary['def'][0]['ts'], $word->getTranscription());
+
+        $tr = $dictionary['def'][0]['tr'];
+        $this->assertInstanceOf(ArrayCollection::class, $word->getTranslations());
+        /** @var Word $translation */
+        $translation = $word->getTranslations()->first();
+        $this->assertSame($tr[1]['text'], $translation->getText());
+        $this->assertSame($tr[1]['pos'], $translation->getPos());
+
+        $syn = $tr[1]['syn'];
+        $this->assertInstanceOf(ArrayCollection::class, $word->getTranslations());
+        /** @var Word $synonym */
+        $synonym = $translation->getSynonyms()->first();
+        $this->assertSame($syn[4]['text'], $synonym->getText());
+        $this->assertSame($syn[4]['pos'], $synonym->getPos());
     }
 
-    private function getDictionary(): string
+    private function getDictionary(): array
     {
-        return json_encode([
+        return [
             'head' => [],
             'def' => [
                 [
@@ -119,6 +140,6 @@ class DictionaryParserTest extends TestCase
                     ]
                 ]
             ]
-        ]);
+        ];
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Ig0rbm\Memo\Service\Translation\Yandex;
+namespace Ig0rbm\Memo\Service\Translation;
 
-use Ig0rbm\Memo\Entity\Translation\Yandex\Direction;
+use Ig0rbm\Memo\Entity\Translation\Direction;
 
 class DirectionParser
 {

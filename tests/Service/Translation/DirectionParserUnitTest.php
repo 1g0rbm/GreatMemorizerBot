@@ -1,10 +1,10 @@
 <?php
 
-namespace Ig0rbm\Memo\Tests\Service\Translation\Yandex;
+namespace Ig0rbm\Memo\Tests\Service\Translation;
 
-use Ig0rbm\Memo\Entity\Translation\Yandex\Direction;
-use Ig0rbm\Memo\Service\Translation\Yandex\DirectionParser;
 use PHPUnit\Framework\TestCase;
+use Ig0rbm\Memo\Entity\Translation\Direction;
+use Ig0rbm\Memo\Service\Translation\DirectionParser;
 
 class DirectionParserUnitTest extends TestCase
 {

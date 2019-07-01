@@ -3,6 +3,7 @@
 namespace Ig0rbm\Memo\Service\Translation\Yandex;
 
 use Ig0rbm\Memo\Entity\Translation\Word;
+use Ig0rbm\Memo\Entity\Translation\Direction;
 use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Exception\Translation\Yandex\TranslationException;
 use Ig0rbm\Memo\Service\Translation\ApiTranslationInterface;
@@ -29,7 +30,7 @@ class YandexDictionaryApiService implements ApiTranslationInterface
         $this->parser = $parser;
     }
 
-    public function getTranslate(string $translateDirection, string $phrase): Word
+    public function getTranslate(Direction $direction, string $phrase): Word
     {
         try {
             $response = $this->client->request(
@@ -38,7 +39,7 @@ class YandexDictionaryApiService implements ApiTranslationInterface
                 [
                     'query' => [
                         'key' => $this->token,
-                        'lang' => $translateDirection,
+                        'lang' => $direction->getDirection(),
                         'text' => $phrase
                     ]
                 ]
