@@ -3,12 +3,13 @@
 namespace Ig0rbm\Memo\Service\Translation\Yandex;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
 
 class DictionaryParser
 {
-    public function parse(string $json): Word
+    public function parse(string $json, Direction $direction): Word
     {
         $arr = json_decode($json, true);
 
@@ -17,28 +18,30 @@ class DictionaryParser
         }
 
         $word = new Word();
+        $word->setLangCode($direction->getLangFrom());
 
         foreach ($arr['def'] as $item) {
-            $this->build($item, $word);
+            $this->build($item, $word, $direction);
         }
 
         return $word;
     }
 
-    public function createWordsCollection(array $rawWord): ArrayCollection
+    public function createWordsCollection(array $rawWord, Direction $direction): ArrayCollection
     {
         $collection = new ArrayCollection();
         $word = new Word();
+        $word->setLangCode($direction->getLangTo());
 
         foreach ($rawWord as $item) {
-            $this->build($item, $word);
+            $this->build($item, $word, $direction);
             $collection->add($word);
         }
 
         return $collection;
     }
 
-    private function build(array $item, Word &$word): void
+    private function build(array $item, Word &$word, Direction $direction): void
     {
         if (false === isset($item['text'])) {
             DictionaryParseException::becauseFieldNotFound('text');
@@ -56,11 +59,11 @@ class DictionaryParser
         }
 
         if (isset($item['tr'])) {
-            $word->setTranslations($this->createWordsCollection($item['tr']));
+            $word->setTranslations($this->createWordsCollection($item['tr'], $direction));
         }
 
         if (isset($item['syn'])) {
-            $word->setSynonyms($this->createWordsCollection($item['syn']));
+            $word->setSynonyms($this->createWordsCollection($item['syn'], $direction));
         }
     }
 }

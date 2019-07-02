@@ -48,6 +48,6 @@ class YandexDictionaryApiService implements ApiTranslationInterface
             throw TranslationException::becauseBadRequestToYandexDictionary($e->getMessage());
         }
 
-        return $this->parser->parse($response->getBody()->getContents());
+        return $this->parser->parse($response->getBody()->getContents(), $direction);
     }
 }

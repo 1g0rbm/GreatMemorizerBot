@@ -3,6 +3,7 @@
 namespace Ig0rbm\Memo\Tests\Service\Yandex;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ig0rbm\Memo\Entity\Translation\Direction;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Translation\Yandex\DictionaryParser;
@@ -21,12 +22,15 @@ class DictionaryParserTest extends TestCase
     public function testParseReturnWord(): void
     {
         $dictionary = $this->getDictionary();
-        $word = $this->service->parse(json_encode($dictionary));
+        $direction = $this->getDirection();
+
+        $word = $this->service->parse(json_encode($dictionary), $direction);
 
         $this->assertInstanceOf(Word::class, $word);
         $this->assertSame($dictionary['def'][0]['text'], $word->getText());
         $this->assertSame($dictionary['def'][0]['pos'], $word->getPos());
         $this->assertSame($dictionary['def'][0]['ts'], $word->getTranscription());
+        $this->assertSame($direction->getLangFrom(), $word->getLangCode());
 
         $tr = $dictionary['def'][0]['tr'];
         $this->assertInstanceOf(ArrayCollection::class, $word->getTranslations());
@@ -34,6 +38,7 @@ class DictionaryParserTest extends TestCase
         $translation = $word->getTranslations()->first();
         $this->assertSame($tr[1]['text'], $translation->getText());
         $this->assertSame($tr[1]['pos'], $translation->getPos());
+        $this->assertSame($direction->getLangTo(), $translation->getLangCode());
 
         $syn = $tr[1]['syn'];
         $this->assertInstanceOf(ArrayCollection::class, $word->getTranslations());
@@ -41,6 +46,7 @@ class DictionaryParserTest extends TestCase
         $synonym = $translation->getSynonyms()->first();
         $this->assertSame($syn[4]['text'], $synonym->getText());
         $this->assertSame($syn[4]['pos'], $synonym->getPos());
+        $this->assertSame($direction->getLangTo(), $synonym->getLangCode());
     }
 
     private function getDictionary(): array
@@ -141,5 +147,15 @@ class DictionaryParserTest extends TestCase
                 ]
             ]
         ];
+    }
+
+    private function getDirection(): Direction
+    {
+        $direction = new Direction();
+        $direction->setLangFrom('ru');
+        $direction->setLangTo('en');
+        $direction->setDirection('ru-en');
+
+        return $direction;
     }
 }
