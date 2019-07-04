@@ -49,6 +49,25 @@ class DictionaryParserTest extends TestCase
         $this->assertSame($direction->getLangTo(), $synonym->getLangCode());
     }
 
+    public function testParseReturnValidWordWhenDefEmpty(): void
+    {
+        $dictionary = $this->getEmptyDictionary();
+        $direction = $this->getDirection();
+
+        $word = $this->service->parse(json_encode($dictionary), $direction);
+
+        $this->assertInstanceOf(Word::class, $word);
+        $this->assertNull($word->getText());
+    }
+
+    private function getEmptyDictionary(): array
+    {
+        return [
+            'head' => [],
+            'def' => []
+        ];
+    }
+
     private function getDictionary(): array
     {
         return [

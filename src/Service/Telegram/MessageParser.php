@@ -25,7 +25,12 @@ class MessageParser
     public function createMessage(string $message): MessageFrom
     {
         $messageRaw = json_decode($message, true);
-        $messageRaw = $messageRaw['message'];
+
+        if (!isset($messageRaw['message']) && !isset($messageRaw['edited_message'])) {
+            throw ParseMessageException::becauseInvalidParameter('No message parameter');
+        }
+
+        $messageRaw = $messageRaw['message'] ?? $messageRaw['edited_message'];
 
         $chat = $this->createChat($messageRaw['chat']);
         $from = $this->createFrom($messageRaw['from']);

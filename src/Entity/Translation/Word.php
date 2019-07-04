@@ -76,7 +76,7 @@ class Word
     /**
      * @return string
      */
-    public function getText(): string
+    public function getText(): ?string
     {
         return $this->text;
     }
