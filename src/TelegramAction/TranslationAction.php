@@ -5,24 +5,24 @@ namespace Ig0rbm\Memo\TelegramAction;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
-use Ig0rbm\Memo\Service\Telegram\Action\ActionInterface;
+use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
 use Ig0rbm\Memo\Service\Translation\DirectionParser;
-use Ig0rbm\Memo\Service\Translation\Yandex\YandexDictionaryApiService;
+use Ig0rbm\Memo\Service\Translation\TranslationService;
 
 class TranslationAction extends AbstractTelegramAction
 {
-    /** @var YandexDictionaryApiService */
-    private $dictionaryApi;
+    /** @var TranslationService */
+    private $translationService;
 
-    /** @var DirectionParser */
-    private $directionParser;
+    /** @var MessageBuilder */
+    private $messageBuilder;
 
     public function __construct(
-        YandexDictionaryApiService $dictionaryApi,
-        DirectionParser $directionParser
+        TranslationService $translationService,
+        MessageBuilder $messageBuilder
     ) {
-        $this->dictionaryApi = $dictionaryApi;
-        $this->directionParser = $directionParser;
+        $this->translationService = $translationService;
+        $this->messageBuilder = $messageBuilder;
     }
 
     public function run(MessageFrom $messageFrom, Command $command): MessageTo
@@ -35,12 +35,9 @@ class TranslationAction extends AbstractTelegramAction
             return $messageTo;
         }
 
-        $response = $this->dictionaryApi->getTranslate(
-            $this->directionParser->parse('en-ru'),
-            $messageFrom->getText()->getText()
-        );
+        $words = $this->translationService->translate('en-ru', $messageFrom->getText()->getText());
 
-        $messageTo->setText($response->getText() ?? 'No word');
+        $messageTo->setText($this->messageBuilder->build($words));
 
         return $messageTo;
     }

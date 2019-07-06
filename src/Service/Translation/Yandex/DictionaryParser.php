@@ -3,45 +3,49 @@
 namespace Ig0rbm\Memo\Service\Translation\Yandex;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
 
 class DictionaryParser
 {
-    public function parse(string $json, Direction $direction): Word
+    public function parse(string $json, Direction $direction): HandyBag
     {
+        $translations = new HandyBag();
         $arr = json_decode($json, true);
 
         if (false === isset($arr['def'])) {
             DictionaryParseException::becauseFieldNotFound('def');
         }
 
-        $word = new Word();
-        $word->setLangCode($direction->getLangFrom());
-
         foreach ($arr['def'] as $item) {
-            $this->build($item, $word, $direction);
+            $word = new Word();
+            $word->setLangCode($direction->getLangFrom());
+            $word = $this->build($item, $word, $direction);
+
+            $translations->set($word->getPos(), $word);
         }
 
-        return $word;
+        return $translations;
     }
 
     public function createWordsCollection(array $rawWord, Direction $direction): ArrayCollection
     {
         $collection = new ArrayCollection();
-        $word = new Word();
-        $word->setLangCode($direction->getLangTo());
 
         foreach ($rawWord as $item) {
-            $this->build($item, $word, $direction);
-            $collection->add($word);
+
+            $word = new Word();
+            $word->setLangCode($direction->getLangTo());
+
+            $collection->add($this->build($item, $word, $direction));
         }
 
         return $collection;
     }
 
-    private function build(array $item, Word &$word, Direction $direction): void
+    private function build(array $item, Word $word, Direction $direction): Word
     {
         if (false === isset($item['text'])) {
             DictionaryParseException::becauseFieldNotFound('text');
@@ -65,5 +69,7 @@ class DictionaryParser
         if (isset($item['syn'])) {
             $word->setSynonyms($this->createWordsCollection($item['syn'], $direction));
         }
+
+        return $word;
     }
 }

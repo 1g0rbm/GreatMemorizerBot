@@ -31,7 +31,8 @@ class TelegramApiService
                 [
                     'form_params' => [
                         'chat_id' => $message->getChatId(),
-                        'text' => $message->getText()
+                        'text' => $message->getText(),
+                        'parse_mode' => 'markdown'
                     ]
                 ]
             );

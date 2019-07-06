@@ -51,7 +51,8 @@ class TelegramApiServiceUnitTest extends TestCase
                 [
                     'form_params' => [
                         'chat_id' => $message->getChatId(),
-                        'text' => $message->getText()
+                        'text' => $message->getText(),
+                        'parse_mode' => 'markdown'
                     ]
                 ]
             )->will($this->throwException(new Exception($exceptionMessage)));
@@ -85,7 +86,8 @@ class TelegramApiServiceUnitTest extends TestCase
                 [
                     'form_params' => [
                         'chat_id' => $message->getChatId(),
-                        'text' => $message->getText()
+                        'text' => $message->getText(),
+                        'parse_mode' => 'markdown'
                     ]
                 ]
             )->willReturn($response);

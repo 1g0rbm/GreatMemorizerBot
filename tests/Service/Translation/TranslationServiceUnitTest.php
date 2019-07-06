@@ -4,10 +4,10 @@ namespace Ig0rbm\Memo\Tests\Service\Translation;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Translation\DirectionParser;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
 use Ig0rbm\Memo\Service\Translation\ApiTranslationInterface;
+use Ig0rbm\HandyBag\HandyBag;
 
 class TranslationServiceUnitTest extends TestCase
 {
@@ -31,6 +31,6 @@ class TranslationServiceUnitTest extends TestCase
 
     public function test(): void
     {
-        $this->assertInstanceOf(Word::class, $this->service->translate('ru-en', 'test'));
+        $this->assertInstanceOf(HandyBag::class, $this->service->translate('ru-en', 'test'));
     }
 }

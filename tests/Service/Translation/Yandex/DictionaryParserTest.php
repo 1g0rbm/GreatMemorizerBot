@@ -3,6 +3,7 @@
 namespace Ig0rbm\Memo\Tests\Service\Yandex;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Entity\Translation\Word;
@@ -19,33 +20,43 @@ class DictionaryParserTest extends TestCase
         $this->service = new DictionaryParser();
     }
 
-    public function testParseReturnWord(): void
+    public function testParseReturnWordsCollection(): void
     {
         $dictionary = $this->getDictionary();
         $direction = $this->getDirection();
 
-        $word = $this->service->parse(json_encode($dictionary), $direction);
+        $words = $this->service->parse(json_encode($dictionary), $direction);
+        $this->assertInstanceOf(HandyBag::class, $words);
+        $this->assertSame(count($dictionary['def']), $words->count());
 
-        $this->assertInstanceOf(Word::class, $word);
-        $this->assertSame($dictionary['def'][0]['text'], $word->getText());
-        $this->assertSame($dictionary['def'][0]['pos'], $word->getPos());
-        $this->assertSame($dictionary['def'][0]['ts'], $word->getTranscription());
-        $this->assertSame($direction->getLangFrom(), $word->getLangCode());
+        /** @var Word $noun */
+        $noun = $words->get('noun');
+        $this->assertSame($dictionary['def'][0]['text'], $noun->getText());
+        $this->assertSame($dictionary['def'][0]['pos'], $noun->getPos());
+        $this->assertSame($dictionary['def'][0]['ts'], $noun->getTranscription());
+        $this->assertSame($direction->getLangFrom(), $noun->getLangCode());
+
+        /** @var Word $adjective */
+        $adjective = $words->get('adjective');
+        $this->assertSame($dictionary['def'][1]['text'], $adjective->getText());
+        $this->assertSame($dictionary['def'][1]['pos'], $adjective->getPos());
+        $this->assertSame($dictionary['def'][1]['ts'], $adjective->getTranscription());
+        $this->assertSame($direction->getLangFrom(), $adjective->getLangCode());
 
         $tr = $dictionary['def'][0]['tr'];
-        $this->assertInstanceOf(ArrayCollection::class, $word->getTranslations());
+        $this->assertInstanceOf(ArrayCollection::class, $noun->getTranslations());
         /** @var Word $translation */
-        $translation = $word->getTranslations()->first();
-        $this->assertSame($tr[1]['text'], $translation->getText());
-        $this->assertSame($tr[1]['pos'], $translation->getPos());
+        $translation = $noun->getTranslations()->first();
+        $this->assertSame($tr[0]['text'], $translation->getText());
+        $this->assertSame($tr[0]['pos'], $translation->getPos());
         $this->assertSame($direction->getLangTo(), $translation->getLangCode());
 
-        $syn = $tr[1]['syn'];
-        $this->assertInstanceOf(ArrayCollection::class, $word->getTranslations());
+        $syn = $tr[0]['syn'];
+        $this->assertInstanceOf(ArrayCollection::class, $translation->getSynonyms());
         /** @var Word $synonym */
         $synonym = $translation->getSynonyms()->first();
-        $this->assertSame($syn[4]['text'], $synonym->getText());
-        $this->assertSame($syn[4]['pos'], $synonym->getPos());
+        $this->assertSame($syn[0]['text'], $synonym->getText());
+        $this->assertSame($syn[0]['pos'], $synonym->getPos());
         $this->assertSame($direction->getLangTo(), $synonym->getLangCode());
     }
 
@@ -56,8 +67,7 @@ class DictionaryParserTest extends TestCase
 
         $word = $this->service->parse(json_encode($dictionary), $direction);
 
-        $this->assertInstanceOf(Word::class, $word);
-        $this->assertNull($word->getText());
+        $this->assertInstanceOf(HandyBag::class, $word);
     }
 
     private function getEmptyDictionary(): array
@@ -74,94 +84,95 @@ class DictionaryParserTest extends TestCase
             'head' => [],
             'def' => [
                 [
-                    'text' => 'translate',
-                    'pos' => 'verb',
-                    'ts' => 'trænsˈleɪt',
+                    'text' => 'house',
+                    'pos' => 'noun',
+                    'ts' => 'haʊs',
                     'tr' => [
                         [
-                            'text' => 'переводить',
-                            'pos' => 'verb',
+                            'text' => 'дом',
+                            'pos' => 'noun',
                             'syn' => [
                                 [
-                                    'text' => 'транслировать',
-                                    'pos' => 'verb'
+                                    'text' => 'здание',
+                                    'pos' => 'noun'
                                 ],
                                 [
-                                    'text' => 'преобразовывать',
-                                    'pos' => 'verb',
-                                    'asp' => 'несов'
+                                    'text' => 'домик',
+                                    'pos' => 'noun',
                                 ],
                                 [
-                                    'text' => 'перевести',
-                                    'pos' => 'verb',
-                                    'asp' => 'сов'
+                                    'text' => 'жилой дом',
+                                    'pos' => 'noun',
                                 ],
                                 [
-                                    'text' => 'преобразовать',
-                                    'pos' => 'verb',
-                                ],
-                                [
-                                    'text' => 'преобразовать',
-                                    'pos' => 'verb',
+                                    'text' => 'домишко',
+                                    'pos' => 'noun',
                                 ],
                             ],
                             'ex' => [
                                 [
-                                    'text' => 'translate into russian',
+                                    'text' => 'auction house',
                                     [
-                                        'text' => 'переводить на русский'
+                                        'text' => 'аукционный дом'
                                     ],
                                 ],
                                 [
-                                    'text' => 'translated text',
+                                    'text' => 'father\'s house',
                                     [
-                                        'text' => 'переведенный текст'
+                                        'text' => 'отчий дом'
                                     ],
                                 ]
                             ]
                         ],
                         [
-                            'text' => 'превращать',
-                            'pos' => 'verb',
+                            'text' => 'жилье',
+                            'pos' => 'noun',
                             'syn' => [
                                 [
-                                    'text' => 'трансформировать',
-                                    'pos' => 'verb'
-                                ],
-                                [
-                                    'text' => 'преобразовывать',
-                                    'pos' => 'verb',
-                                    'asp' => 'несов'
-                                ],
-                                [
-                                    'text' => 'перевести',
-                                    'pos' => 'verb',
-                                    'asp' => 'сов'
-                                ],
-                                [
-                                    'text' => 'преобразовать',
-                                    'pos' => 'verb',
-                                ],
-                                [
-                                    'text' => 'преобразовать',
-                                    'pos' => 'verb',
+                                    'text' => 'жилище',
+                                    'pos' => 'noun'
                                 ],
                             ],
                             'ex' => [
                                 [
-                                    'text' => 'translate into russian',
+                                    'text' => 'safe houses',
                                     [
-                                        'text' => 'переводить на русский'
+                                        'text' => 'безопасное жилье'
                                     ],
                                 ],
                                 [
-                                    'text' => 'translated text',
+                                    'text' => 'right to housing',
                                     [
-                                        'text' => 'переведенный текст'
+                                        'text' => 'право на жилище'
                                     ],
                                 ]
                             ]
                         ]
+                    ]
+                ],
+                [
+                    'text' => 'house',
+                    'pos' => 'adjective',
+                    'ts' => 'haʊs',
+                    'tr' => [
+                        [
+                            'text' => 'домашний',
+                            'pos' => 'adjective',
+                            'syn' => [
+                                [
+                                    'text' => 'домовой',
+                                    'pos' => 'adjective'
+                                ],
+                            ],
+                            'ex' => [
+                                [
+                                    'text' => 'house cat',
+                                    [
+                                        'text' => 'домашняя кошка'
+                                    ],
+                                ],
+                            ]
+                        ],
                     ]
                 ]
             ]

@@ -2,11 +2,11 @@
 
 namespace Ig0rbm\Memo\Service\Translation\Yandex;
 
-use Ig0rbm\Memo\Entity\Translation\Word;
-use Ig0rbm\Memo\Entity\Translation\Direction;
 use Symfony\Component\HttpFoundation\Request;
+use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Exception\Translation\Yandex\TranslationException;
 use Ig0rbm\Memo\Service\Translation\ApiTranslationInterface;
+use Ig0rbm\HandyBag\HandyBag;
 use GuzzleHttp\Client;
 use Throwable;
 
@@ -30,7 +30,7 @@ class YandexDictionaryApiService implements ApiTranslationInterface
         $this->parser = $parser;
     }
 
-    public function getTranslate(Direction $direction, string $phrase): Word
+    public function getTranslate(Direction $direction, string $phrase): HandyBag
     {
         try {
             $response = $this->client->request(
