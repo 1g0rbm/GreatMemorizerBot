@@ -36,8 +36,9 @@ class TranslationAction extends AbstractTelegramAction
         }
 
         $words = $this->translationService->translate('en-ru', $messageFrom->getText()->getText());
+        $text = $this->messageBuilder->build($words) ?: 'No translation or invalid word';
 
-        $messageTo->setText($this->messageBuilder->build($words));
+        $messageTo->setText($text);
 
         return $messageTo;
     }
