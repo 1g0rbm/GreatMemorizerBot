@@ -17,19 +17,16 @@ class MessageBuilder
         while ($wordsIterator->valid()) {
             /** @var Word $word */
             $word = $wordsIterator->current();
-            $this->appendSource($word->getText())
-                ->appendBreak()
-                ->appendPos($word->getPos())
-                ->appendBreak()
-                ->appendTranscription($word->getTranscription())
+            $this->appendAsBold($word->getText() . ': ')
+                ->appendAsBold($word->getPos() . ' ')
+                ->appendAsBold(sprintf('[%s]', $word->getTranscription()))
                 ->appendBreak()
                 ->appendTranslation($word->getTranslations());
 
             $wordsIterator->next();
 
             if ($wordsIterator->valid()) {
-                $this->append('-----------------------------')
-                    ->appendBreak();
+                $this->appendBreak();
             }
         }
 
@@ -53,9 +50,6 @@ class MessageBuilder
 
     private function appendTranslation(ArrayCollection $translation): self
     {
-        $this->appendAsBold('Translation: ')
-            ->appendBreak();
-
         $translationIterator = $translation->getIterator();
         while ($translationIterator->valid()) {
             /** @var Word $translation */
