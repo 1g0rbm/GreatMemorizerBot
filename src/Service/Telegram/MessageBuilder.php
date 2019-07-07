@@ -39,16 +39,12 @@ class MessageBuilder
 
     private function appendSynonyms(ArrayCollection $collection): self
     {
-        $this->appendAsBold('Synonyms: ')
-            ->appendBreak();
-
         $iterator = $collection->getIterator();
         while ($iterator->valid()) {
             /** @var Word $translation */
             $translation = $iterator->current();
-            $this->append('    ')
-                ->append($translation->getText())
-                ->appendBreak();
+            $this->append(' | ')
+                ->append($translation->getText());
 
             $iterator->next();
         }
@@ -66,8 +62,7 @@ class MessageBuilder
             /** @var Word $translation */
             $translation = $translationIterator->current();
             $this->append('    ')
-                ->append($translation->getText())
-                ->appendBreak();
+                ->append($translation->getText());
 
             if ($translation->getSynonyms()) {
                 $this->appendSynonyms($translation->getSynonyms());
