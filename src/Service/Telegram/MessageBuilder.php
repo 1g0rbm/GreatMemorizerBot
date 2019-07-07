@@ -28,8 +28,7 @@ class MessageBuilder
             $wordsIterator->next();
 
             if ($wordsIterator->valid()) {
-                $this->append('-----------------------')
-                    ->appendBreak()
+                $this->append('-----------------------------')
                     ->appendBreak();
             }
         }
