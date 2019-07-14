@@ -17,8 +17,8 @@ class MessageBuilder
         while ($wordsIterator->valid()) {
             /** @var Word $word */
             $word = $wordsIterator->current();
-            $this->appendAsBold($word->getText() . ': ')
-                ->appendAsBold($word->getPos() . ' ')
+            $this->appendAsBold(sprintf('%s: ', $word->getText()))
+                ->appendAsBold(sprintf('%s ', $word->getPos()))
                 ->appendAsBold(sprintf('[%s]', $word->getTranscription()))
                 ->appendBreak()
                 ->appendTranslation($word->getTranslations());
@@ -65,37 +65,6 @@ class MessageBuilder
 
             $translationIterator->next();
         }
-
-        return $this;
-    }
-
-    private function appendTranscription(string $source): self
-    {
-        $this->appendTitle('Transcription', $source);
-
-        return $this;
-    }
-
-    private function appendSource(string $source): self
-    {
-        $this->appendTitle('Source', $source);
-
-        return $this;
-    }
-
-    private function appendPos(string $source): self
-    {
-        $this->appendTitle('Pos', $source);
-
-        return $this;
-    }
-
-    private function appendTitle(string $title, string $value): self
-    {
-        $this->appendAsBold(sprintf('%s: ', $title))
-            ->appendBreak()
-            ->append('    ')
-            ->append($value);
 
         return $this;
     }
