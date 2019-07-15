@@ -6,13 +6,13 @@ use Ig0rbm\HandyBag\HandyBag;
 
 class TranslationService
 {
-    /** @var ApiTranslationInterface */
+    /** @var ApiWordTranslationInterface */
     private $apiTranslation;
 
     /** @var DirectionParser */
     private $directionParser;
 
-    public function __construct(ApiTranslationInterface $apiTranslation, DirectionParser $directionParser)
+    public function __construct(ApiWordTranslationInterface $apiTranslation, DirectionParser $directionParser)
     {
         $this->apiTranslation = $apiTranslation;
         $this->directionParser = $directionParser;

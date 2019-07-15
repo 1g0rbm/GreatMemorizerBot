@@ -6,7 +6,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Service\Translation\DirectionParser;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
-use Ig0rbm\Memo\Service\Translation\ApiTranslationInterface;
+use Ig0rbm\Memo\Service\Translation\ApiWordTranslationInterface;
 use Ig0rbm\HandyBag\HandyBag;
 
 class TranslationServiceUnitTest extends TestCase
@@ -14,7 +14,7 @@ class TranslationServiceUnitTest extends TestCase
     /** @var TranslationService */
     private $service;
 
-    /** @var ApiTranslationInterface|MockObject */
+    /** @var ApiWordTranslationInterface|MockObject */
     private $apiTranslation;
 
     /** @var DirectionParser|MockObject */
@@ -23,7 +23,7 @@ class TranslationServiceUnitTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->apiTranslation = $this->getMockBuilder(ApiTranslationInterface::class)->getMock();
+        $this->apiTranslation = $this->getMockBuilder(ApiWordTranslationInterface::class)->getMock();
         $this->directionParser = $this->createMock(DirectionParser::class);
 
         $this->service = new TranslationService($this->apiTranslation, $this->directionParser);

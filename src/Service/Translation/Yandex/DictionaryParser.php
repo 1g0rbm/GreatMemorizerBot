@@ -10,7 +10,7 @@ use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
 
 class DictionaryParser
 {
-    public function parse(string $json, Direction $direction): HandyBag
+    public function parse(string $json, Direction $direction): ?HandyBag
     {
         $translations = new HandyBag();
         $arr = json_decode($json, true);

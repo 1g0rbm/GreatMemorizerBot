@@ -6,7 +6,7 @@ use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
-use Ig0rbm\Memo\Service\Translation\DirectionParser;
+use Ig0rbm\Memo\Service\Translation\TextTranslationService;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
 
 class TranslationAction extends AbstractTelegramAction
@@ -17,11 +17,16 @@ class TranslationAction extends AbstractTelegramAction
     /** @var MessageBuilder */
     private $messageBuilder;
 
+    /** @var TextTranslationService */
+    private $textTranslation;
+
     public function __construct(
         TranslationService $translationService,
+        TextTranslationService $textTranslation,
         MessageBuilder $messageBuilder
     ) {
         $this->translationService = $translationService;
+        $this->textTranslation = $textTranslation;
         $this->messageBuilder = $messageBuilder;
     }
 
@@ -36,9 +41,14 @@ class TranslationAction extends AbstractTelegramAction
         }
 
         $words = $this->translationService->translate('en-ru', $messageFrom->getText()->getText());
-        $text = $this->messageBuilder->build($words) ?: 'No translation or invalid word';
+        if ($words->count() > 0) {
+            $message = $this->messageBuilder->buildFromWords($words) ?: 'No translation or invalid word';
+        } else {
+            $text = $this->textTranslation->translate('en-ru', $messageFrom->getText()->getText());
+            $message = $this->messageBuilder->buildFromText($text);
+        }
 
-        $messageTo->setText($text);
+        $messageTo->setText($message);
 
         return $messageTo;
     }

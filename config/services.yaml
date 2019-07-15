@@ -52,6 +52,11 @@ services:
             $client: '@eight_points_guzzle.client.yandex_dictionary_api'
             $token: '%env(YANDEX_DICTIONARY_API_KEY)%'
 
+    Ig0rbm\Memo\Service\Translation\Yandex\YandexTranslationApiService:
+        arguments:
+            $client: '@eight_points_guzzle.client.yandex_translation_api'
+            $token: '%env(YANDEX_TRANSLATION_API_KEY)%'
+
     ##############################################################################################################
     #∨                                                                                                          ∨#
     #∨                                         telegram actions is here                                         ∨#

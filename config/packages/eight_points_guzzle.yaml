@@ -7,3 +7,5 @@ eight_points_guzzle:
             base_url: '%env(TELEGRAM_API_PROXY_URL)%'
         yandex_dictionary_api:
             base_url: 'https://dictionary.yandex.net'
+        yandex_translation_api:
+            base_url: 'https://translate.yandex.net'

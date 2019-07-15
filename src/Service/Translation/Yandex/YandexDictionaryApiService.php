@@ -5,12 +5,12 @@ namespace Ig0rbm\Memo\Service\Translation\Yandex;
 use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Exception\Translation\Yandex\TranslationException;
-use Ig0rbm\Memo\Service\Translation\ApiTranslationInterface;
+use Ig0rbm\Memo\Service\Translation\ApiWordTranslationInterface;
 use Ig0rbm\HandyBag\HandyBag;
 use GuzzleHttp\Client;
 use Throwable;
 
-class YandexDictionaryApiService implements ApiTranslationInterface
+class YandexDictionaryApiService implements ApiWordTranslationInterface
 {
     private const LOOKUP_URI = '/api/v1/dicservice.json/lookup';
 
@@ -45,7 +45,7 @@ class YandexDictionaryApiService implements ApiTranslationInterface
                 ]
             );
         } catch (Throwable $e) {
-            throw TranslationException::becauseBadRequestToYandexDictionary($e->getMessage());
+            throw TranslationException::becauseBadRequestFromYandexApi($e->getMessage());
         }
 
         return $this->parser->parse($response->getBody()->getContents(), $direction);

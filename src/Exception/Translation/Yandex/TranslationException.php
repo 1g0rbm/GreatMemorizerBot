@@ -6,7 +6,7 @@ use Exception;
 
 class TranslationException extends Exception
 {
-    public static function becauseBadRequestToYandexDictionary(string $message): self
+    public static function becauseBadRequestFromYandexApi(string $message): self
     {
         return new self($message, 500);
     }
