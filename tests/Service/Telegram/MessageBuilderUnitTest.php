@@ -34,7 +34,7 @@ class MessageBuilderUnitTest extends TestCase
             $bag->set($word->getPos(), $word);
         }
 
-        $string = $this->service->build($bag);
+        $string = $this->service->buildFromWords($bag);
 
         $word = $bag->get('adjective');
         $this->assertStringEndsWith(sprintf(
