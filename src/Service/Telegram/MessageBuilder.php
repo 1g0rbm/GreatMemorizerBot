@@ -36,10 +36,7 @@ class MessageBuilder
 
     public function buildFromText(Text $text): string
     {
-        $this->appendAsBold('Translation: ')
-            ->appendBreak()
-            ->append($text->getText())
-            ->appendBreak();
+        $this->append($text->getText())->appendBreak();
 
         return $this->string;
     }
