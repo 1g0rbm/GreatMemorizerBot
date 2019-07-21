@@ -3,27 +3,65 @@
 namespace Ig0rbm\Memo\Entity\Telegram;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * @ORM\Entity
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="Ig0rbm\Memo\Repository\Telegram\UserRepository")
- * @package Ig0rbm\Memo\Entity\Telegram
  */
 class User
 {
-    /** @var int */
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     *
+     * @var integer
+     */
     private $id;
 
-    /** @var int */
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     *
+     * @var integer
+     */
     private $telegramId;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
+     * @var string
+     */
     private $firstName;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
+     * @var string
+     */
     private $lastName;
 
-    /** @var string */
+    /**
+     * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
+     * @var string
+     */
     private $userName;
 
     /**

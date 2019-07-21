@@ -4,10 +4,18 @@
 namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="chats")
+ */
 class Chat
 {
     /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     *
      * @Assert\NotBlank
      * @Assert\Type("integer")
      *
@@ -16,6 +24,8 @@ class Chat
     private $id;
 
     /**
+     * @ORM\Column(type="string")
+     *
      * @Assert\NotBlank
      * @Assert\Type("string")
      *
@@ -24,6 +34,8 @@ class Chat
     private $firstName;
 
     /**
+     * @ORM\Column(type="string")
+     *
      * @Assert\NotBlank
      * @Assert\Type("string")
      *
@@ -32,6 +44,8 @@ class Chat
     private $lastName;
 
     /**
+     * @ORM\Column(type="string")
+     *
      * @Assert\NotBlank
      * @Assert\Type("string")
      *
@@ -40,6 +54,8 @@ class Chat
     private $username;
 
     /**
+     * @ORM\Column(type="string")
+     *
      * @Assert\NotBlank
      * @Assert\Type("string")
      *
