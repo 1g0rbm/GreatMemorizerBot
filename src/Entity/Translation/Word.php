@@ -3,40 +3,88 @@
 namespace Ig0rbm\Memo\Entity\Translation;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="words")
+ */
 class Word
 {
     /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     *
      * @var int
      */
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=2)
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     * @Assert\Length(min="2", max="2")
+     *
      * @var string
      */
     private $langCode;
 
     /**
+     * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
      * @var string
      */
     private $text;
 
     /**
+     * @ORM\Column(type="string", length=100)
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
      * @var string
      */
     private $pos;
 
     /**
+     * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
      * @var string
      */
     private $transcription;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Word", inversedBy="words")
+     * @ORM\JoinTable(
+     *     name="words2translation",
+     *     joinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="translation_id", referencedColumnName="id")}
+     * )
+     *
      * @var ArrayCollection|Word[]
      */
     private $translations;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Word", inversedBy="words")
+     * @ORM\JoinTable(
+     *     name="words2synonims",
+     *     joinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="synonym_id", referencedColumnName="id")}
+     * )
+     *
      * @var ArrayCollection|Word[]
      */
     private $synonyms;
