@@ -3,6 +3,7 @@
 namespace Ig0rbm\Memo\Service\Telegram;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Translation\Text;
 use Ig0rbm\Memo\Entity\Translation\Word;
@@ -41,7 +42,7 @@ class MessageBuilder
         return $this->string;
     }
 
-    private function appendSynonyms(ArrayCollection $collection): self
+    private function appendSynonyms(Collection $collection): self
     {
         $iterator = $collection->getIterator();
         while ($iterator->valid()) {
@@ -56,7 +57,11 @@ class MessageBuilder
         return $this;
     }
 
-    private function appendTranslation(ArrayCollection $translation): self
+    /**
+     * @param Collection|ArrayCollection $translation
+     * @return MessageBuilder
+     */
+    private function appendTranslation(Collection $translation): self
     {
         $translationIterator = $translation->getIterator();
         while ($translationIterator->valid()) {

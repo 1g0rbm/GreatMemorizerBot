@@ -2,13 +2,14 @@
 
 namespace Ig0rbm\Memo\Entity\Translation;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="words")
+ * @ORM\Entity(repositoryClass="Ig0rbm\Memo\Repository\Translation\WordRepository")
  */
 class Word
 {
@@ -58,7 +59,6 @@ class Word
     /**
      * @ORM\Column(type="string")
      *
-     * @Assert\NotBlank
      * @Assert\Type("string")
      *
      * @var string
@@ -66,26 +66,26 @@ class Word
     private $transcription;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Word", inversedBy="words")
+     * @ORM\ManyToMany(targetEntity="Word", inversedBy="words", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="words2translation",
      *     joinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="translation_id", referencedColumnName="id")}
      * )
      *
-     * @var ArrayCollection|Word[]
+     * @var Collection|Word[]
      */
     private $translations;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Word", inversedBy="words")
+     * @ORM\ManyToMany(targetEntity="Word", inversedBy="words", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="words2synonims",
      *     joinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="synonym_id", referencedColumnName="id")}
      * )
      *
-     * @var ArrayCollection|Word[]
+     * @var Collection|Word[]
      */
     private $synonyms;
 
@@ -170,15 +170,15 @@ class Word
     }
 
     /**
-     * @return ArrayCollection|Word[]
+     * @return null|Collection|Word[]
      */
-    public function getTranslations()
+    public function getTranslations(): ?Collection
     {
         return $this->translations;
     }
 
     /**
-     * @param ArrayCollection|Word[] $translations
+     * @param Collection|Word[] $translations
      */
     public function setTranslations($translations): void
     {
@@ -186,15 +186,15 @@ class Word
     }
 
     /**
-     * @return ArrayCollection|Word[]
+     * @return null|Collection|Word[]
      */
-    public function getSynonyms()
+    public function getSynonyms(): ?Collection
     {
         return $this->synonyms;
     }
 
     /**
-     * @param ArrayCollection|Word[] $synonyms
+     * @param Collection|Word[] $synonyms
      */
     public function setSynonyms($synonyms): void
     {

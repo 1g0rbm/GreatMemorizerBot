@@ -4,6 +4,8 @@ namespace Ig0rbm\Memo\Repository\Telegram\Message;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 
 class ChatRepository extends ServiceEntityRepository
@@ -21,6 +23,10 @@ class ChatRepository extends ServiceEntityRepository
         return $chat;
     }
 
+    /**
+     * @throws ORMException
+     * @throws ORMInvalidArgumentException
+     */
     public function addChat(Chat $chat): void
     {
         $this->getEntityManager()->persist($chat);

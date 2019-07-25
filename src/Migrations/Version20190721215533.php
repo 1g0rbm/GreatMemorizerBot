@@ -26,10 +26,11 @@ final class Version20190721215533 extends AbstractMigration
         );
 
         $this->addSql('CREATE SEQUENCE words_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE words (id INT NOT NULL, lang_code VARCHAR(2) NOT NULL, text VARCHAR(255) NOT NULL, pos VARCHAR(100) NOT NULL, transcription VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE words (id INT NOT NULL, lang_code VARCHAR(2) NOT NULL, text VARCHAR(255) NOT NULL, pos VARCHAR(100) NOT NULL, transcription VARCHAR(255), PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE words2translation (word_id INT NOT NULL, translation_id INT NOT NULL, PRIMARY KEY(word_id, translation_id))');
         $this->addSql('CREATE INDEX IDX_210B8E65E357438D ON words2translation (word_id)');
         $this->addSql('CREATE INDEX IDX_210B8E659CAA2B25 ON words2translation (translation_id)');
+        $this->addSql('CREATE INDEX IDX_WORD_TEXT ON words (text)');
         $this->addSql('CREATE TABLE words2synonims (word_id INT NOT NULL, synonym_id INT NOT NULL, PRIMARY KEY(word_id, synonym_id))');
         $this->addSql('CREATE INDEX IDX_B54C8BF9E357438D ON words2synonims (word_id)');
         $this->addSql('CREATE INDEX IDX_B54C8BF98C1B728E ON words2synonims (synonym_id)');
@@ -47,7 +48,6 @@ final class Version20190721215533 extends AbstractMigration
             'Migration can only be executed safely on \'postgresql\'.'
         );
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE words2translation DROP CONSTRAINT FK_210B8E65E357438D');
         $this->addSql('ALTER TABLE words2translation DROP CONSTRAINT FK_210B8E659CAA2B25');
         $this->addSql('ALTER TABLE words2synonims DROP CONSTRAINT FK_B54C8BF9E357438D');

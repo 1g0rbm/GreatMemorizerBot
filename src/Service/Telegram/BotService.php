@@ -57,7 +57,7 @@ class BotService
 
             $response = new MessageTo();
             $response->setChatId($message->getChat()->getId());
-            $response->setText(sprintf('Error during handle message "%s"', $message->getText()));
+            $response->setText(sprintf('Error during handle message "%s"', $message->getText()->getText()));
         }
 
         $this->telegramApiService->sendMessage($response);
