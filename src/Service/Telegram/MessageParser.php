@@ -56,9 +56,9 @@ class MessageParser
         $chat = new Chat();
         $chat->setId($chatRaw['id']);
         $chat->setType($chatRaw['type']);
-        $chat->setFirstName($chatRaw['first_name']);
-        $chat->setLastName($chatRaw['last_name']);
-        $chat->setUsername($chatRaw['username']);
+        $chat->setFirstName($chatRaw['first_name'] ?? null);
+        $chat->setLastName($chatRaw['last_name'] ?? null);
+        $chat->setUsername($chatRaw['username'] ?? null);
 
         $this->validate($chat);
 
@@ -70,9 +70,9 @@ class MessageParser
         $from = new From();
         $from->setId($fromRaw['id']);
         $from->setIsBot($fromRaw['is_bot']);
-        $from->setFirstName($fromRaw['first_name']);
-        $from->setLastName($fromRaw['last_name']);
-        $from->setUsername($fromRaw['username']);
+        $from->setFirstName($fromRaw['first_name'] ?? null);
+        $from->setLastName($fromRaw['last_name'] ?? null);
+        $from->setUsername($fromRaw['username'] ?? null);
         $from->setLanguageCode($fromRaw['language_code']);
 
         $this->validate($from);

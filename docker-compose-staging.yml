@@ -18,7 +18,7 @@ services:
       APP_DEBUG: 1
     volumes:
       - ./:/app
-  memo-php-cli:
+  memo-php-cli-stage:
     build:
       context: ./docker/development
       dockerfile: php-cli.dockerfile
@@ -27,15 +27,15 @@ services:
     volumes:
       - ./:/app
       - composer:/root/.composer/cache
-  memo-postgres:
+  memo-postgres-stage:
     image: postgres:11.2-alpine
     volumes:
-      - memo-postgres:/var/lib/postgresql/data
+      - memo-postgres-stage:/var/lib/postgresql/data
     env_file: .env
     ports:
-      - "54321:5432"
+      - "54323:5432"
 
 volumes:
-  memo-postgres:
+  memo-postgres-stage:
   composer:
 

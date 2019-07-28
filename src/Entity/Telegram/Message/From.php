@@ -24,26 +24,23 @@ class From
     private $isBot;
 
     /**
-     * @Assert\NotBlank
      * @Assert\Type("string")
      *
-     * @var string
+     * @var string|null
      */
     private $firstName;
 
     /**
-     * @Assert\NotBlank
      * @Assert\Type("string")
      *
-     * @var string
+     * @var string|null
      */
     private $lastName;
 
     /**
-     * @Assert\NotBlank
      * @Assert\Type("string")
      *
-     * @var string
+     * @var string|null
      */
     private $username;
 
@@ -88,49 +85,49 @@ class From
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getFirstName(): string
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
 
     /**
-     * @param string $firstName
+     * @param string|null $firstName
      */
-    public function setFirstName(string $firstName): void
+    public function setFirstName(?string $firstName): void
     {
         $this->firstName = $firstName;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLastName(): string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
 
     /**
-     * @param string $lastName
+     * @param string|null $lastName
      */
-    public function setLastName(string $lastName): void
+    public function setLastName(?string $lastName): void
     {
         $this->lastName = $lastName;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getUsername(): string
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
     /**
-     * @param string $username
+     * @param string|null $username
      */
-    public function setUsername(string $username): void
+    public function setUsername(?string $username): void
     {
         $this->username = $username;
     }

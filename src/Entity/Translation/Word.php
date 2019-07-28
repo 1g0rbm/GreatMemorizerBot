@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="words")
+ * @ORM\Table(name="words", indexes={@ORM\Index(name="word_text", columns={"text"})})
  * @ORM\Entity(repositoryClass="Ig0rbm\Memo\Repository\Translation\WordRepository")
  */
 class Word
@@ -57,7 +57,7 @@ class Word
     private $pos;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      *
      * @Assert\Type("string")
      *
