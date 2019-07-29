@@ -54,6 +54,11 @@ class TranslationService
     {
         $direction = $this->directionParser->parse($translateDirection);
 
+        $words = $this->wordRepository->findWordsCollection($string);
+        if ($words) {
+            return $this->messageBuilder->buildFromWords($words);
+        }
+
         $words = $this->apiWordTranslation->getTranslate($direction, $string);
         if ($words->count() > 0) {
             $this->saveWordsCollection($words);

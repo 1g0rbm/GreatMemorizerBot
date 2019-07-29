@@ -3,9 +3,12 @@
 namespace Ig0rbm\Memo\Repository\Translation;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
+use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
 
 class WordRepository extends ServiceEntityRepository
@@ -21,6 +24,22 @@ class WordRepository extends ServiceEntityRepository
         $word = $this->findOneBy(['text' => $text]);
 
         return $word;
+    }
+
+    public function findWordsCollection(string $text): ?HandyBag
+    {
+        $words = $this->findBy(['text' => $text]);
+        if (empty($words)) {
+            return null;
+        }
+
+        $collection = new HandyBag();
+        /** @var Word $word */
+        foreach ($words as $word) {
+            $collection->set($word->getPos(), $word);
+        }
+
+        return $collection;
     }
 
     /**

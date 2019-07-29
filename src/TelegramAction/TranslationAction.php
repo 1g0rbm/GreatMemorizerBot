@@ -2,6 +2,8 @@
 
 namespace Ig0rbm\Memo\TelegramAction;
 
+use Doctrine\ORM\ORMException;
+
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
@@ -42,6 +44,9 @@ class TranslationAction extends AbstractTelegramAction
         $this->entityFlusher = $entityFlusher;
     }
 
+    /**
+     * @throws ORMException
+     */
     public function run(MessageFrom $messageFrom, Command $command): MessageTo
     {
         $messageTo = new MessageTo();
