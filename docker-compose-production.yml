@@ -21,15 +21,12 @@ services:
     ports:
       - "54321:5432"
   memo-php-cli:
-    build:
-      context: ./docker/development
-      dockerfile: php-cli.dockerfile
+    image: ${REGISTRY_HOST}/memo-php-cli:${REGISTRY_PRODUCTION_TAG}
     environment:
-      APP_DEBUG: 1
-    volumes:
-      - ./:/app
-      - composer:/root/.composer/cache
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: pgsql://memo:${POSTGRES_PASSWORD}memo-postgres:5432/memo
+    depends_on:
+      - memo-postgres
 
 volumes:
   memo-postgres:
-  composer:

@@ -48,11 +48,13 @@ build-image:
 	docker build --pull --file=./docker/production/nginx.dockerfile --tag ${REGISTRY_HOST}/memo-nginx:${REGISTRY_PRODUCTION_TAG} .
 	docker build --pull --file=./docker/production/php-fpm.dockerfile --tag ${REGISTRY_HOST}/memo-php-fpm:${REGISTRY_PRODUCTION_TAG} .
 	docker build --pull --file=./docker/production/postgres.dockerfile --tag ${REGISTRY_HOST}/memo-postgres:${REGISTRY_PRODUCTION_TAG} .
+	docker build --pull --file=./docker/production/php-cli.dockerfile --tag ${REGISTRY_HOST}/memo-php-cli:${REGISTRY_PRODUCTION_TAG} .
 
 push-registry:
 	docker push ${REGISTRY_HOST}/memo-nginx:${REGISTRY_PRODUCTION_TAG}
 	docker push ${REGISTRY_HOST}/memo-php-fpm:${REGISTRY_PRODUCTION_TAG}
 	docker push ${REGISTRY_HOST}/memo-postgres:${REGISTRY_PRODUCTION_TAG}
+	docker push ${REGISTRY_HOST}/memo-php-cli:${REGISTRY_PRODUCTION_TAG}
 
 deploy-production:
 	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${STAGING_HOST}; rm -rf docker-compose.yml'
