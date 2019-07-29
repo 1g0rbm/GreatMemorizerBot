@@ -4,7 +4,7 @@ namespace Ig0rbm\Memo\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-final class EntityFlusher
+class EntityFlusher
 {
     /** @var EntityManager */
     private $em;

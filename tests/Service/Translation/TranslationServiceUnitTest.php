@@ -13,6 +13,8 @@ use Ig0rbm\Memo\Service\Translation\Yandex\DictionaryParser;
 use Ig0rbm\Memo\Service\Translation\DirectionParser;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
 use Ig0rbm\Memo\Service\Translation\ApiWordTranslationInterface;
+use Ig0rbm\Memo\Repository\Translation\WordRepository;
+use Ig0rbm\Memo\Service\EntityFlusher;
 
 class TranslationServiceUnitTest extends TestCase
 {
@@ -31,6 +33,12 @@ class TranslationServiceUnitTest extends TestCase
     /** @var MessageBuilder|MockObject */
     private $messageBuilder;
 
+    /** @var WordRepository|MockObject */
+    private $wordRepository;
+
+    /** @var EntityFlusher|MockObject */
+    private $flusher;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -38,12 +46,16 @@ class TranslationServiceUnitTest extends TestCase
         $this->apiTextTranslation = $this->getMockBuilder(ApiTextTranslationInterface::class)->getMock();
         $this->directionParser = $this->createMock(DirectionParser::class);
         $this->messageBuilder = $this->createMock(MessageBuilder::class);
+        $this->wordRepository = $this->createMock(WordRepository::class);
+        $this->flusher = $this->createMock(EntityFlusher::class);
 
         $this->service = new TranslationService(
             $this->apiWordTranslation,
             $this->apiTextTranslation,
             $this->directionParser,
-            $this->messageBuilder
+            $this->messageBuilder,
+            $this->wordRepository,
+            $this->flusher
         );
     }
 
