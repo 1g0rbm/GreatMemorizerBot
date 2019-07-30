@@ -156,7 +156,7 @@ class Word
     /**
      * @return string
      */
-    public function getTranscription(): string
+    public function getTranscription(): ?string
     {
         return $this->transcription;
     }
