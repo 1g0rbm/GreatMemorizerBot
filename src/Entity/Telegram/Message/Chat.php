@@ -3,6 +3,7 @@
 
 namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
+use Ig0rbm\Memo\Entity\Translation\WordList;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -60,6 +61,18 @@ class Chat
      * @var string
      */
     private $type;
+
+    /**
+     * @ORM\OneToOne(
+     *     targetEntity="Ig0rbm\Memo\Entity\Translation\WordList",
+     *     mappedBy="words",
+     *     orphanRemoval=true,
+     *     cascade={"persist"}
+     * )
+     *
+     * @var WordList
+     */
+    private $wordList;
 
     /**
      * @return int
@@ -139,5 +152,21 @@ class Chat
     public function setType(string $type): void
     {
         $this->type = $type;
+    }
+
+    /**
+     * @return WordList
+     */
+    public function getWordList(): WordList
+    {
+        return $this->wordList;
+    }
+
+    /**
+     * @param WordList $wordList
+     */
+    public function setWordList(WordList $wordList): void
+    {
+        $this->wordList = $wordList;
     }
 }
