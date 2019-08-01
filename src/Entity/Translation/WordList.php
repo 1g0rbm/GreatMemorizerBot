@@ -28,7 +28,7 @@ class WordList
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="Ig0rbm\Memo\Entity\Telegram\Message\Chat", inversedBy="chats")
+     * @ORM\OneToOne(targetEntity="Ig0rbm\Memo\Entity\Telegram\Message\Chat", inversedBy="wordList")
      * @ORM\JoinColumn(name="chat_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      *
      * @Assert\NotBlank

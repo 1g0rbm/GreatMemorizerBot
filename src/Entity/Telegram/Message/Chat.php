@@ -65,7 +65,7 @@ class Chat
     /**
      * @ORM\OneToOne(
      *     targetEntity="Ig0rbm\Memo\Entity\Translation\WordList",
-     *     mappedBy="words",
+     *     mappedBy="chat",
      *     orphanRemoval=true,
      *     cascade={"persist"}
      * )

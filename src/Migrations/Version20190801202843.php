@@ -10,11 +10,11 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190731210206 extends AbstractMigration
+final class Version20190801202843 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Add word_list table';
     }
 
     public function up(Schema $schema) : void
@@ -22,7 +22,6 @@ final class Version20190731210206 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SEQUENCE word_list_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE word_list (id INT NOT NULL, chat_id INT NOT NULL, word_id INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_4C5DFBF51A9A7125 ON word_list (chat_id)');
         $this->addSql('CREATE INDEX IDX_4C5DFBF5E357438D ON word_list (word_id)');
@@ -35,7 +34,6 @@ final class Version20190731210206 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('DROP SEQUENCE word_list_id_seq CASCADE');
         $this->addSql('DROP TABLE word_list');
     }
 }
