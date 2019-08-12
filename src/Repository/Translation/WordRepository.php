@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Ig0rbm\HandyBag\HandyBag;
+use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
 
 class WordRepository extends ServiceEntityRepository
@@ -24,17 +25,17 @@ class WordRepository extends ServiceEntityRepository
         return $word;
     }
 
-    public function findWordsCollection(string $text): ?HandyBag
+    public function findWordsCollection(string $text): ?WordsBag
     {
         $words = $this->findBy(['text' => $text]);
         if (empty($words)) {
             return null;
         }
 
-        $collection = new HandyBag();
+        $collection = new WordsBag();
         /** @var Word $word */
         foreach ($words as $word) {
-            $collection->set($word->getPos(), $word);
+            $collection->setWord($word);
         }
 
         return $collection;

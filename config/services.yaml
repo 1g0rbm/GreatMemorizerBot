@@ -6,8 +6,11 @@
 parameters:
     telegram_commands:
         /translate:
-            text_response: 'What word you want to translate?'
+            text_response: 'What word do you want to translate?'
             action_class: Ig0rbm\Memo\TelegramAction\TranslationAction
+        /save:
+            text_response: 'What word do you wont to save?'
+            action_class: Ig0rbm\Memo\TelegramAction\SaveAction
         /hello:
             text_response: 'Hello!'
             action_class: Ig0rbm\Memo\TelegramAction\HelloAction
@@ -64,6 +67,9 @@ services:
     ##############################################################################################################
 
     Ig0rbm\Memo\TelegramAction\TranslationAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\SaveAction:
         public: true
 
     Ig0rbm\Memo\TelegramAction\HelloAction:

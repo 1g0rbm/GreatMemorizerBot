@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Translation;
 
+use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Text;
 
 class TextTranslationService
@@ -9,17 +10,13 @@ class TextTranslationService
     /** @var ApiTextTranslationInterface */
     private $apiTranslation;
 
-    /** @var DirectionParser */
-    private $directionParser;
-
-    public function __construct(ApiTextTranslationInterface $apiTranslation, DirectionParser $directionParser)
+    public function __construct(ApiTextTranslationInterface $apiTranslation)
     {
         $this->apiTranslation = $apiTranslation;
-        $this->directionParser = $directionParser;
     }
 
-    public function translate(string $translateDirection, string $text): Text
+    public function translate(Direction $direction, string $text): Text
     {
-        return $this->apiTranslation->getTranslate($this->directionParser->parse($translateDirection), $text);
+        return $this->apiTranslation->getTranslate($direction, $text);
     }
 }

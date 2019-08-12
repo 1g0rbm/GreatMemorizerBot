@@ -2,30 +2,30 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Translation;
 
+use Doctrine\ORM\ORMException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Text;
 use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
-use Ig0rbm\Memo\Service\Translation\ApiTextTranslationInterface;
 use Ig0rbm\Memo\Service\Translation\Yandex\DictionaryParser;
 use Ig0rbm\Memo\Service\Translation\DirectionParser;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
-use Ig0rbm\Memo\Service\Translation\ApiWordTranslationInterface;
+use Ig0rbm\Memo\Service\Translation\TextTranslationService;
+use Ig0rbm\Memo\Service\Translation\WordTranslationService;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
-use Ig0rbm\Memo\Service\EntityFlusher;
 
 class TranslationServiceUnitTest extends TestCase
 {
     /** @var TranslationService */
     private $service;
 
-    /** @var ApiWordTranslationInterface|MockObject */
-    private $apiWordTranslation;
+    /** @var WordTranslationService|MockObject */
+    private $wordTranslationService;
 
-    /** @var ApiTextTranslationInterface|MockObject */
-    private $apiTextTranslation;
+    /** @var TextTranslationService|MockObject */
+    private $textTranslationService;
 
     /** @var DirectionParser|MockObject */
     private $directionParser;
@@ -36,29 +36,27 @@ class TranslationServiceUnitTest extends TestCase
     /** @var WordRepository|MockObject */
     private $wordRepository;
 
-    /** @var EntityFlusher|MockObject */
-    private $flusher;
-
     public function setUp(): void
     {
         parent::setUp();
-        $this->apiWordTranslation = $this->getMockBuilder(ApiWordTranslationInterface::class)->getMock();
-        $this->apiTextTranslation = $this->getMockBuilder(ApiTextTranslationInterface::class)->getMock();
         $this->directionParser = $this->createMock(DirectionParser::class);
         $this->messageBuilder = $this->createMock(MessageBuilder::class);
         $this->wordRepository = $this->createMock(WordRepository::class);
-        $this->flusher = $this->createMock(EntityFlusher::class);
+        $this->wordTranslationService = $this->createMock(WordTranslationService::class);
+        $this->textTranslationService = $this->createMock(TextTranslationService::class);
 
         $this->service = new TranslationService(
-            $this->apiWordTranslation,
-            $this->apiTextTranslation,
-            $this->directionParser,
-            $this->messageBuilder,
+            $this->wordTranslationService,
+            $this->textTranslationService,
             $this->wordRepository,
-            $this->flusher
+            $this->directionParser,
+            $this->messageBuilder
         );
     }
 
+    /**
+     * @throws ORMException
+     */
     public function testReturnValidTranslateForWord(): void
     {
         $wordForTranslate = 'test';
@@ -69,8 +67,8 @@ class TranslationServiceUnitTest extends TestCase
             ->willReturn($direction);
 
         $wordCollection = $this->getWordsCollection($direction, $this->getDictionary());
-        $this->apiWordTranslation->expects($this->once())
-            ->method('getTranslate')
+        $this->wordTranslationService->expects($this->once())
+            ->method('translate')
             ->with($direction, $wordForTranslate)
             ->willReturn($wordCollection);
 
@@ -88,6 +86,9 @@ class TranslationServiceUnitTest extends TestCase
         );
     }
 
+    /**
+     * @throws ORMException
+     */
     public function testReturnValidTranslateForText(): void
     {
         $wordForTranslate = 'test';
@@ -98,8 +99,8 @@ class TranslationServiceUnitTest extends TestCase
             ->willReturn($direction);
 
         $wordCollection = $this->getWordsCollection($direction, $this->getEmptyDictionary());
-        $this->apiWordTranslation->expects($this->once())
-            ->method('getTranslate')
+        $this->wordTranslationService->expects($this->once())
+            ->method('translate')
             ->with($direction, $wordForTranslate)
             ->willReturn($wordCollection);
 
@@ -108,8 +109,8 @@ class TranslationServiceUnitTest extends TestCase
 
         $text = new Text();
         $text->setText($wordForTranslate);
-        $this->apiTextTranslation->expects($this->once())
-            ->method('getTranslate')
+        $this->textTranslationService->expects($this->once())
+            ->method('translate')
             ->with($direction, $wordForTranslate)
             ->willReturn($text);
 

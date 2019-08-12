@@ -12,38 +12,33 @@ use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
 
 class TranslationService
 {
-    /** @var ApiWordTranslationInterface */
-    private $apiWordTranslation;
+    /** @var WordTranslationService */
+    private $wordTranslation;
 
-    /** @var DirectionParser */
-    private $directionParser;
-
-    /** @var ApiTextTranslationInterface */
-    private $apiTextTranslation;
-
-    /** @var MessageBuilder */
-    private $messageBuilder;
+    /** @var TextTranslationService */
+    private $textTranslation;
 
     /** @var WordRepository */
     private $wordRepository;
 
-    /** @var EntityFlusher */
-    private $flusher;
+    /** @var DirectionParser */
+    private $directionParser;
+
+    /** @var MessageBuilder */
+    private $messageBuilder;
 
     public function __construct(
-        ApiWordTranslationInterface $apiWordTranslation,
-        ApiTextTranslationInterface $apiTextTranslation,
-        DirectionParser $directionParser,
-        MessageBuilder $messageBuilder,
+        WordTranslationService $wordTranslation,
+        TextTranslationService $textTranslation,
         WordRepository $wordRepository,
-        EntityFlusher $flusher
+        DirectionParser $directionParser,
+        MessageBuilder $messageBuilder
     ) {
-        $this->apiWordTranslation = $apiWordTranslation;
-        $this->apiTextTranslation = $apiTextTranslation;
+        $this->wordTranslation = $wordTranslation;
+        $this->textTranslation = $textTranslation;
+        $this->wordRepository = $wordRepository;
         $this->directionParser = $directionParser;
         $this->messageBuilder = $messageBuilder;
-        $this->wordRepository = $wordRepository;
-        $this->flusher = $flusher;
     }
 
     /**
@@ -59,31 +54,11 @@ class TranslationService
             return $this->messageBuilder->buildFromWords($words);
         }
 
-        $words = $this->apiWordTranslation->getTranslate($direction, $string);
+        $words = $this->wordTranslation->translate($direction, $string);
         if ($words->count() > 0) {
-            $this->saveWordsCollection($words);
-
             return $this->messageBuilder->buildFromWords($words);
         }
 
-        return $this->messageBuilder->buildFromText($this->apiTextTranslation->getTranslate($direction, $string));
-    }
-
-    /**
-     * @throws ORMException
-     * @throws ORMInvalidArgumentException
-     */
-    private function saveWordsCollection(HandyBag $words): void
-    {
-        /** @var Word $word */
-        foreach ($words->getIterator() as $word) {
-            if ($this->wordRepository->findOneByText($word->getText())) {
-                return;
-            }
-
-            $this->wordRepository->addWord($word);
-        }
-
-        $this->flusher->flush();
+        return $this->messageBuilder->buildFromText($this->textTranslation->translate($direction, $string));
     }
 }

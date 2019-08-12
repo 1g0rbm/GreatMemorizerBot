@@ -3,6 +3,7 @@
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
@@ -27,7 +28,7 @@ class MessageBuilderUnitTest extends TestCase
 
     public function testBuildReturnValidString(): void
     {
-        $bag = new HandyBag();
+        $bag = new WordsBag();
         $posList = ['noun', 'verb', 'adjective'];
         foreach ($posList as $pos) {
             $word = $this->getWord($pos);
