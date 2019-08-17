@@ -3,9 +3,10 @@
 
 namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
-use Ig0rbm\Memo\Entity\Translation\WordList;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ig0rbm\Memo\Entity\Translation\Word;
 
 /**
  * @ORM\Entity
@@ -63,14 +64,14 @@ class Chat
     private $type;
 
     /**
-     * @ORM\OneToOne(
-     *     targetEntity="Ig0rbm\Memo\Entity\Translation\WordList",
-     *     mappedBy="chat",
-     *     orphanRemoval=true,
-     *     cascade={"persist"}
+     * @ORM\ManyToMany(targetEntity="Ig0rbm\Memo\Entity\Translation\Word", cascade={"persist"})
+     * @ORM\JoinTable(
+     *     name="chats2words",
+     *     joinColumns={@ORM\JoinColumn(name="chat_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")}
      * )
      *
-     * @var WordList
+     * @var Collection|Word[]
      */
     private $wordList;
 
@@ -155,17 +156,17 @@ class Chat
     }
 
     /**
-     * @return WordList
+     * @return Collection|Word[]
      */
-    public function getWordList(): WordList
+    public function getWordList(): Collection
     {
         return $this->wordList;
     }
 
     /**
-     * @param WordList $wordList
+     * @param Collection|Word[] $wordList
      */
-    public function setWordList(WordList $wordList): void
+    public function setWordList(Collection $wordList): void
     {
         $this->wordList = $wordList;
     }
