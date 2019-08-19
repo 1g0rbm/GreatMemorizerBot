@@ -50,8 +50,6 @@ class SaveAction extends AbstractTelegramAction
             return $messageTo;
         }
 
-//        $this->wordListPersistService->persist($from->getChat(), $wordsBag);
-
         $messageTo->setText('Word was saved successfully');
 
         return $messageTo;

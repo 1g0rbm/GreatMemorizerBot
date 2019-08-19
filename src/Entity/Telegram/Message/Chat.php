@@ -4,9 +4,7 @@
 namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ig0rbm\Memo\Entity\Translation\Word;
 
 /**
  * @ORM\Entity
@@ -62,18 +60,6 @@ class Chat
      * @var string
      */
     private $type;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Ig0rbm\Memo\Entity\Translation\Word", cascade={"persist"})
-     * @ORM\JoinTable(
-     *     name="chats2words",
-     *     joinColumns={@ORM\JoinColumn(name="chat_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")}
-     * )
-     *
-     * @var Collection|Word[]
-     */
-    private $wordList;
 
     /**
      * @return int
@@ -153,21 +139,5 @@ class Chat
     public function setType(string $type): void
     {
         $this->type = $type;
-    }
-
-    /**
-     * @return Collection|Word[]
-     */
-    public function getWordList(): Collection
-    {
-        return $this->wordList;
-    }
-
-    /**
-     * @param Collection|Word[] $wordList
-     */
-    public function setWordList(Collection $wordList): void
-    {
-        $this->wordList = $wordList;
     }
 }
