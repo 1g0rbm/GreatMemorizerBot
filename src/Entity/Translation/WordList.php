@@ -18,6 +18,7 @@ class WordList
 {
     /**
      * @ORM\Id
+     * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
      * @Assert\NotBlank
@@ -31,7 +32,7 @@ class WordList
      * @Assert\NotBlank
      * @TelegramMessageAssert\Chat
      *
-     * @ORM\OneToOne(targetEntity="Ig0rbm\Memo\Entity\Telegram\Message\Chat")
+     * @ORM\OneToOne(targetEntity="Ig0rbm\Memo\Entity\Telegram\Message\Chat", cascade={"persist"})
      * @ORM\JoinColumn(name="chat_id", referencedColumnName="id")
      *
      * @var Chat
@@ -101,5 +102,10 @@ class WordList
     public function setWords(Collection $words): void
     {
         $this->words = $words;
+    }
+
+    public function addWord(Word $word): void
+    {
+        $this->words->add($word);
     }
 }

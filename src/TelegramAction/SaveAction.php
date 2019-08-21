@@ -6,9 +6,11 @@ use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\WordListException;
 use Ig0rbm\Memo\Service\Translation\DirectionParser;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
 use Ig0rbm\Memo\Service\Translation\WordTranslationService;
+use Ig0rbm\Memo\Service\WordList\WordListManager;
 
 class SaveAction extends AbstractTelegramAction
 {
@@ -21,14 +23,19 @@ class SaveAction extends AbstractTelegramAction
     /** @var DirectionParser */
     private $directionParser;
 
+    /** @var WordListManager */
+    private $manager;
+
     public function __construct(
         TranslationService $translation,
         WordTranslationService $wordTranslation,
-        DirectionParser $directionParser
+        DirectionParser $directionParser,
+        WordListManager $manager
     ) {
         $this->translation = $translation;
         $this->wordTranslation = $wordTranslation;
         $this->directionParser = $directionParser;
+        $this->manager = $manager;
     }
 
     /**
@@ -50,7 +57,12 @@ class SaveAction extends AbstractTelegramAction
             return $messageTo;
         }
 
-        $messageTo->setText('Word was saved successfully');
+        try {
+            $this->manager->add($from->getChat(), $wordsBag);
+            $messageTo->setText('Word was saved successfully');
+        } catch (WordListException $e) {
+            $messageTo->setText($e->getMessage());
+        }
 
         return $messageTo;
     }
