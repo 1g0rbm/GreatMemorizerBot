@@ -6,6 +6,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Telegram\Message\From;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Exception\Telegram\Message\ParseMessageException;
+use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MessageParser
@@ -16,31 +17,35 @@ class MessageParser
     /** @var TextParser */
     private $textParser;
 
-    public function __construct(ValidatorInterface $validator, TextParser $textParser)
+    /** @var ChatRepository */
+    private $chatRepository;
+
+    public function __construct(ValidatorInterface $validator, TextParser $textParser, ChatRepository $chatRepository)
     {
         $this->validator = $validator;
         $this->textParser = $textParser;
+        $this->chatRepository = $chatRepository;
     }
 
     public function createMessage(string $message): MessageFrom
     {
-        $messageRaw = json_decode($message, true);
+        $msgRaw = json_decode($message, true);
 
-        if (!isset($messageRaw['message']) && !isset($messageRaw['edited_message'])) {
+        if (!isset($msgRaw['message']) && !isset($msgRaw['edited_message'])) {
             throw ParseMessageException::becauseInvalidParameter('No message parameter');
         }
 
-        $messageRaw = $messageRaw['message'] ?? $messageRaw['edited_message'];
+        $msgRaw = $msgRaw['message'] ?? $msgRaw['edited_message'];
 
-        $chat = $this->createChat($messageRaw['chat']);
-        $from = $this->createFrom($messageRaw['from']);
+        $chat = $this->chatRepository->findChatById($msgRaw['chat']['id']) ?? $this->createChat($msgRaw['chat']);
+        $from = $this->createFrom($msgRaw['from']);
 
         $message = new MessageFrom();
-        $message->setMessageId($messageRaw['message_id']);
+        $message->setMessageId($msgRaw['message_id']);
         $message->setChat($chat);
         $message->setFrom($from);
-        $message->setDate($messageRaw['date']);
-        $message->setText($this->textParser->parse($messageRaw['text']));
+        $message->setDate($msgRaw['date']);
+        $message->setText($this->textParser->parse($msgRaw['text']));
 
         $this->validate($message);
 

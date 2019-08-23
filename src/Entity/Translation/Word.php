@@ -13,6 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Word
 {
+    public const POS_NOUN = 'noun';
+    public const POS_VERB = 'verb';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

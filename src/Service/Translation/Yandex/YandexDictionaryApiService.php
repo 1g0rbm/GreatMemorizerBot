@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Exception\Translation\Yandex\TranslationException;
 use Ig0rbm\Memo\Service\Translation\ApiWordTranslationInterface;
-use Ig0rbm\HandyBag\HandyBag;
+use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use GuzzleHttp\Client;
 use Throwable;
 
@@ -30,7 +30,10 @@ class YandexDictionaryApiService implements ApiWordTranslationInterface
         $this->parser = $parser;
     }
 
-    public function getTranslate(Direction $direction, string $phrase): HandyBag
+    /**
+     * @throws TranslationException
+     */
+    public function getTranslate(Direction $direction, string $phrase): WordsBag
     {
         try {
             $response = $this->client->request(

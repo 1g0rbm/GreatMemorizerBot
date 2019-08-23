@@ -14,7 +14,7 @@ final class Version20190728171242 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Initial db migration. Created words, chats, users table';
     }
 
     public function up(Schema $schema) : void

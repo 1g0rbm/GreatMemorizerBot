@@ -4,7 +4,7 @@ namespace Ig0rbm\Memo\Service\Telegram;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Ig0rbm\HandyBag\HandyBag;
+use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Text;
 use Ig0rbm\Memo\Entity\Translation\Word;
 
@@ -13,7 +13,7 @@ class MessageBuilder
     /** @var string */
     private $string = '';
 
-    public function buildFromWords(HandyBag $words): string
+    public function buildFromWords(WordsBag $words): string
     {
         $wordsIterator = $words->getIterator();
         while ($wordsIterator->valid()) {

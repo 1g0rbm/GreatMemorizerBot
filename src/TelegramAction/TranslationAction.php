@@ -9,7 +9,6 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
 use Ig0rbm\Memo\Service\EntityFlusher;
-use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
 use Ig0rbm\Memo\Service\Translation\TextTranslationService;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
 
@@ -17,9 +16,6 @@ class TranslationAction extends AbstractTelegramAction
 {
     /** @var TranslationService */
     private $translationService;
-
-    /** @var MessageBuilder */
-    private $messageBuilder;
 
     /** @var TextTranslationService */
     private $textTranslation;
@@ -33,13 +29,11 @@ class TranslationAction extends AbstractTelegramAction
     public function __construct(
         TranslationService $translationService,
         TextTranslationService $textTranslation,
-        MessageBuilder $messageBuilder,
         ChatRepository $chatRepository,
         EntityFlusher $entityFlusher
     ) {
         $this->translationService = $translationService;
         $this->textTranslation = $textTranslation;
-        $this->messageBuilder = $messageBuilder;
         $this->chatRepository = $chatRepository;
         $this->entityFlusher = $entityFlusher;
     }
