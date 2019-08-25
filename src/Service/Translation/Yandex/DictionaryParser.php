@@ -45,18 +45,21 @@ class DictionaryParser
         return $collection;
     }
 
+    /**
+     * @param mixed[] $item
+     * @param Word $word
+     * @param Direction $direction
+     * @return Word
+     * @throws DictionaryParseException
+     */
     private function build(array $item, Word $word, Direction $direction): Word
     {
         if (false === isset($item['text'])) {
-            DictionaryParseException::becauseFieldNotFound('text');
-        }
-
-        if (false === isset($item['pos'])) {
-            DictionaryParseException::becauseFieldNotFound('pos');
+            throw DictionaryParseException::becauseFieldNotFound('text');
         }
 
         $word->setText($item['text']);
-        $word->setPos($item['pos']);
+        $word->setPos($item['pos'] ?? 'unclear');
 
         if (isset($item['ts'])) {
             $word->setTranscription($item['ts']);

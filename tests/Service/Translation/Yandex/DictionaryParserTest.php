@@ -22,7 +22,7 @@ class DictionaryParserTest extends TestCase
 
     public function testParseReturnWordsCollection(): void
     {
-        $dictionary = $this->getDictionary();
+        $dictionary = $this->getDictionaryWithNounAndAdjective();
         $direction = $this->getDirection();
 
         $words = $this->service->parse(json_encode($dictionary), $direction);
@@ -60,6 +60,47 @@ class DictionaryParserTest extends TestCase
         $this->assertSame($direction->getLangTo(), $synonym->getLangCode());
     }
 
+    public function testParseWhenUnclearPosReturnWordsCollection(): void
+    {
+        $dictionary = $this->getDictionaryWithAdverbAndUnclear();
+        $direction = $this->getDirection();
+
+        $words = $this->service->parse(json_encode($dictionary), $direction);
+        $this->assertInstanceOf(HandyBag::class, $words);
+        $this->assertSame(count($dictionary['def']), $words->count());
+
+        /** @var Word $noun */
+        $noun = $words->get('adverb');
+        $this->assertSame($dictionary['def'][0]['text'], $noun->getText());
+        $this->assertSame($dictionary['def'][0]['pos'], $noun->getPos());
+        $this->assertSame($dictionary['def'][0]['ts'], $noun->getTranscription());
+        $this->assertSame($direction->getLangFrom(), $noun->getLangCode());
+
+        /** @var Word $adjective */
+        $adjective = $words->get('unclear');
+        $this->assertSame($dictionary['def'][1]['text'], $adjective->getText());
+        $this->assertFalse(isset($dictionary['def'][1]['pos']));
+        $this->assertSame('unclear', $adjective->getPos());
+        $this->assertSame($dictionary['def'][1]['ts'], $adjective->getTranscription());
+        $this->assertSame($direction->getLangFrom(), $adjective->getLangCode());
+
+        $tr = $dictionary['def'][0]['tr'];
+        $this->assertInstanceOf(ArrayCollection::class, $noun->getTranslations());
+        /** @var Word $translation */
+        $translation = $noun->getTranslations()->first();
+        $this->assertSame($tr[0]['text'], $translation->getText());
+        $this->assertSame($tr[0]['pos'], $translation->getPos());
+        $this->assertSame($direction->getLangTo(), $translation->getLangCode());
+
+        $syn = $tr[0]['syn'];
+        $this->assertInstanceOf(ArrayCollection::class, $translation->getSynonyms());
+        /** @var Word $synonym */
+        $synonym = $translation->getSynonyms()->first();
+        $this->assertSame($syn[0]['text'], $synonym->getText());
+        $this->assertSame($syn[0]['pos'], $synonym->getPos());
+        $this->assertSame($direction->getLangTo(), $synonym->getLangCode());
+    }
+
     public function testParseReturnValidWordWhenDefEmpty(): void
     {
         $dictionary = $this->getEmptyDictionary();
@@ -74,11 +115,11 @@ class DictionaryParserTest extends TestCase
     {
         return [
             'head' => [],
-            'def' => []
+            'def' => [],
         ];
     }
 
-    private function getDictionary(): array
+    private function getDictionaryWithNounAndAdjective(): array
     {
         return [
             'head' => [],
@@ -94,7 +135,7 @@ class DictionaryParserTest extends TestCase
                             'syn' => [
                                 [
                                     'text' => 'здание',
-                                    'pos' => 'noun'
+                                    'pos' => 'noun',
                                 ],
                                 [
                                     'text' => 'домик',
@@ -113,16 +154,16 @@ class DictionaryParserTest extends TestCase
                                 [
                                     'text' => 'auction house',
                                     [
-                                        'text' => 'аукционный дом'
+                                        'text' => 'аукционный дом',
                                     ],
                                 ],
                                 [
                                     'text' => 'father\'s house',
                                     [
-                                        'text' => 'отчий дом'
+                                        'text' => 'отчий дом',
                                     ],
-                                ]
-                            ]
+                                ],
+                            ],
                         ],
                         [
                             'text' => 'жилье',
@@ -130,25 +171,25 @@ class DictionaryParserTest extends TestCase
                             'syn' => [
                                 [
                                     'text' => 'жилище',
-                                    'pos' => 'noun'
+                                    'pos' => 'noun',
                                 ],
                             ],
                             'ex' => [
                                 [
                                     'text' => 'safe houses',
                                     [
-                                        'text' => 'безопасное жилье'
+                                        'text' => 'безопасное жилье',
                                     ],
                                 ],
                                 [
                                     'text' => 'right to housing',
                                     [
-                                        'text' => 'право на жилище'
+                                        'text' => 'право на жилище',
                                     ],
-                                ]
-                            ]
-                        ]
-                    ]
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 [
                     'text' => 'house',
@@ -161,21 +202,102 @@ class DictionaryParserTest extends TestCase
                             'syn' => [
                                 [
                                     'text' => 'домовой',
-                                    'pos' => 'adjective'
+                                    'pos' => 'adjective',
                                 ],
                             ],
                             'ex' => [
                                 [
                                     'text' => 'house cat',
                                     [
-                                        'text' => 'домашняя кошка'
+                                        'text' => 'домашняя кошка',
                                     ],
                                 ],
-                            ]
+                            ],
                         ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function getDictionaryWithAdverbAndUnclear(): array
+    {
+        return             [
+            'head' => [],
+            'def' => [
+                [
+                    'text' => 'at all',
+                    'pos' => 'adverb',
+                    'ts' => 'ætˈɔːl',
+                    'tr' => [
+                        [
+                            'text' => 'вообще',
+                            'pos' => 'adverb',
+                            'syn' => [
+                                [
+                                    'text' => 'совсем',
+                                    'pos' => 'adverb',
+                                ],
+                                [
+                                    'text' => 'совершенно',
+                                    'pos' => 'adverb',
+                                ],
+                                [
+                                    'text' => 'вовсе',
+                                    'pos' => 'adverb',
+                                ],
+                                [
+                                    'text' => 'напрочь',
+                                    'pos' => 'adverb',
+                                ],
+                            ],
+                            'mean' => [
+                                [
+                                    'text' => 'in general',
+                                ],
+                                [
+                                    'text' => 'absolutely',
+                                ],
+                                [
+                                    'text' => 'completely',
+                                ],
+                            ],
+                        ],
+                        [
+                            'text' => 'ничуть',
+                            'pos' => 'adverb',
+                            'syn' => [
+                                [
+                                    'text' => 'нисколько',
+                                    'pos' => 'adverb',
+                                ],
+                                [
+                                    'text' => 'нимало',
+                                    'pos' => 'adverb',
+                                ],
+                            ],
+                            'mean' => [
+                                [
+                                    'text' => 'not',
+                                ],
+                            ],
+                        ],
+                        [
+                            'text' => 'y всех',
+                            'pos' => 'adverb',
+                        ],
+                    ],
+                ],
+                [
+                    'text' => 'at all',
+                    'ts' => 'ætˈɔːl',
+                    'tr' => [
+                        [
+                            'text' => ''
+                        ]
                     ]
                 ]
-            ]
+            ],
         ];
     }
 
