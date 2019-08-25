@@ -8,6 +8,6 @@ class DictionaryParseException extends Exception
 {
     public static function becauseFieldNotFound(string $fieldName): self
     {
-        return new self(sprintf('Field with name "%s" was not found'), 500);
+        return new self(sprintf('Field with name "%s" was not found', $fieldName), 500);
     }
 }
