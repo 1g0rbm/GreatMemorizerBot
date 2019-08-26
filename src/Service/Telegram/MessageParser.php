@@ -37,6 +37,19 @@ class MessageParser
 
         $msgRaw = $msgRaw['message'] ?? $msgRaw['edited_message'];
 
+        $message = $this->createMessageFrom($msgRaw);
+
+        if (isset($msgRaw['reply_to_message'])) {
+            $message->setReply($this->createMessageFrom($msgRaw['reply_to_message']));
+        }
+
+        $this->validate($message);
+
+        return $message;
+    }
+
+    private function createMessageFrom(array $msgRaw): MessageFrom
+    {
         $chat = $this->chatRepository->findChatById($msgRaw['chat']['id']) ?? $this->createChat($msgRaw['chat']);
         $from = $this->createFrom($msgRaw['from']);
 
@@ -46,8 +59,6 @@ class MessageParser
         $message->setFrom($from);
         $message->setDate($msgRaw['date']);
         $message->setText($this->textParser->parse($msgRaw['text']));
-
-        $this->validate($message);
 
         return $message;
     }

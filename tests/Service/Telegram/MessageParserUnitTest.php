@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
+use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\Text;
 use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
 use Ig0rbm\Memo\Service\Telegram\TextParser;
@@ -100,6 +101,24 @@ class MessageParserUnitTest extends TestCase
         $this->assertInstanceOf(Text::class, $message->getText());
         $this->assertInstanceOf(From::class, $message->getFrom());
         $this->assertInstanceOf(Chat::class, $message->getChat());
+        $this->assertNull($message->getReply());
+    }
+
+    public function testCreateMessageWithReplyReturnMessage(): void
+    {
+        $this->validator->expects($this->any())
+            ->method('validate')
+            ->willReturn([]);
+
+        $rawMessage = $this->getTestBotReplyRequest();
+        $message = $this->service->createMessage(json_encode($rawMessage));
+
+        $this->assertSame($rawMessage['message']['message_id'], $message->getMessageId());
+        $this->assertSame($rawMessage['message']['date'], $message->getDate());
+        $this->assertInstanceOf(Text::class, $message->getText());
+        $this->assertInstanceOf(From::class, $message->getFrom());
+        $this->assertInstanceOf(Chat::class, $message->getChat());
+        $this->assertInstanceOf(MessageFrom::class, $message->getReply());
     }
 
     private function getTestBotRequest(): array
@@ -118,18 +137,69 @@ class MessageParserUnitTest extends TestCase
                     'first_name' => $firstName,
                     'last_name' => $lastName,
                     'username' => $username,
-                    'language_code' => $this->faker->languageCode
+                    'language_code' => $this->faker->languageCode,
                 ],
                 'chat' => [
                     'id' => $this->faker->unique()->randomNumber(9),
                     'first_name' => $firstName,
                     'last_name' => $lastName,
                     'username' => $username,
-                    'type' => 'private'
+                    'type' => 'private',
                 ],
                 'date' => $this->faker->dateTime->getTimestamp(),
-                'text' => $this->faker->text(100)
-            ]
+                'text' => $this->faker->text(100),
+            ],
+        ];
+    }
+
+    private function getTestBotReplyRequest(): array
+    {
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $username = $this->faker->userName;
+
+        return [
+            'update_id' => $this->faker->unique()->randomNumber(8),
+            'message' => [
+                'message_id' => $this->faker->unique()->randomNumber(4),
+                'from' => [
+                    'id' => $this->faker->unique()->randomNumber(9),
+                    'is_bot' => false,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'username' => $username,
+                    'language_code' => $this->faker->languageCode,
+                ],
+                'chat' => [
+                    'id' => $this->faker->unique()->randomNumber(9),
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'username' => $username,
+                    'type' => 'private',
+                ],
+                'date' => $this->faker->dateTime->getTimestamp(),
+                'reply_to_message' => [
+                    'message_id' => $this->faker->unique()->randomNumber(4),
+                    'from' => [
+                        'id' => $this->faker->unique()->randomNumber(9),
+                        'is_bot' => false,
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'username' => $username,
+                        'language_code' => $this->faker->languageCode,
+                    ],
+                    'chat' => [
+                        'id' => $this->faker->unique()->randomNumber(9),
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'username' => $username,
+                        'type' => 'private',
+                    ],
+                    'date' => $this->faker->dateTime->getTimestamp(),
+                    'text' => 'translation word: adverb [some tr] переводимое слово'
+                ],
+                'text' => '/save',
+            ],
         ];
     }
 }
