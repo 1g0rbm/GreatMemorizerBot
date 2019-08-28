@@ -45,7 +45,6 @@ class From
     private $username;
 
     /**
-     * @Assert\NotBlank
      * @Assert\Type("string")
      *
      * @var string
@@ -133,17 +132,17 @@ class From
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLanguageCode(): string
+    public function getLanguageCode(): ?string
     {
         return $this->languageCode;
     }
 
     /**
-     * @param string $languageCode
+     * @param string|null $languageCode
      */
-    public function setLanguageCode(string $languageCode): void
+    public function setLanguageCode(?string $languageCode): void
     {
         $this->languageCode = $languageCode;
     }

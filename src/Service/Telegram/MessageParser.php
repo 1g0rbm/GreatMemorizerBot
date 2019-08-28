@@ -89,7 +89,7 @@ class MessageParser
         $from->setFirstName($fromRaw['first_name'] ?? null);
         $from->setLastName($fromRaw['last_name'] ?? null);
         $from->setUsername($fromRaw['username'] ?? null);
-        $from->setLanguageCode($fromRaw['language_code']);
+        $from->setLanguageCode($fromRaw['language_code'] ?? null);
 
         $this->validate($from);
 
