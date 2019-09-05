@@ -6,9 +6,6 @@ namespace Ig0rbm\Memo\Entity\Telegram\Message;
 use Symfony\Component\Validator\Constraints as Assert;
 use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
 
-/**
- * @package Ig0rbm\Memo\Entity\Telegram\Message
- */
 class MessageFrom
 {
     /**
@@ -47,9 +44,16 @@ class MessageFrom
      * @Assert\NotBlank
      * @TelegramMessageAssert\Text
      *
-     * @var string
+     * @var Text
      */
     private $text;
+
+    /**
+     * @TelegramMessageAssert\MessageFrom
+     *
+     * @var MessageFrom
+     */
+    private $reply;
 
     /**
      * @return int
@@ -129,5 +133,15 @@ class MessageFrom
     public function setText(Text $text): void
     {
         $this->text = $text;
+    }
+
+    public function getReply(): ?MessageFrom
+    {
+        return $this->reply;
+    }
+
+    public function setReply(MessageFrom $reply): void
+    {
+        $this->reply = $reply;
     }
 }

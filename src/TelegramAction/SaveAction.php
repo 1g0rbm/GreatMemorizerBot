@@ -8,15 +8,12 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Exception\WordListException;
 use Ig0rbm\Memo\Service\Translation\DirectionParser;
-use Ig0rbm\Memo\Service\Translation\TranslationService;
+use Ig0rbm\Memo\Service\Translation\MessageTextFinder;
 use Ig0rbm\Memo\Service\Translation\WordTranslationService;
 use Ig0rbm\Memo\Service\WordList\WordListManager;
 
 class SaveAction extends AbstractTelegramAction
 {
-    /** @var TranslationService */
-    private $translation;
-
     /** @var WordTranslationService */
     private $wordTranslation;
 
@@ -26,16 +23,19 @@ class SaveAction extends AbstractTelegramAction
     /** @var WordListManager */
     private $manager;
 
+    /** @var MessageTextFinder */
+    private $textFinder;
+
     public function __construct(
-        TranslationService $translation,
         WordTranslationService $wordTranslation,
         DirectionParser $directionParser,
-        WordListManager $manager
+        WordListManager $manager,
+        MessageTextFinder $textFinder
     ) {
-        $this->translation = $translation;
         $this->wordTranslation = $wordTranslation;
         $this->directionParser = $directionParser;
         $this->manager = $manager;
+        $this->textFinder = $textFinder;
     }
 
     /**
@@ -46,10 +46,9 @@ class SaveAction extends AbstractTelegramAction
         $messageTo = new MessageTo();
         $messageTo->setChatId($from->getChat()->getId());
 
-        $wordsBag = $this->wordTranslation->translate(
-            $this->directionParser->parse('en-ru'),
-            $from->getText()->getText()
-        );
+        $text = $this->textFinder->find($from);
+
+        $wordsBag = $this->wordTranslation->translate($this->directionParser->parse('en-ru'), $text);
 
         if ($wordsBag->count() === 0) {
             $messageTo->setText('Wrong word for save');
