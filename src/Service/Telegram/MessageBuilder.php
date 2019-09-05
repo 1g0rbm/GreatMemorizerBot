@@ -2,6 +2,8 @@
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
+use Traversable;
+use Iterator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ig0rbm\Memo\Collection\Translation\WordsBag;
@@ -13,12 +15,26 @@ class MessageBuilder
     /** @var string */
     private $string = '';
 
+    public function buildFromCollection(Collection $collection): string
+    {
+        return $this->buildFromIterable($collection->getIterator());
+    }
+
     public function buildFromWords(WordsBag $words): string
     {
-        $wordsIterator = $words->getIterator();
+        return $this->buildFromIterable($words->getIterator());
+    }
+
+    /**
+     * @param Traversable|Iterator $wordsIterator
+     * @return string
+     */
+    public function buildFromIterable(Traversable $wordsIterator): string
+    {
         while ($wordsIterator->valid()) {
             /** @var Word $word */
             $word = $wordsIterator->current();
+
             $this->appendAsBold(sprintf('%s: ', $word->getText()))
                 ->appendAsBold(sprintf('%s ', $word->getPos()))
                 ->appendAsBold(sprintf('[%s]', $word->getTranscription()))
@@ -44,6 +60,7 @@ class MessageBuilder
 
     private function appendSynonyms(Collection $collection): self
     {
+        /** @var Iterator $iterator */
         $iterator = $collection->getIterator();
         while ($iterator->valid()) {
             /** @var Word $translation */
