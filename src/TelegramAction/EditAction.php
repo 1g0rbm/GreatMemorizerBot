@@ -2,14 +2,13 @@
 
 namespace Ig0rbm\Memo\TelegramAction;
 
+use Doctrine\DBAL\DBALException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
-use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
-use Psr\Log\LoggerInterface;
 
 class EditAction extends AbstractTelegramAction
 {
@@ -25,12 +24,19 @@ class EditAction extends AbstractTelegramAction
         $this->repository = $repository;
     }
 
+    /**
+     * @throws DBALException
+     */
     public function run(MessageFrom $messageFrom, Command $command): MessageTo
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
         $wordList = $this->repository->findDistinctByChat($messageFrom->getChat());
+        if (empty($wordList)) {
+            $to->setText($command->getTextResponse());
+            return $to;
+        }
 
         foreach ($wordList as $word) {
             $this->builder->addLine(
@@ -43,9 +49,8 @@ class EditAction extends AbstractTelegramAction
             );
         }
 
+        $to->setText('Press button to delete word');
         $to->setInlineKeyboard($this->builder->flush());
-
-        $to->setText($command->getTextResponse());
 
         return $to;
     }
