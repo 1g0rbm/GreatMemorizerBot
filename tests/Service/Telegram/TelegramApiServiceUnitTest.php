@@ -2,29 +2,33 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
-use Ig0rbm\Memo\Exception\Telegram\SendMessageException;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Service\Telegram\TelegramApiService;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Telegram\SendMessageException;
+use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Serializer;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Faker\Factory;
 use Faker\Generator;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use Exception;
 
 class TelegramApiServiceUnitTest extends TestCase
 {
     private const TEST_DOMAIN = 'http://api.telegram.org';
     private const TEST_TOKEN = 'test_token_string';
 
-    /** @var TelegramApiService|MockObject */
+    /** @var TelegramApiService */
     private $service;
 
     /** @var Client|MockObject */
     private $client;
+
+    /** @var Serializer|MockObject */
+    private $serializer;
 
     /** @var Generator */
     private $faker;
@@ -34,8 +38,9 @@ class TelegramApiServiceUnitTest extends TestCase
         parent::setUp();
         $this->faker = Factory::create();
         $this->client = $this->createMock(Client::class);
+        $this->serializer = $this->createMock(Serializer::class);
 
-        $this->service = new TelegramApiService($this->client, self::TEST_TOKEN);
+        $this->service = new TelegramApiService($this->client, $this->serializer, self::TEST_TOKEN);
     }
 
     public function testSendMessageThrowSendMessageException(): void
@@ -52,7 +57,8 @@ class TelegramApiServiceUnitTest extends TestCase
                     'form_params' => [
                         'chat_id' => $message->getChatId(),
                         'text' => $message->getText(),
-                        'parse_mode' => 'markdown'
+                        'parse_mode' => 'markdown',
+                        'reply_markup' => json_encode(['inline_keyboard' => []])
                     ]
                 ]
             )->will($this->throwException(new Exception($exceptionMessage)));
@@ -87,7 +93,8 @@ class TelegramApiServiceUnitTest extends TestCase
                     'form_params' => [
                         'chat_id' => $message->getChatId(),
                         'text' => $message->getText(),
-                        'parse_mode' => 'markdown'
+                        'parse_mode' => 'markdown',
+                        'reply_markup' => json_encode(['inline_keyboard' => []])
                     ]
                 ]
             )->willReturn($response);

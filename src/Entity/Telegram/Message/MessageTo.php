@@ -2,6 +2,8 @@
 
 namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class MessageTo
@@ -21,6 +23,18 @@ class MessageTo
      * @var string
      */
     private $text;
+
+    /**
+     * @Assert\NotBlank
+     *
+     * @var Collection
+     */
+    private $replyMarkup;
+
+    public function __construct()
+    {
+        $this->replyMarkup = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -52,5 +66,31 @@ class MessageTo
     public function setText(string $text): void
     {
         $this->text = $text;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getReplyMarkup(): Collection
+    {
+        return $this->replyMarkup;
+    }
+
+    public function getInlineKeyboard(): ?InlineKeyboard
+    {
+        return $this->replyMarkup->get(InlineKeyboard::KEY_NAME);
+    }
+
+    /**
+     * @param Collection $replyMarkup
+     */
+    public function setReplyMarkup(Collection $replyMarkup): void
+    {
+        $this->replyMarkup = $replyMarkup;
+    }
+
+    public function setInlineKeyboard(InlineKeyboard $keyboard): void
+    {
+        $this->replyMarkup->set(InlineKeyboard::KEY_NAME, $keyboard);
     }
 }

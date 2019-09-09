@@ -2,24 +2,29 @@
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
-use Ig0rbm\Memo\Exception\Telegram\SendMessageException;
+use Throwable;
 use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Telegram\SendMessageException;
+use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Serializer;
 use GuzzleHttp\Client;
-use Throwable;
 
 class TelegramApiService
 {
     /** @var Client */
     private $client;
 
+    /** @var Serializer */
+    private $serializer;
+
     /** @var string */
     private $token;
 
-    public function __construct(Client $client, string $token)
+    public function __construct(Client $client, Serializer $serializer, string $token)
     {
-        $this->client = $client;
-        $this->token = $token;
+        $this->client   = $client;
+        $this->serializer = $serializer;
+        $this->token    = $token;
     }
 
     public function sendMessage(MessageTo $message): string
@@ -32,7 +37,10 @@ class TelegramApiService
                     'form_params' => [
                         'chat_id' => $message->getChatId(),
                         'text' => $message->getText(),
-                        'parse_mode' => 'markdown'
+                        'parse_mode' => 'markdown',
+                        'reply_markup' => json_encode([
+                            'inline_keyboard' => $this->serializer->serialize($message->getInlineKeyboard())
+                        ])
                     ]
                 ]
             );
