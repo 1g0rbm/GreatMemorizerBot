@@ -49,7 +49,7 @@ class EditAction extends AbstractTelegramAction
             );
         }
 
-        $to->setText('Press button to delete word');
+        $to->setText(sprintf('%s press button to delete word', $command->getCommand()));
         $to->setInlineKeyboard($this->builder->flush());
 
         return $to;

@@ -2,12 +2,13 @@
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Telegram\Message\From;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Exception\Telegram\Message\ParseMessageException;
 use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MessageParser
 {
@@ -29,18 +30,25 @@ class MessageParser
 
     public function createMessage(string $message): MessageFrom
     {
-        $msgRaw = json_decode($message, true);
+        $request = json_decode($message, true);
 
-        if (!isset($msgRaw['message']) && !isset($msgRaw['edited_message'])) {
+        if (!isset($request['message']) &&
+            !isset($request['edited_message']) &&
+            !isset($request['callback_query'], $request['callback_query']['message'])
+        ) {
             throw ParseMessageException::becauseInvalidParameter('No message parameter');
         }
 
-        $msgRaw = $msgRaw['message'] ?? $msgRaw['edited_message'];
+        $msgRaw = $request['message'] ?? $request['edited_message'] ?? $request['callback_query']['message'];
 
         $message = $this->createMessageFrom($msgRaw);
 
         if (isset($msgRaw['reply_to_message'])) {
             $message->setReply($this->createMessageFrom($msgRaw['reply_to_message']));
+        }
+
+        if (isset($request['callback_query'])) {
+            $message->setCallbackQuery($this->createCallbackQuery($request['callback_query']));
         }
 
         $this->validate($message);
@@ -94,6 +102,17 @@ class MessageParser
         $this->validate($from);
 
         return $from;
+    }
+
+    public function createCallbackQuery(array $rawCallbackQuery): CallbackQuery
+    {
+        $query = new CallbackQuery();
+        $query->setId($rawCallbackQuery['id']);
+        $query->setFrom($this->createFrom($rawCallbackQuery['from']));
+        $query->setChatInstance($rawCallbackQuery['chat_instance']);
+        $query->setData($rawCallbackQuery['data']);
+
+        return $query;
     }
 
     /**

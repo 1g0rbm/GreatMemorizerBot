@@ -41,7 +41,7 @@ class TextParser
     private function getCommand(string $rawText): ?string
     {
         $matches = [];
-        preg_match('#^/\w+#', $rawText, $matches);
+        preg_match(Command::REGEXP, $rawText, $matches);
 
         return count($matches) >= 1 ? $matches[0] : null;
     }

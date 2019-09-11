@@ -56,6 +56,13 @@ class MessageFrom
     private $reply;
 
     /**
+     * @TelegramMessageAssert\CallbackQuery
+     *
+     * @var CallbackQuery
+     */
+    private $callbackQuery;
+
+    /**
      * @return int
      */
     public function getMessageId(): int
@@ -143,5 +150,21 @@ class MessageFrom
     public function setReply(MessageFrom $reply): void
     {
         $this->reply = $reply;
+    }
+
+    /**
+     * @return CallbackQuery
+     */
+    public function getCallbackQuery(): CallbackQuery
+    {
+        return $this->callbackQuery;
+    }
+
+    /**
+     * @param CallbackQuery $callbackQuery
+     */
+    public function setCallbackQuery(CallbackQuery $callbackQuery): void
+    {
+        $this->callbackQuery = $callbackQuery;
     }
 }
