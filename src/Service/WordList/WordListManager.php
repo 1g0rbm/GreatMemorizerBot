@@ -6,7 +6,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
-use Ig0rbm\Memo\Exception\WordListException;
+use Ig0rbm\Memo\Exception\WordList\WordListException;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 
 class WordListManager

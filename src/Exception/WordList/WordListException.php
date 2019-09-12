@@ -1,6 +1,6 @@
 <?php
 
-namespace Ig0rbm\Memo\Exception;
+namespace Ig0rbm\Memo\Exception\WordList;
 
 use DomainException;
 

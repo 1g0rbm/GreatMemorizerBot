@@ -58,7 +58,7 @@ class MessageFrom
     /**
      * @TelegramMessageAssert\CallbackQuery
      *
-     * @var CallbackQuery
+     * @var CallbackQuery|null
      */
     private $callbackQuery;
 
@@ -152,18 +152,12 @@ class MessageFrom
         $this->reply = $reply;
     }
 
-    /**
-     * @return CallbackQuery
-     */
-    public function getCallbackQuery(): CallbackQuery
+    public function getCallbackQuery(): ?CallbackQuery
     {
         return $this->callbackQuery;
     }
 
-    /**
-     * @param CallbackQuery $callbackQuery
-     */
-    public function setCallbackQuery(CallbackQuery $callbackQuery): void
+    public function setCallbackQuery(?CallbackQuery $callbackQuery): void
     {
         $this->callbackQuery = $callbackQuery;
     }

@@ -9,6 +9,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
+use Ig0rbm\Memo\Service\WordList\WordListCleaner;
 
 class EditAction extends AbstractTelegramAction
 {
@@ -18,10 +19,14 @@ class EditAction extends AbstractTelegramAction
     /** @var WordListRepository */
     private $repository;
 
-    public function __construct(Builder $builder, WordListRepository $repository)
+    /** @var WordListCleaner */
+    private $cleaner;
+
+    public function __construct(Builder $builder, WordListRepository $repository, WordListCleaner $cleaner)
     {
-        $this->builder = $builder;
+        $this->builder    = $builder;
         $this->repository = $repository;
+        $this->cleaner    = $cleaner;
     }
 
     /**
@@ -32,6 +37,11 @@ class EditAction extends AbstractTelegramAction
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
+        $callbackQuery = $messageFrom->getCallbackQuery();
+        if ($callbackQuery) {
+            $this->cleaner->clean($messageFrom->getChat(), $callbackQuery->getData());
+        }
+
         $wordList = $this->repository->findDistinctByChat($messageFrom->getChat());
         if (empty($wordList)) {
             $to->setText($command->getTextResponse());
@@ -39,14 +49,7 @@ class EditAction extends AbstractTelegramAction
         }
 
         foreach ($wordList as $word) {
-            $this->builder->addLine(
-                [
-                    new InlineButton(
-                        $word['text'],
-                        sprintf('delete:%s', $word['text'])
-                    ),
-                ]
-            );
+            $this->builder->addLine([new InlineButton($word['text'], $word['text'])]);
         }
 
         $to->setText(sprintf('%s press button to delete word', $command->getCommand()));
