@@ -2,7 +2,6 @@
 
 namespace Ig0rbm\Memo\Tests\Controller\Webhook;
 
-use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +14,7 @@ use Faker\Generator;
  * @group functional
  * @grooup controller
  */
-class WebhookControllerSaveTest extends WebTestCase
+class SaveActionTest extends WebTestCase
 {
     private const CHAT_ID = 233575306;
 

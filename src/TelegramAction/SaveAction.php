@@ -6,7 +6,7 @@ use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
-use Ig0rbm\Memo\Exception\WordListException;
+use Ig0rbm\Memo\Exception\WordList\WordListException;
 use Ig0rbm\Memo\Service\Translation\DirectionParser;
 use Ig0rbm\Memo\Service\Translation\MessageTextFinder;
 use Ig0rbm\Memo\Service\Translation\WordTranslationService;

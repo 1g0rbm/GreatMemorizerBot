@@ -1,6 +1,6 @@
 <?php
 
-namespace Ig0rbm\Memo\Tests\Service\Wordlist;
+namespace Ig0rbm\Memo\Tests\Service\WordList;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;

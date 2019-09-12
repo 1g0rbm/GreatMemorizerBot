@@ -1,6 +1,6 @@
 <?php
 
-namespace Ig0rbm\Memo\Tests\Service\Wordlist;
+namespace Ig0rbm\Memo\Tests\Service\WordList;
 
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Translation\WordList;

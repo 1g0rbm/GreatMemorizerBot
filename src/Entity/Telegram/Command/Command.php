@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class Command
 {
-    public const REGEXP = '#^/#';
+    public const REGEXP = '#^/\w+#';
     public const DEFAULT_COMMAND_NAME = 'default';
 
     /**

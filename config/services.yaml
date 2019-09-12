@@ -11,6 +11,12 @@ parameters:
         /save:
             text_response: 'What word do you wont to save?'
             action_class: Ig0rbm\Memo\TelegramAction\SaveAction
+        /show:
+            text_response: 'Yor list is empty'
+            action_class: Ig0rbm\Memo\TelegramAction\ShowAction
+        /edit:
+            text_response: 'Nothing to edit'
+            action_class: Ig0rbm\Memo\TelegramAction\EditAction
         /hello:
             text_response: 'Hello!'
             action_class: Ig0rbm\Memo\TelegramAction\HelloAction
@@ -76,4 +82,10 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\DefaultAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\ShowAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\EditAction:
         public: true
