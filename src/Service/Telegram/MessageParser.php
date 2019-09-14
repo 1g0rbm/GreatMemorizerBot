@@ -3,12 +3,13 @@
 namespace Ig0rbm\Memo\Service\Telegram;
 
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Telegram\Message\From;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Exception\Telegram\Message\ParseMessageException;
-use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
+use Ig0rbm\Memo\Service\InitializeAccountService;
 
 class MessageParser
 {
@@ -18,14 +19,17 @@ class MessageParser
     /** @var TextParser */
     private $textParser;
 
-    /** @var ChatRepository */
-    private $chatRepository;
+    /** @var InitializeAccountService */
+    private $initializeAccount;
 
-    public function __construct(ValidatorInterface $validator, TextParser $textParser, ChatRepository $chatRepository)
-    {
-        $this->validator = $validator;
-        $this->textParser = $textParser;
-        $this->chatRepository = $chatRepository;
+    public function __construct(
+        ValidatorInterface $validator,
+        TextParser $textParser,
+        InitializeAccountService $initializeAccount
+    ) {
+        $this->validator         = $validator;
+        $this->textParser        = $textParser;
+        $this->initializeAccount = $initializeAccount;
     }
 
     public function createMessage(string $message): MessageFrom
@@ -56,14 +60,19 @@ class MessageParser
         return $message;
     }
 
+    /**
+     * @param mixed[]
+     * @return MessageFrom
+     * @throws ORMException
+     */
     private function createMessageFrom(array $msgRaw): MessageFrom
     {
-        $chat = $this->chatRepository->findChatById($msgRaw['chat']['id']) ?? $this->createChat($msgRaw['chat']);
+        $account = $this->initializeAccount->initialize($this->createChat($msgRaw['chat']));
         $from = $this->createFrom($msgRaw['from']);
 
         $message = new MessageFrom();
         $message->setMessageId($msgRaw['message_id']);
-        $message->setChat($chat);
+        $message->setChat($account->getChat());
         $message->setFrom($from);
         $message->setDate($msgRaw['date']);
         $message->setText($this->textParser->parse($msgRaw['text']));
