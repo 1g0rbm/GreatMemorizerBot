@@ -17,6 +17,9 @@ parameters:
         /edit:
             text_response: 'Nothing to edit'
             action_class: Ig0rbm\Memo\TelegramAction\EditAction
+        /switch:
+            text_response: 'Choose translation direction'
+            action_class: Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction
         /hello:
             text_response: 'Hello!'
             action_class: Ig0rbm\Memo\TelegramAction\HelloAction
@@ -88,4 +91,7 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\EditAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction:
         public: true

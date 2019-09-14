@@ -98,7 +98,6 @@ class WordTranslationServiceUnitTest extends TestCase
     private function getDirection(): Direction
     {
         $direction = new Direction();
-        $direction->setDirection('en-ru');
         $direction->setLangFrom('en');
         $direction->setLangTo('ru');
 

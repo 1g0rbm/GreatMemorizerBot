@@ -7,6 +7,7 @@ use Faker\Generator;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Text;
 use Ig0rbm\Memo\Service\Translation\Yandex\TranslationParser;
+use Ig0rbm\Memo\Exception\Translation\Yandex\TranslationParseException;
 use PHPUnit\Framework\TestCase;
 
 class TranslationParserUnitTest extends TestCase
@@ -24,6 +25,9 @@ class TranslationParserUnitTest extends TestCase
         $this->faker = Factory::create();
     }
 
+    /**
+     * @throws TranslationParseException
+     */
     public function testParseReturnText(): void
     {
         $translation = $this->getTranslation();
@@ -34,6 +38,9 @@ class TranslationParserUnitTest extends TestCase
         );
     }
 
+    /**
+     * @throws TranslationParseException
+     */
     public function testParserReturnFilledText(): void
     {
         $translation = $this->getTranslation();
@@ -48,7 +55,6 @@ class TranslationParserUnitTest extends TestCase
         $direction = new Direction();
         $direction->setLangTo('en');
         $direction->setLangFrom('ru');
-        $direction->setDirection('ru-en');
 
         return $direction;
     }

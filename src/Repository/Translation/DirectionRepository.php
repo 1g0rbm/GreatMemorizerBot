@@ -3,6 +3,7 @@
 namespace Ig0rbm\Memo\Repository\Translation;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Translation\Direction;
