@@ -5,6 +5,7 @@ namespace Ig0rbm\Memo\Service\Translation;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Ig0rbm\HandyBag\HandyBag;
+use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 use Ig0rbm\Memo\Service\EntityFlusher;
@@ -45,10 +46,8 @@ class TranslationService
      * @throws ORMException
      * @throws ORMInvalidArgumentException
      */
-    public function translate(string $translateDirection, string $string): string
+    public function translate(Direction $direction, string $string): string
     {
-        $direction = $this->directionParser->parse($translateDirection);
-
         $words = $this->wordRepository->findWordsCollection($string);
         if ($words) {
             return $this->messageBuilder->buildFromWords($words);

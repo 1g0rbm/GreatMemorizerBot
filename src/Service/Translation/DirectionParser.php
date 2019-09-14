@@ -10,11 +10,6 @@ class DirectionParser
     {
         [$langFrom, $langTo] = explode('-', $rawDirection);
 
-        $direction = new Direction();
-        $direction->setDirection($rawDirection);
-        $direction->setLangFrom($langFrom);
-        $direction->setLangTo($langTo);
-
-        return $direction;
+        return new Direction($langFrom, $langTo);
     }
 }

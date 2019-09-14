@@ -5,7 +5,7 @@ namespace Ig0rbm\Memo\Tests\Service\Telegram;
 use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\Text;
-use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
+use Ig0rbm\Memo\Service\InitializeAccountService;
 use Ig0rbm\Memo\Service\Telegram\TextParser;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
@@ -28,8 +28,8 @@ class MessageParserUnitTest extends TestCase
     /** @var MockObject|TextParser */
     private $textParser;
 
-    /** @var MockObject|ChatRepository */
-    private $chatRepository;
+    /** @var MockObject|InitializeAccountService */
+    private $initializeAccountService;
 
     /** @var Generator */
     private $faker;
@@ -39,10 +39,10 @@ class MessageParserUnitTest extends TestCase
         parent::setUp();
         $this->validator = $this->getMockBuilder(ValidatorInterface::class)->getMock();
         $this->textParser = $this->createMock(TextParser::class);
-        $this->chatRepository = $this->createMock(ChatRepository::class);
+        $this->initializeAccountService = $this->createMock(InitializeAccountService::class);
         $this->faker = Factory::create();
 
-        $this->service = new MessageParser($this->validator, $this->textParser, $this->chatRepository);
+        $this->service = new MessageParser($this->validator, $this->textParser, $this->initializeAccountService);
     }
 
     public function testCreateChatReturnValidChat(): void

@@ -306,7 +306,6 @@ class DictionaryParserTest extends TestCase
         $direction = new Direction();
         $direction->setLangFrom('ru');
         $direction->setLangTo('en');
-        $direction->setDirection('ru-en');
 
         return $direction;
     }

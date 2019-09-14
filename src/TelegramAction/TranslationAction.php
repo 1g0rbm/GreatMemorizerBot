@@ -7,8 +7,7 @@ use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
-use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
-use Ig0rbm\Memo\Service\EntityFlusher;
+use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Service\Translation\TextTranslationService;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
 
@@ -20,22 +19,17 @@ class TranslationAction extends AbstractTelegramAction
     /** @var TextTranslationService */
     private $textTranslation;
 
-    /** @var ChatRepository */
-    private $chatRepository;
-
-    /** @var EntityFlusher */
-    private $entityFlusher;
+    /** @var AccountRepository */
+    private $accountRepository;
 
     public function __construct(
         TranslationService $translationService,
         TextTranslationService $textTranslation,
-        ChatRepository $chatRepository,
-        EntityFlusher $entityFlusher
+        AccountRepository $accountRepository
     ) {
         $this->translationService = $translationService;
         $this->textTranslation = $textTranslation;
-        $this->chatRepository = $chatRepository;
-        $this->entityFlusher = $entityFlusher;
+        $this->accountRepository = $accountRepository;
     }
 
     /**
@@ -46,17 +40,13 @@ class TranslationAction extends AbstractTelegramAction
         $messageTo = new MessageTo();
         $messageTo->setChatId($messageFrom->getChat()->getId());
 
-        if (null === $this->chatRepository->findChatById($messageFrom->getChat()->getId())) {
-            $this->chatRepository->addChat($messageFrom->getChat());
-            $this->entityFlusher->flush();
-        }
-
         if (null === $messageFrom->getText()->getText()) {
             $messageTo->setText('Wrong text');
             return $messageTo;
         }
 
-        $message = $this->translationService->translate('en-ru', $messageFrom->getText()->getText());
+        $account = $this->accountRepository->findOneByChat($messageFrom->getChat());
+        $message = $this->translationService->translate($account->getDirection(), $messageFrom->getText()->getText());
         $messageTo->setText($message);
 
         return $messageTo;

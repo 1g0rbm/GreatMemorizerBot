@@ -49,7 +49,6 @@ class TextTranslationServiceUnitTest extends TestCase
         $direction = new Direction();
         $direction->setLangFrom('en');
         $direction->setLangTo('ru');
-        $direction->setDirection('en-ru');
 
         return $direction;
     }

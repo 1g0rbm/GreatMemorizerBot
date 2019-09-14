@@ -62,10 +62,6 @@ class TranslationServiceUnitTest extends TestCase
         $wordForTranslate = 'test';
         $direction = $this->getDirection();
 
-        $this->directionParser->expects($this->once())
-            ->method('parse')
-            ->willReturn($direction);
-
         $wordCollection = $this->getWordsCollection($direction, $this->getDictionary());
         $this->wordTranslationService->expects($this->once())
             ->method('translate')
@@ -82,7 +78,7 @@ class TranslationServiceUnitTest extends TestCase
 
         $this->assertSame(
             sprintf('*%s*', $wordForTranslate),
-            $this->service->translate('en-ru', $wordForTranslate)
+            $this->service->translate($this->getDirection(), $wordForTranslate)
         );
     }
 
@@ -93,10 +89,6 @@ class TranslationServiceUnitTest extends TestCase
     {
         $wordForTranslate = 'test';
         $direction = $this->getDirection();
-
-        $this->directionParser->expects($this->once())
-            ->method('parse')
-            ->willReturn($direction);
 
         $wordCollection = $this->getWordsCollection($direction, $this->getEmptyDictionary());
         $this->wordTranslationService->expects($this->once())
@@ -119,7 +111,7 @@ class TranslationServiceUnitTest extends TestCase
             ->with($text)
             ->willReturn($wordForTranslate);
 
-        $this->assertSame($text->getText(), $this->service->translate('en-ru', $wordForTranslate));
+        $this->assertSame($text->getText(), $this->service->translate($this->getDirection(), $wordForTranslate));
     }
 
     private function getWordsCollection(Direction $direction, array $dictionary): HandyBag
