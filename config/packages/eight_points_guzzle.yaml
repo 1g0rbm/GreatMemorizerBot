@@ -5,6 +5,8 @@ eight_points_guzzle:
     clients:
         telegram_api:
             base_url: '%env(TELEGRAM_API_PROXY_URL)%'
+        telegraph_api:
+            base_url: 'https://api.telegra.ph'
         yandex_dictionary_api:
             base_url: 'https://dictionary.yandex.net'
         yandex_translation_api:
