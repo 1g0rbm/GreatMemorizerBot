@@ -32,6 +32,9 @@ class MessageParser
         $this->initializeAccount = $initializeAccount;
     }
 
+    /**
+     * @throws ORMException
+     */
     public function createMessage(string $message): MessageFrom
     {
         $request = json_decode($message, true);
@@ -67,6 +70,10 @@ class MessageParser
      */
     private function createMessageFrom(array $msgRaw): MessageFrom
     {
+        if (isset($msgRaw['text']) === false) {
+            throw ParseMessageException::becauseInvalidParameter('There isn\'t "text" parameter');
+        }
+
         $account = $this->initializeAccount->initialize($this->createChat($msgRaw['chat']));
         $from = $this->createFrom($msgRaw['from']);
 
