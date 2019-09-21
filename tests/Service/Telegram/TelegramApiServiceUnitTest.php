@@ -58,7 +58,7 @@ class TelegramApiServiceUnitTest extends TestCase
                         'chat_id' => $message->getChatId(),
                         'text' => $message->getText(),
                         'parse_mode' => 'markdown',
-                        'reply_markup' => json_encode(['inline_keyboard' => []])
+                        'reply_markup' => json_encode(['inline_keyboard' => [],  'remove_keyboard' => false])
                     ]
                 ]
             )->will($this->throwException(new Exception($exceptionMessage)));
@@ -94,7 +94,7 @@ class TelegramApiServiceUnitTest extends TestCase
                         'chat_id' => $message->getChatId(),
                         'text' => $message->getText(),
                         'parse_mode' => 'markdown',
-                        'reply_markup' => json_encode(['inline_keyboard' => []])
+                        'reply_markup' => json_encode(['inline_keyboard' => [], 'remove_keyboard' => false])
                     ]
                 ]
             )->willReturn($response);

@@ -2,6 +2,8 @@
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
+use Ig0rbm\Memo\Entity\Telegram\Keyboard\ReplyKeyboardRemove;
+use Ig0rbm\Memo\Entity\Telegram\Message\InlineKeyboard;
 use Throwable;
 use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
@@ -39,7 +41,9 @@ class TelegramApiService
                         'text' => $message->getText(),
                         'parse_mode' => 'markdown',
                         'reply_markup' => json_encode([
-                            'inline_keyboard' => $this->serializer->serialize($message->getInlineKeyboard())
+                            InlineKeyboard::KEY_NAME => $this->serializer->serialize($message->getInlineKeyboard()),
+                            ReplyKeyboardRemove::KEY_NAME => $message->getReplyKeyboardRemove() ?
+                                $message->getReplyKeyboardRemove()->isRemoveKeyboard() : false
                         ])
                     ]
                 ]

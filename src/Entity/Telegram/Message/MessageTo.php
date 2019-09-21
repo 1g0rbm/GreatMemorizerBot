@@ -4,6 +4,7 @@ namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Ig0rbm\Memo\Entity\Telegram\Keyboard\ReplyKeyboardRemove;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class MessageTo
@@ -17,10 +18,9 @@ class MessageTo
     private $chatId;
 
     /**
-     * @Assert\NotBlank
      * @Assert\Type("string")
      *
-     * @var string
+     * @var string|null
      */
     private $text;
 
@@ -36,41 +36,26 @@ class MessageTo
         $this->replyMarkup = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getChatId(): int
     {
         return $this->chatId;
     }
 
-    /**
-     * @param int $chatId
-     */
     public function setChatId(int $chatId): void
     {
         $this->chatId = $chatId;
     }
 
-    /**
-     * @return string
-     */
-    public function getText(): string
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    /**
-     * @param string $text
-     */
-    public function setText(string $text): void
+    public function setText(?string $text): void
     {
         $this->text = $text;
     }
 
-    /**
-     * @return Collection
-     */
     public function getReplyMarkup(): Collection
     {
         return $this->replyMarkup;
@@ -81,9 +66,6 @@ class MessageTo
         return $this->replyMarkup->get(InlineKeyboard::KEY_NAME);
     }
 
-    /**
-     * @param Collection $replyMarkup
-     */
     public function setReplyMarkup(Collection $replyMarkup): void
     {
         $this->replyMarkup = $replyMarkup;
@@ -92,5 +74,15 @@ class MessageTo
     public function setInlineKeyboard(InlineKeyboard $keyboard): void
     {
         $this->replyMarkup->set(InlineKeyboard::KEY_NAME, $keyboard);
+    }
+
+    public function setReplyKeyboardRemove(ReplyKeyboardRemove $replyKeyboardRemove): void
+    {
+        $this->replyMarkup->set(ReplyKeyboardRemove::KEY_NAME, $replyKeyboardRemove);
+    }
+
+    public function getReplyKeyboardRemove(): ?ReplyKeyboardRemove
+    {
+        return $this->replyMarkup->get(ReplyKeyboardRemove::KEY_NAME);
     }
 }

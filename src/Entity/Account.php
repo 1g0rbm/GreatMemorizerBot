@@ -43,7 +43,7 @@ class Account
      * @Assert\NotBlank
      * @AssertTranslation\DirectionConstraint
      *
-     * @ORM\OneToOne(targetEntity="Ig0rbm\Memo\Entity\Translation\Direction", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Ig0rbm\Memo\Entity\Translation\Direction", cascade={"persist"})
      * @ORM\JoinColumn(name="direction_id", referencedColumnName="id")
      *
      * @var Direction

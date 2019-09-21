@@ -2,6 +2,8 @@
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
+use Throwable;
+use Doctrine\ORM\ORMException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Event\Telegram\BeforeParseRequestEvent;
@@ -11,7 +13,6 @@ use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandParser;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Psr\Log\LoggerInterface;
-use Throwable;
 
 class BotService
 {
@@ -50,6 +51,7 @@ class BotService
     }
 
     /**
+     * @throws ORMException
      * @throws ParseCommandException
      */
     public function handle(string $raw): void
