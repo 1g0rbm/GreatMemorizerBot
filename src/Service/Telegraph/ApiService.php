@@ -4,6 +4,7 @@ namespace Ig0rbm\Memo\Service\Telegraph;
 
 use Ig0rbm\Memo\Service\Telegraph\Request\BaseRequest;
 use Ig0rbm\Memo\Service\Telegraph\Request\CreatePage;
+use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
 use Throwable;
 use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Telegraph\Page;
@@ -47,20 +48,13 @@ class ApiService
         return Page::createFromTelegraphResponse($content['result']);
     }
 
-    public function getAccountInfo(?array $fields = null): array
+    public function getAccountInfo(GetAccount $request): array
     {
-        $fields = $fields ?? ['short_name', 'author_name'];
-
         try {
             $response = $this->client->request(
                 Request::METHOD_GET,
                 self::ACCOUNT_INFO,
-                [
-                    'query' => [
-                        'access_token' => $this->token,
-                        'fields' => $this->serializeFields($fields)
-                    ]
-                ]
+                $this->prepareQuery($request)
             );
         } catch (Throwable $e) {
             throw TelegraphApiException::becauseBadRequestToTelegraph($e->getMessage());
@@ -77,9 +71,14 @@ class ApiService
     private function prepareQuery(BaseRequest $request): array
     {
         $request->setAccessToken($this->token);
+
         $arr = $request->toArray();
         if (isset($arr['content'])) {
             $arr['content'] = json_encode($arr['content']);
+        }
+
+        if (isset($arr['fields'])) {
+            $arr['fields'] = $this->serializeFields($arr['fields']);
         }
 
         return ['query' => $arr];

@@ -2,38 +2,85 @@
 
 namespace Ig0rbm\Memo\Entity\Telegraph;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use Ig0rbm\Memo\Entity\Telegraph\Content\AbstractElementNode;
 
 class Page
 {
-    /** @var string */
+    /**
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
+     * @var string
+     */
     private $path;
 
-    /** @var string */
+    /**
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
+     * @var string
+     */
     private $url;
 
-    /** @var string */
+    /**
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
+     * @var string
+     */
     private $title;
 
-    /** @var string */
+    /**
+     * @Assert\NotBlank
+     * @Assert\Type("string")
+     *
+     * @var string
+     */
     private $description;
 
-    /** @var string|null */
+    /**
+     * @Assert\Type("string")
+     *
+     * @var string|null
+     */
     private $authorName;
 
-    /** @var string|null */
+    /**
+     * @Assert\Type("string")
+     *
+     * @var string|null
+     */
     private $authorUrl;
 
-    /** @var string|null */
+    /**
+     * @Assert\Type("string")
+     *
+     * @var string|null
+     */
     private $imageUrl;
 
-    /** @var AbstractElementNode[]*/
+    /**
+     * @Assert\NotBlank
+     *
+     * @var AbstractElementNode[]
+     */
     private $content;
 
-    /** @var integer */
+    /**
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     *
+     * @var integer
+     */
     private $views;
 
-    /** @var bool */
+    /**
+     * @Assert\NotBlank
+     * @Assert\Type("bool")
+     *
+     * @var bool
+     */
     private $canEdit;
 
     public static function createFromTelegraphResponse(array $arr): self

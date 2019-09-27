@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegraph;
 
+use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ListItemNode;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ListNode;
@@ -29,7 +30,9 @@ class ApiServiceTest extends WebTestCase
 
     public function testGetAccountDefaultInfo(): void
     {
-        $response = $this->service->getAccountInfo();
+        $request = new GetAccount();
+
+        $response = $this->service->getAccountInfo($request);
 
         $this->assertTrue($response['ok']);
         $this->assertEquals('DevMemoBot', $response['result']['short_name']);
@@ -38,10 +41,13 @@ class ApiServiceTest extends WebTestCase
 
     public function testGetAccountCustomInfo(): void
     {
-        $response = $this->service->getAccountInfo(['short_name']);
+        $request = new GetAccount();
+        $request->setFields([GetAccount::FIELD_AUTHOR_NAME]);
+
+        $response = $this->service->getAccountInfo($request);
 
         $this->assertTrue($response['ok']);
-        $this->assertEquals('DevMemoBot', $response['result']['short_name']);
+        $this->assertEquals('DevGreatMemorizerBot', $response['result']['author_name']);
         $this->assertEquals(1, count($response['result']));
     }
 
