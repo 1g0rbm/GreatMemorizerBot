@@ -2,14 +2,18 @@
 
 namespace Ig0rbm\Memo\Service\Telegraph;
 
-use Ig0rbm\Memo\Exception\Telegraph\TelegraphApiException;
+use Ig0rbm\Memo\Service\Telegraph\Request\BaseRequest;
+use Ig0rbm\Memo\Service\Telegraph\Request\CreatePage;
 use Throwable;
 use Symfony\Component\HttpFoundation\Request;
+use Ig0rbm\Memo\Entity\Telegraph\Page;
+use Ig0rbm\Memo\Exception\Telegraph\TelegraphApiException;
 use GuzzleHttp\Client;
 
 class ApiService
 {
     public const ACCOUNT_INFO = '/getAccountInfo';
+    public const CREATE_PAGE = '/createPage';
 
     /** @var Client */
     private $client;
@@ -21,6 +25,26 @@ class ApiService
     {
         $this->client = $client;
         $this->token = $token;
+    }
+
+    public function createPage(CreatePage $request): Page
+    {
+        try {
+            $response = $this->client->request(
+                Request::METHOD_GET,
+                self::CREATE_PAGE,
+                $this->prepareQuery($request)
+            );
+        } catch (Throwable $e) {
+            throw TelegraphApiException::becauseBadRequestToTelegraph($e->getMessage());
+        }
+
+        $content = json_decode($response->getBody()->getContents(), true);
+        if ($content['ok'] === false) {
+            throw TelegraphApiException::becauseBadResponseFromTelegraph($content['error']);
+        }
+
+        return Page::createFromTelegraphResponse($content['result']);
     }
 
     public function getAccountInfo(?array $fields = null): array
@@ -48,6 +72,17 @@ class ApiService
         }
 
         return $content;
+    }
+
+    private function prepareQuery(BaseRequest $request): array
+    {
+        $request->setAccessToken($this->token);
+        $arr = $request->toArray();
+        if (isset($arr['content'])) {
+            $arr['content'] = json_encode($arr['content']);
+        }
+
+        return ['query' => $arr];
     }
 
     private function serializeFields(array $fields): string
