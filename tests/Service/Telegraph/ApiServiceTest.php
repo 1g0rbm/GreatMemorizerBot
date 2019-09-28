@@ -3,6 +3,7 @@
 namespace Ig0rbm\Memo\Tests\Service\Telegraph;
 
 use Ig0rbm\Memo\Entity\Telegraph\Account;
+use Ig0rbm\Memo\Service\Telegraph\Request\EditPage;
 use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ListItemNode;
@@ -80,5 +81,52 @@ class ApiServiceTest extends WebTestCase
         $this->assertEquals($title, $response->getTitle());
         $this->assertEquals($authorName, $response->getAuthorName());
         $this->assertNull($response->getAuthorUrl());
+    }
+
+    public function testEditPage(): void
+    {
+        $title      = 'Test title';
+        $authorName = 'DevMemoBot';
+
+        $p = new ParagraphNode();
+        $p->setText('Hello, World');
+
+        $li1 = new ListItemNode();
+        $li1->setText('item 1');
+
+        $li2 = new ListItemNode();
+        $li2->setText('item 2');
+
+        $l = new ListNode();
+        $l->addChild($li1);
+        $l->addChild($li2);
+
+        $request = new CreatePage();
+        $request->setTitle($title);
+        $request->setAuthorName($authorName);
+        $request->setContent([$p, $l]);
+
+        $createdPage = $this->service->createPage($request);
+
+        $this->assertInstanceOf(Page::class, $createdPage);
+        $this->assertEquals($title, $createdPage->getTitle());
+        $this->assertEquals($authorName, $createdPage->getAuthorName());
+        $this->assertNull($createdPage->getAuthorUrl());
+
+        $title = 'Edit title';
+
+        $request = new EditPage();
+        $request->setTitle($title);
+        $request->setAuthorName($authorName);
+        $request->setContent([$p, $l]);
+        $request->setPath($createdPage->getPath());
+
+        $editedPage = $this->service->editPage($request);
+
+        $this->assertInstanceOf(Page::class, $editedPage);
+        $this->assertEquals($title, $editedPage->getTitle());
+
+        $this->assertNotEquals($createdPage->getTitle(), $editedPage->getTitle());
+        $this->assertEquals($createdPage->getPath(), $editedPage->getPath());
     }
 }
