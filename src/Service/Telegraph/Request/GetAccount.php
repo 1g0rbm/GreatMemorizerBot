@@ -12,14 +12,6 @@ class GetAccount extends BaseRequest
     public const FIELD_AUTH_URL    = 'auth_url';
     public const FIELD_PAGE_COUNT  = 'page_count';
 
-    public static $availableFields = [
-        self::FIELD_SHORT_NAME,
-        self::FIELD_AUTHOR_NAME,
-        self::FIELD_AUTHOR_URL,
-        self::FIELD_AUTH_URL,
-        self::FIELD_PAGE_COUNT
-    ];
-
     /**
      * @Assert\NotBlank
      * @Assert\Type("string")

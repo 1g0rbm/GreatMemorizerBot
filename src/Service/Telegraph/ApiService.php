@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Telegraph;
 
+use Ig0rbm\Memo\Entity\Telegraph\Account;
 use Ig0rbm\Memo\Service\Telegraph\Request\BaseRequest;
 use Ig0rbm\Memo\Service\Telegraph\Request\CreatePage;
 use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
@@ -48,7 +49,7 @@ class ApiService
         return Page::createFromTelegraphResponse($content['result']);
     }
 
-    public function getAccountInfo(GetAccount $request): array
+    public function getAccountInfo(GetAccount $request): Account
     {
         try {
             $response = $this->client->request(
@@ -65,7 +66,7 @@ class ApiService
             throw TelegraphApiException::becauseBadResponseFromTelegraph($content['error']);
         }
 
-        return $content;
+        return Account::createFromTelegraphResponse($content['result']);
     }
 
     private function prepareQuery(BaseRequest $request): array

@@ -3,30 +3,28 @@
 namespace Ig0rbm\Memo\Entity\Telegraph;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
 
 class Account
 {
     /**
-     * @Assert\NotBlank
      * @Assert\Type("string")
      *
-     * @var string
+     * @var string|null
      */
     private $shortName;
 
     /**
-     * @Assert\NotBlank
      * @Assert\Type("string")
      *
-     * @var string
+     * @var string|null
      */
     private $authorName;
 
     /**
-     * @Assert\NotBlank
      * @Assert\Type("string")
      *
-     * @var string
+     * @var string|null
      */
     private $authorUrl;
 
@@ -43,6 +41,33 @@ class Account
      * @var string|null
      */
     private $authUrl;
+
+    public static function createFromTelegraphResponse(array $response): self
+    {
+        $acc = new self();
+
+        if (isset($response[GetAccount::FIELD_AUTHOR_NAME])) {
+            $acc->setAuthorName($response[GetAccount::FIELD_AUTHOR_NAME]);
+        }
+
+        if (isset($response[GetAccount::FIELD_SHORT_NAME])) {
+            $acc->setShortName($response[GetAccount::FIELD_SHORT_NAME]);
+        }
+
+        if (isset($response[GetAccount::FIELD_AUTHOR_URL])) {
+            $acc->setAuthorUrl($response[GetAccount::FIELD_AUTHOR_URL]);
+        }
+
+        if (isset($response[GetAccount::FIELD_AUTH_URL])) {
+            $acc->setAuthUrl($response[GetAccount::FIELD_AUTH_URL]);
+        }
+
+        if (isset($response[GetAccount::FIELD_PAGE_COUNT])) {
+            $acc->setPageCount($response[GetAccount::FIELD_PAGE_COUNT]);
+        }
+
+        return $acc;
+    }
 
     /**
      * @Assert\Type("integer")

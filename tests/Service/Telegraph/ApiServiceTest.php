@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegraph;
 
+use Ig0rbm\Memo\Entity\Telegraph\Account;
 use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ListItemNode;
@@ -34,9 +35,9 @@ class ApiServiceTest extends WebTestCase
 
         $response = $this->service->getAccountInfo($request);
 
-        $this->assertTrue($response['ok']);
-        $this->assertEquals('DevMemoBot', $response['result']['short_name']);
-        $this->assertEquals('DevGreatMemorizerBot', $response['result']['author_name']);
+        $this->assertInstanceOf(Account::class, $response);
+        $this->assertEquals('DevMemoBot', $response->getShortName());
+        $this->assertEquals('DevGreatMemorizerBot', $response->getAuthorName());
     }
 
     public function testGetAccountCustomInfo(): void
@@ -46,9 +47,8 @@ class ApiServiceTest extends WebTestCase
 
         $response = $this->service->getAccountInfo($request);
 
-        $this->assertTrue($response['ok']);
-        $this->assertEquals('DevGreatMemorizerBot', $response['result']['author_name']);
-        $this->assertEquals(1, count($response['result']));
+        $this->assertInstanceOf(Account::class, $response);
+        $this->assertEquals('DevGreatMemorizerBot', $response->getAuthorName());
     }
 
     public function testCreatePage(): void
