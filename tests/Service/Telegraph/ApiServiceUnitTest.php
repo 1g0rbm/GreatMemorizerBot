@@ -3,8 +3,10 @@
 namespace Ig0rbm\Memo\Tests\Service\Telegraph;
 
 use Exception;
+use Ig0rbm\Memo\Entity\Telegraph\Account;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
 use Ig0rbm\Memo\Exception\Telegraph\TelegraphApiException;
 use Ig0rbm\Memo\Service\Telegraph\ApiService;
 use GuzzleHttp\Client;
@@ -35,6 +37,9 @@ class ApiServiceUnitTest extends TestCase
 
     public function testGetAccountInfoThrowExceptionDuringRequest(): void
     {
+        $request = new GetAccount();
+        $request->setFields([GetAccount::FIELD_SHORT_NAME, GetAccount::FIELD_AUTHOR_NAME]);
+
         $this->client->expects($this->once())
             ->method('request')
             ->with(
@@ -42,8 +47,9 @@ class ApiServiceUnitTest extends TestCase
                 ApiService::ACCOUNT_INFO,
                 [
                     'query' => [
-                        'access_token' => self::TOKEN,
-                        'fields' => '["short_name","author_name"]',
+                        'access_token'   => self::TOKEN,
+                        'fields'         => '["short_name","author_name"]',
+                        'return_content' => false
                     ],
                 ]
             )
@@ -51,11 +57,14 @@ class ApiServiceUnitTest extends TestCase
 
         $this->expectException(TelegraphApiException::class);
 
-        $this->service->getAccountInfo();
+        $this->service->getAccountInfo($request);
     }
 
     public function testGetAccountInfoThrowExceptionThenBadResponse(): void
     {
+        $request = new GetAccount();
+        $request->setFields([GetAccount::FIELD_SHORT_NAME, GetAccount::FIELD_AUTHOR_NAME]);
+
         $content = ['ok' => false, 'error' => 'error_message'];
 
         $streamInterface = $this->getMockBuilder(StreamInterface::class)->getMock();
@@ -75,8 +84,9 @@ class ApiServiceUnitTest extends TestCase
                 ApiService::ACCOUNT_INFO,
                 [
                     'query' => [
-                        'access_token' => self::TOKEN,
-                        'fields' => '["short_name","author_name"]',
+                        'access_token'   => self::TOKEN,
+                        'fields'         => '["short_name","author_name"]',
+                        'return_content' => false
                     ],
                 ]
             )
@@ -84,12 +94,18 @@ class ApiServiceUnitTest extends TestCase
 
         $this->expectException(TelegraphApiException::class);
 
-        $this->service->getAccountInfo();
+        $this->service->getAccountInfo($request);
     }
 
     public function testGetAccountInfo(): void
     {
-        $content = ['ok' => true, 'result' => ['field_name' => 'field_value']];
+        $request = new GetAccount();
+        $request->setFields([GetAccount::FIELD_SHORT_NAME, GetAccount::FIELD_AUTHOR_NAME]);
+
+        $content = [
+            'ok' => true,
+            'result' => [GetAccount::FIELD_SHORT_NAME => 'short', GetAccount::FIELD_AUTHOR_NAME => 'author']
+        ];
 
         $streamInterface = $this->getMockBuilder(StreamInterface::class)->getMock();
         $streamInterface->expects($this->once())
@@ -108,16 +124,18 @@ class ApiServiceUnitTest extends TestCase
                 ApiService::ACCOUNT_INFO,
                 [
                     'query' => [
-                        'access_token' => self::TOKEN,
-                        'fields' => '["short_name","author_name"]',
+                        'access_token'   => self::TOKEN,
+                        'fields'         => '["short_name","author_name"]',
+                        'return_content' => false
                     ],
                 ]
             )
             ->willReturn($response);
 
-        $response = $this->service->getAccountInfo();
+        $response = $this->service->getAccountInfo($request);
 
-        $this->assertTrue($content['ok']);
-        $this->assertEquals($content['result']['field_name'], $response['result']['field_name']);
+        $this->assertInstanceOf(Account::class, $response);
+        $this->assertEquals($content['result'][GetAccount::FIELD_AUTHOR_NAME], $response->getAuthorName());
+        $this->assertEquals($content['result'][GetAccount::FIELD_SHORT_NAME], $response->getShortName());
     }
 }

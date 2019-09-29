@@ -2,13 +2,13 @@
 
 namespace Ig0rbm\Memo\Service\Telegraph;
 
+use Throwable;
+use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Telegraph\Account;
 use Ig0rbm\Memo\Service\Telegraph\Request\BaseRequest;
 use Ig0rbm\Memo\Service\Telegraph\Request\CreatePage;
 use Ig0rbm\Memo\Service\Telegraph\Request\EditPage;
 use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
-use Throwable;
-use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Telegraph\Page;
 use Ig0rbm\Memo\Exception\Telegraph\TelegraphApiException;
 use GuzzleHttp\Client;

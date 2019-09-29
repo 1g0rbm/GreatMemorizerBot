@@ -50,6 +50,15 @@ class Account
      */
     private $direction;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Assert\Type("string")
+     *
+     * @var string|null
+     */
+    private $pageListPath;
+
     public function getId(): int
     {
         return $this->id;
@@ -78,5 +87,15 @@ class Account
     public function setDirection(Direction $direction): void
     {
         $this->direction = $direction;
+    }
+
+    public function getPageListPath(): ?string
+    {
+        return $this->pageListPath;
+    }
+
+    public function setPageListPath(?string $pageListPath): void
+    {
+        $this->pageListPath = $pageListPath;
     }
 }

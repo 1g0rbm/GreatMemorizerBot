@@ -10,6 +10,11 @@ abstract class BaseRequest
     /** @var string */
     protected $returnContent;
 
+    public function __construct()
+    {
+        $this->returnContent = false;
+    }
+
     public function getAccessToken(): string
     {
         return $this->accessToken;

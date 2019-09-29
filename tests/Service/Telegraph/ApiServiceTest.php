@@ -2,16 +2,16 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegraph;
 
-use Ig0rbm\Memo\Entity\Telegraph\Account;
-use Ig0rbm\Memo\Service\Telegraph\Request\EditPage;
-use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ListItemNode;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ListNode;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ParagraphNode;
 use Ig0rbm\Memo\Entity\Telegraph\Page;
+use Ig0rbm\Memo\Entity\Telegraph\Account;
 use Ig0rbm\Memo\Service\Telegraph\Request\CreatePage;
 use Ig0rbm\Memo\Service\Telegraph\ApiService;
+use Ig0rbm\Memo\Service\Telegraph\Request\EditPage;
+use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
 
 /**
  * @group functional
