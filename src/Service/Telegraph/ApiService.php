@@ -53,7 +53,7 @@ class ApiService
     {
         try {
             $response = $this->client->request(
-                Request::METHOD_GET,
+                Request::METHOD_POST,
                 $uri,
                 $this->prepareQuery($request)
             );
@@ -85,7 +85,7 @@ class ApiService
             $arr['fields'] = $this->serializeFields($arr['fields']);
         }
 
-        return ['query' => $arr];
+        return ['form_params' => $arr];
     }
 
     private function serializeFields(array $fields): string

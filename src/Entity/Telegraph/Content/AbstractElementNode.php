@@ -1,6 +1,6 @@
 <?php
 
-namespace Ig0rbm\Memo\Entity\Telegraph\Content;;
+namespace Ig0rbm\Memo\Entity\Telegraph\Content;
 
 use JsonSerializable;
 
@@ -15,10 +15,20 @@ abstract class AbstractElementNode implements JsonSerializable
     /** @var array */
     protected $children = [];
 
+    public function setText(string $text): void
+    {
+        $this->children = [$text];
+    }
+
+    public function addChild(AbstractElementNode $node): void
+    {
+        $this->children[] = $node;
+    }
+
     public function toArray(): array
     {
         $result = [
-            'tag' => $this->tag
+            'tag' => $this->tag,
         ];
 
         if (!empty($this->attrs)) {

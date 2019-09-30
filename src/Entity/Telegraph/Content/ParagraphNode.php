@@ -10,14 +10,4 @@ class ParagraphNode extends AbstractElementNode
     {
         $this->tag = self::TAG_NAME;
     }
-
-    public function setText(string $text): void
-    {
-        $this->children = [$text];
-    }
-
-    public function addChild(AbstractElementNode $node): void
-    {
-        $this->children[] = $node;
-    }
 }

@@ -75,6 +75,12 @@ services:
             $token: '%env(TELEGRAPH_ACCESS_TOKEN)%'
         public: true
 
+    Ig0rbm\Memo\EventListener\WordListEventListener:
+        arguments:
+            $manager: '@Ig0rbm\Memo\Service\WordList\Telegraph\WordListManager'
+        tags:
+            - { name: kernel.event_listener, event: 'memo.word_list_event', method: 'onWordListAction'}
+
     ##############################################################################################################
     #∨                                                                                                          ∨#
     #∨                                         telegram actions is here                                         ∨#

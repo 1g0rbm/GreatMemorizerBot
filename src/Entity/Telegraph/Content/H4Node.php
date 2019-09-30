@@ -2,9 +2,9 @@
 
 namespace Ig0rbm\Memo\Entity\Telegraph\Content;;
 
-class ListItemNode extends AbstractElementNode
+class H4Node extends AbstractElementNode
 {
-    public const TAG_NAME = 'li';
+    public const TAG_NAME = 'h4';
 
     public function __construct()
     {
