@@ -3,12 +3,12 @@
 namespace Ig0rbm\Memo\Tests\Service\Telegraph;
 
 use Exception;
-use Ig0rbm\Memo\Entity\Telegraph\Account;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
 use Ig0rbm\Memo\Exception\Telegraph\TelegraphApiException;
 use Ig0rbm\Memo\Service\Telegraph\ApiService;
+use Ig0rbm\Memo\Entity\Telegraph\Account;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -43,10 +43,10 @@ class ApiServiceUnitTest extends TestCase
         $this->client->expects($this->once())
             ->method('request')
             ->with(
-                'GET',
+                'POST',
                 ApiService::ACCOUNT_INFO,
                 [
-                    'query' => [
+                    'form_params' => [
                         'access_token'   => self::TOKEN,
                         'fields'         => '["short_name","author_name"]',
                         'return_content' => false
@@ -80,10 +80,10 @@ class ApiServiceUnitTest extends TestCase
         $this->client->expects($this->once())
             ->method('request')
             ->with(
-                'GET',
+                'POST',
                 ApiService::ACCOUNT_INFO,
                 [
-                    'query' => [
+                    'form_params' => [
                         'access_token'   => self::TOKEN,
                         'fields'         => '["short_name","author_name"]',
                         'return_content' => false
@@ -120,10 +120,10 @@ class ApiServiceUnitTest extends TestCase
         $this->client->expects($this->once())
             ->method('request')
             ->with(
-                'GET',
+                'POST',
                 ApiService::ACCOUNT_INFO,
                 [
-                    'query' => [
+                    'form_params' => [
                         'access_token'   => self::TOKEN,
                         'fields'         => '["short_name","author_name"]',
                         'return_content' => false

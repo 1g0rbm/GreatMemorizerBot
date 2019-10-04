@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegraph;
 
+use Ig0rbm\Memo\Service\Telegraph\Request\GetPage;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ListItemNode;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ListNode;
@@ -17,7 +18,7 @@ use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
  * @group functional
  * @group telegraph
  */
-class ApiServiceTest extends WebTestCase
+class   ApiServiceTest extends WebTestCase
 {
     /** @var ApiService */
     private $service;
@@ -128,5 +129,45 @@ class ApiServiceTest extends WebTestCase
 
         $this->assertNotEquals($createdPage->getTitle(), $editedPage->getTitle());
         $this->assertEquals($createdPage->getPath(), $editedPage->getPath());
+    }
+
+    public function testGetPage(): void
+    {
+        $title      = 'Test title';
+        $authorName = 'DevMemoBot';
+
+        $p = new ParagraphNode();
+        $p->setText('Hello, World');
+
+        $li1 = new ListItemNode();
+        $li1->setText('item 1');
+
+        $li2 = new ListItemNode();
+        $li2->setText('item 2');
+
+        $l = new ListNode();
+        $l->addChild($li1);
+        $l->addChild($li2);
+
+        $request = new CreatePage();
+        $request->setTitle($title);
+        $request->setAuthorName($authorName);
+        $request->setContent([$p, $l]);
+
+        $response = $this->service->createPage($request);
+
+        $this->assertInstanceOf(Page::class, $response);
+        $this->assertEquals($authorName, $response->getAuthorName());
+        $this->assertNull($response->getAuthorUrl());
+
+        $getPageRequest = new GetPage();
+
+        $getPageRequest->setPath($response->getPath());
+
+        $getPageResponse = $this->service->getPage($getPageRequest);
+
+        var_dump($getPageResponse);
+
+        $this->assertInstanceOf(Page::class, $getPageResponse);
     }
 }

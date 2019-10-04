@@ -3,6 +3,7 @@
 namespace Ig0rbm\Memo\Tests\Service\WordList\Telegraph;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ig0rbm\Memo\Entity\Telegraph\Content\ParagraphNode;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Service\Telegraph\ApiService;
@@ -162,11 +163,11 @@ class WordListManagerUnitTest extends TestCase
         return $account;
     }
 
-    private function createListNode(): ListNode
+    private function createListNode(): ParagraphNode
     {
-        $ul = new ListNode();
+        $p = new ParagraphNode();
 
-        return $ul;
+        return $p;
     }
 
     private function createWordList(): WordList

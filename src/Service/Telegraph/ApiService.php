@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Telegraph;
 
+use Ig0rbm\Memo\Service\Telegraph\Request\GetPage;
 use Throwable;
 use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Telegraph\Account;
@@ -18,6 +19,7 @@ class ApiService
     public const ACCOUNT_INFO = '/getAccountInfo';
     public const CREATE_PAGE  = '/createPage';
     public const EDIT_PAGE    = '/editPage';
+    public const GET_PAGE     = '/getPage';
 
     /** @var Client */
     private $client;
@@ -39,6 +41,11 @@ class ApiService
     public function editPage(EditPage $request): Page
     {
         return Page::createFromTelegraphResponse($this->doRequest($request, self::EDIT_PAGE));
+    }
+
+    public function getPage(GetPage $request): Page
+    {
+        return Page::createFromTelegraphResponse($this->doRequest($request, self::GET_PAGE));
     }
 
     public function getAccountInfo(GetAccount $request): Account

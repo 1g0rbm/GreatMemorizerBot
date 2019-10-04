@@ -2,34 +2,73 @@
 
 namespace Ig0rbm\Memo\Service\WordList;
 
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
-use Ig0rbm\Memo\Entity\Translation\Word;
+use Ig0rbm\Memo\Exception\WordList\WordListException;
+use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Repository\Translation\WordListRepository;
-use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
-use Psr\Log\LoggerInterface;
+use Ig0rbm\Memo\Service\EntityFlusher;
+use Ig0rbm\Memo\Service\Telegraph\ApiService;
+use Ig0rbm\Memo\Service\Telegraph\Request\CreatePage;
+use Ig0rbm\Memo\Service\Telegraph\Request\GetPage;
+use Ig0rbm\Memo\Service\WordList\Telegraph\WordListBuilder;
 
 class WordListShowService
 {
     /** @var WordListRepository */
     private $wordListRepository;
 
-    /** @var MessageBuilder */
+    /** @var AccountRepository */
+    private $accountRepository;
+
+    /** @var ApiService */
+    private $apiService;
+
+    /** @var WordListBuilder */
     private $builder;
 
-    public function __construct(WordListRepository $wordListRepository, MessageBuilder $builder)
-    {
+    /** @var EntityFlusher */
+    private $flusher;
+
+    public function __construct(
+        WordListRepository $wordListRepository,
+        AccountRepository $accountRepository,
+        ApiService $apiService,
+        WordListBuilder $builder,
+        EntityFlusher $flusher
+    ) {
         $this->wordListRepository = $wordListRepository;
-        $this->builder = $builder;
+        $this->accountRepository  = $accountRepository;
+        $this->apiService         = $apiService;
+        $this->builder            = $builder;
+        $this->flusher            = $flusher;
     }
 
     public function findByChat(Chat $chat): ?string
     {
-        $list = $this->wordListRepository->findByChat($chat);
-        if ($list === null) {
+        $account = $this->accountRepository->findOneByChat($chat);
+        if ($account === null) {
+            throw WordListException::becauseThereIsNotAccountForChat($chat);
+        }
+
+        if ($account->getPageListPath()) {
+            $getPageRequest = new GetPage();
+            $getPageRequest->setPath($account->getPageListPath());
+
+            $page = $this->apiService->getPage($getPageRequest);
+
+            return $page->getUrl();
+        }
+
+        $wordList = $this->wordListRepository->findByChat($chat);
+        if ($wordList === null) {
             return null;
         }
 
-        return $this->builder->buildFromCollection($list->getWords()) ?: null;
+        $page = $this->apiService->createPage(CreatePage::rememberList([$this->builder->build($wordList)]));
+
+        $account->setPageListPath($page->getPath());
+        $this->flusher->flush();
+
+        return $page->getUrl();
     }
 }

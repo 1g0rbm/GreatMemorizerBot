@@ -18,9 +18,14 @@ class CreatePage extends BaseRequest
     /** @var AbstractElementNode[] */
     protected $content;
 
-    public function __construct()
+    public static function rememberList(array $content): self
     {
-        $this->returnContent = false;
+        $request = new self();
+        $request->setContent($content);
+        $request->setTitle('Remember list');
+        $request->setAuthorName('GreatMemoBot');
+
+        return $request;
     }
 
     public function getTitle(): string

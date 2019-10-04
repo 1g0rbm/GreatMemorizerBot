@@ -2,11 +2,9 @@
 
 namespace Ig0rbm\Memo\Service\WordList\Telegraph;
 
-use Ig0rbm\Memo\Entity\Telegraph\Content\BrNode;
 use Ig0rbm\Memo\Entity\Telegraph\Content\H4Node;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ItalicNode;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ParagraphNode;
-use Ig0rbm\Memo\Entity\Telegraph\Content\StrongNode;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Entity\Translation\WordList;
 
