@@ -4,6 +4,7 @@ namespace Ig0rbm\Memo\Tests\Service\WordList;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Ig0rbm\Memo\Service\EntityFlusher;
 use Ig0rbm\Memo\Entity\Telegraph\Content\ParagraphNode;
 use Ig0rbm\Memo\Entity\Translation\WordList;
 use Ig0rbm\Memo\Service\Telegraph\Request\CreatePage;
@@ -37,6 +38,9 @@ class WordListShowServiceTest extends TestCase
     /** @var WordListBuilder|MockObject */
     private $builder;
 
+    /** @var EntityFlusher|MockObject */
+    private $flusher;
+
     /** @var Generator */
     private $faker;
 
@@ -48,12 +52,14 @@ class WordListShowServiceTest extends TestCase
         $this->accountRepository  = $this->createMock(AccountRepository::class);
         $this->apiService         = $this->createMock(ApiService::class);
         $this->builder            = $this->createMock(WordListBuilder::class);
+        $this->flusher            = $this->createMock(EntityFlusher::class);
 
         $this->service = new WordListShowService(
             $this->wordListRepository,
             $this->accountRepository,
             $this->apiService,
-            $this->builder
+            $this->builder,
+            $this->flusher
         );
     }
 
@@ -164,6 +170,7 @@ class WordListShowServiceTest extends TestCase
     {
         $page = new Page();
         $page->setUrl('https://telegra.ph/test/path');
+        $page->setPath('/test/path');
 
         return $page;
     }

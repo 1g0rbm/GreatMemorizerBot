@@ -166,8 +166,6 @@ class   ApiServiceTest extends WebTestCase
 
         $getPageResponse = $this->service->getPage($getPageRequest);
 
-        var_dump($getPageResponse);
-
         $this->assertInstanceOf(Page::class, $getPageResponse);
     }
 }
