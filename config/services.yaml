@@ -69,6 +69,18 @@ services:
             $client: '@eight_points_guzzle.client.yandex_translation_api'
             $token: '%env(YANDEX_TRANSLATION_API_KEY)%'
 
+    Ig0rbm\Memo\Service\Telegraph\ApiService:
+        arguments:
+            $client: '@eight_points_guzzle.client.telegraph_api'
+            $token: '%env(TELEGRAPH_ACCESS_TOKEN)%'
+        public: true
+
+    Ig0rbm\Memo\EventListener\WordListEventListener:
+        arguments:
+            $manager: '@Ig0rbm\Memo\Service\WordList\Telegraph\WordListManager'
+        tags:
+            - { name: kernel.event_listener, event: 'memo.word_list_event', method: 'onWordListAction'}
+
     ##############################################################################################################
     #∨                                                                                                          ∨#
     #∨                                         telegram actions is here                                         ∨#

@@ -11,6 +11,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Entity\Translation\WordList;
 use Ig0rbm\Memo\Exception\WordList\WordListCleanerException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WordListCleanerUnitTest extends TestCase
 {
@@ -23,14 +24,18 @@ class WordListCleanerUnitTest extends TestCase
     /** @var EntityFlusher|MockObject */
     private $flusher;
 
+    /** @var EventDispatcherInterface|MockObject */
+    private $eventDispatcher;
+
     public function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->createMock(WordListRepository::class);
         $this->flusher = $this->createMock(EntityFlusher::class);
+        $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
 
-        $this->service = new WordListCleaner($this->repository, $this->flusher);
+        $this->service = new WordListCleaner($this->repository, $this->flusher, $this->eventDispatcher);
     }
 
     public function testCleanThrowExceptionIfThereIsNoWordList(): void

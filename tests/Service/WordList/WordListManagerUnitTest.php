@@ -12,6 +12,7 @@ use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Translation\WordList;
 use Ig0rbm\Memo\Service\WordList\WordListManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WordListManagerUnitTest extends TestCase
 {
@@ -24,14 +25,18 @@ class WordListManagerUnitTest extends TestCase
     /** @var WordListPreparer|MockObject */
     private $wordListPreparer;
 
+    /** @var EventDispatcherInterface|MockObject */
+    private $eventDispatcher;
+
     public function setUp(): void
     {
         parent::setUp();
 
         $this->em = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
         $this->wordListPreparer = $this->createMock(WordListPreparer::class) ;
+        $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
 
-        $this->service = new WordListManager($this->em, $this->wordListPreparer);
+        $this->service = new WordListManager($this->em, $this->wordListPreparer, $this->eventDispatcher);
     }
 
     public function testAddFlushThenListExistInDB(): void
