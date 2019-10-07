@@ -4,6 +4,7 @@ namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
+use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 
 class CallbackQuery
 {
@@ -100,5 +101,18 @@ class CallbackQuery
     public function setData(string $data): void
     {
         $this->data = $data;
+    }
+
+    public function getCommand(): ?string
+    {
+        return $this->isDataIsCommand() ? $this->data : null;
+    }
+
+    public function isDataIsCommand(): bool
+    {
+        $matches = [];
+        preg_match(Command::REGEXP, $this->data, $matches);
+
+        return count($matches) >= 1;
     }
 }

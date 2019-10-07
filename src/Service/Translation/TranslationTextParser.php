@@ -10,6 +10,8 @@ class TranslationTextParser
 
     public function parse(string $pattern): string
     {
-       return stristr($pattern, self::TEXT_DIVIDER, true);
+        $string = stristr($pattern, self::TEXT_DIVIDER, true);
+
+        return $string ?: $pattern;
     }
 }

@@ -17,7 +17,7 @@ class MessageTextFinder
     public function find(MessageFrom $messageFrom): ?string
     {
         if ($messageFrom->getReply() === null) {
-            return $messageFrom->getText()->getText();
+            return $this->translationTextParser->parse($messageFrom->getText()->getText());
         }
 
         return $this->translationTextParser->parse($messageFrom->getReply()->getText()->getText());
