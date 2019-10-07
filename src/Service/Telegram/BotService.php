@@ -12,6 +12,7 @@ use Ig0rbm\Memo\Service\Telegram\Command\CommandActionParser;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandParser;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
+use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Psr\Log\LoggerInterface;
 
 class BotService
@@ -59,7 +60,8 @@ class BotService
         $this->dispatchBeforeParseRequest($raw);
 
         $message = $this->messageParser->createMessage($raw);
-        $command = $this->defineCommand($message->getText()->getCommand());
+
+        $command = $this->defineCommand($message);
         $actionCollection = $this->actionParser->createActionList();
 
         /** @var ActionInterface $action */
@@ -86,8 +88,10 @@ class BotService
     /**
      * @throws ParseCommandException
      */
-    private function defineCommand(?string $command): Command
+    private function defineCommand(MessageFrom $from): Command
     {
+        $command = $from->getCallbackCommand() ?: $from->getText()->getCommand();
+
         $commandsBag = $this->commandParser->createCommandCollection();
         if (!$commandsBag->has($command)) {
             return $commandsBag->get(Command::DEFAULT_COMMAND_NAME);

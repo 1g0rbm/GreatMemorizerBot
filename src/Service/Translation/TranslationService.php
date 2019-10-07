@@ -37,9 +37,9 @@ class TranslationService
     ) {
         $this->wordTranslation = $wordTranslation;
         $this->textTranslation = $textTranslation;
-        $this->wordRepository = $wordRepository;
+        $this->wordRepository  = $wordRepository;
         $this->directionParser = $directionParser;
-        $this->messageBuilder = $messageBuilder;
+        $this->messageBuilder  = $messageBuilder;
     }
 
     /**

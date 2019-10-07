@@ -161,4 +161,13 @@ class MessageFrom
     {
         $this->callbackQuery = $callbackQuery;
     }
+
+    public function getCallbackCommand(): ?string
+    {
+        if ($this->callbackQuery === null) {
+            return null;
+        }
+
+        return $this->callbackQuery->getCommand();
+    }
 }
