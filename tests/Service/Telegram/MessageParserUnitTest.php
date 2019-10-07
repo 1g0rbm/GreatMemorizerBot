@@ -2,12 +2,12 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\Text;
 use Ig0rbm\Memo\Service\InitializeAccountService;
 use Ig0rbm\Memo\Service\Telegram\TextParser;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Telegram\Message\From;
 use Ig0rbm\Memo\Service\Telegram\MessageParser;
@@ -105,6 +105,24 @@ class MessageParserUnitTest extends TestCase
         $this->assertNull($message->getReply());
     }
 
+    public function testCreateMessageReturnValidMessageWithCallbackQuery(): void
+    {
+        $this->validator->expects($this->any())
+            ->method('validate')
+            ->willReturn([]);
+
+        $rawMessage = $this->getTestCallbackBotCommandRequest();
+        $message = $this->service->createMessage(json_encode($rawMessage));
+
+        $this->assertSame($rawMessage['callback_query']['message']['message_id'], $message->getMessageId());
+        $this->assertSame($rawMessage['callback_query']['message']['date'], $message->getDate());
+        $this->assertInstanceOf(Text::class, $message->getText());
+        $this->assertInstanceOf(From::class, $message->getFrom());
+        $this->assertInstanceOf(Chat::class, $message->getChat());
+        $this->assertNull($message->getReply());
+        $this->assertSame($rawMessage['callback_query']['data'], $message->getCallbackCommand());
+    }
+
     public function testCreateMessageWithReplyReturnMessage(): void
     {
         $this->validator->expects($this->any())
@@ -138,6 +156,58 @@ class MessageParserUnitTest extends TestCase
         $this->assertInstanceOf(Chat::class, $message->getChat());
         $this->assertInstanceOf(CallbackQuery::class, $message->getCallbackQuery());
         $this->assertSame($rawMessage['callback_query']['data'], $message->getCallbackQuery()->getData());
+        $this->assertNull($message->getCallbackCommand());
+    }
+
+    private function getTestCallbackBotCommandRequest(): array
+    {
+        $firstName = $this->faker->firstName;
+        $lastName = $this->faker->lastName;
+        $username = $this->faker->userName;
+
+        return [
+            'update_id' => $this->faker->unique()->randomNumber(8),
+            'callback_query' => [
+                'id' => $this->faker->unique()->randomNumber(4),
+                'from' => [
+                    'id' => $this->faker->unique()->randomNumber(9),
+                    'is_bot' => false,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'username' => $username,
+                    'language_code' => $this->faker->languageCode,
+                ],
+                'message' => [
+                    'message_id' => $this->faker->unique()->randomNumber(4),
+                    'from' => [
+                        'id' => $this->faker->unique()->randomNumber(9),
+                        'is_bot' => false,
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'username' => $username,
+                        'language_code' => $this->faker->languageCode,
+                    ],
+                    'chat' => [
+                        'id' => $this->faker->unique()->randomNumber(9),
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'username' => $username,
+                        'type' => 'private',
+                    ],
+                    'date' => $this->faker->dateTime->getTimestamp(),
+                    'text' => 'text text text to text at text',
+                    'reply_markup' => [
+                        'inline_keyboard' => [
+                            [
+                                ['text' => 'command', 'callback_data' => '/command'],
+                            ],
+                        ],
+                    ],
+                ],
+                'chat_instance' => '-5844625820849856935',
+                'data' => '/command',
+            ]
+        ];
     }
 
     private function getTestCallbackBotRequest(): array
