@@ -13,7 +13,13 @@ class WordListBuilder
     public function build(WordList $wordList): ParagraphNode
     {
         $words = $wordList->getWords()->toArray();
-        $list = new ParagraphNode();
+        $list  = new ParagraphNode();
+
+        if (empty($words)) {
+            $list->setText('Your remember list is empty');
+
+            return $list;
+        }
 
         /** @var Word $word */
         foreach ($words as $word) {
