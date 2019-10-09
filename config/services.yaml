@@ -7,10 +7,13 @@ parameters:
     telegram_commands:
         /translate:
             text_response: 'What word do you want to translate?'
-            action_class: Ig0rbm\Memo\TelegramAction\TranslationAction
+            action_class: Ig0rbm\Memo\TelegramAction\QuizAction
         /save:
             text_response: 'What word do you wont to save?'
             action_class: Ig0rbm\Memo\TelegramAction\SaveAction
+        /quiz:
+            text_response: 'Let`s quiz start'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizAction
         /show:
             text_response: 'Yor list is empty'
             action_class: Ig0rbm\Memo\TelegramAction\ShowAction
@@ -106,4 +109,7 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\QuizAction:
         public: true
