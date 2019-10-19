@@ -84,6 +84,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: 'memo.word_list_event', method: 'onWordListAction'}
 
+    Ig0rbm\Memo\Service\Quiz\QuizStepBuilder: ~
+
     ##############################################################################################################
     #∨                                                                                                          ∨#
     #∨                                         telegram actions is here                                         ∨#

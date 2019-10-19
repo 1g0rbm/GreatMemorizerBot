@@ -2,11 +2,11 @@
 
 namespace Ig0rbm\Memo\Entity\Quiz;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Ig0rbm\Memo\Entity\Translation\Word;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Ig0rbm\Memo\Entity\Translation\Word;
 
 /**
  * @ORM\Entity
@@ -59,7 +59,7 @@ class QuizStep
      *
      * @var Word[]|Collection
      */
-    private $wrongWords;
+    private $words;
 
     /**
      * @ORM\Column(type="boolean")
@@ -77,7 +77,7 @@ class QuizStep
 
     public function __construct()
     {
-        $this->wrongWords = new ArrayCollection();
+        $this->words = new ArrayCollection();
         $this->isAnswered = false;
         $this->isCorrect  = false;
     }
@@ -112,14 +112,14 @@ class QuizStep
         $this->correctWord = $correctWord;
     }
 
-    public function getWrongWords()
+    public function getWords(): Collection
     {
-        return $this->wrongWords;
+        return $this->words;
     }
 
-    public function setWrongWords($wrongWords): void
+    public function setWords(Collection $wrongWords): void
     {
-        $this->wrongWords = $wrongWords;
+        $this->words = $wrongWords;
     }
 
     public function isAnswered(): bool
