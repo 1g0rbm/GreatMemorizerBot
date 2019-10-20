@@ -29,7 +29,7 @@ class Quiz
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="Ig0rbm\Memo\Entity\Telegram\Message\Chat", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Ig0rbm\Memo\Entity\Telegram\Message\Chat")
      * @ORM\JoinColumn(name="chat_id", referencedColumnName="id")
      *
      * @Assert\NotBlank
@@ -52,12 +52,52 @@ class Quiz
     /**
      * @var QuizStep[]|Collection
      *
-     * @ORM\OneToMany(targetEntity="QuizStep", mappedBy="quiz")
+     * @ORM\OneToMany(targetEntity="QuizStep", mappedBy="quiz", cascade={"persist"})
      */
     private $steps;
 
     public function __construct()
     {
         $this->steps = new ArrayCollection();
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getChat(): Chat
+    {
+        return $this->chat;
+    }
+
+    public function setChat(Chat $chat): void
+    {
+        $this->chat = $chat;
+    }
+
+    public function getLength(): int
+    {
+        return $this->length;
+    }
+
+    public function setLength(int $length): void
+    {
+        $this->length = $length;
+    }
+
+    public function getSteps(): Collection
+    {
+        return $this->steps;
+    }
+
+    public function setSteps(ArrayCollection $steps): void
+    {
+        $this->steps = $steps;
     }
 }

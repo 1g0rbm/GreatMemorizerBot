@@ -31,7 +31,7 @@ class QuizStep
      * @var Quiz
      *
      * @ORM\ManyToOne(targetEntity="Quiz", inversedBy="steps")
-     * @ORM\JoinColumn(name="quiz_step_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      *
      * @Assert\NotBlank
      */
@@ -50,7 +50,7 @@ class QuizStep
     /**
      * @ORM\ManyToMany(targetEntity="Ig0rbm\Memo\Entity\Translation\Word", cascade={"persist"})
      * @ORM\JoinTable(
-     *     name="quiz_step2wrong_words",
+     *     name="quiz_step2words",
      *     joinColumns={@ORM\JoinColumn(name="quiz_step_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")}
      * )
