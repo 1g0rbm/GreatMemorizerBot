@@ -47,7 +47,7 @@ class Quiz
      *
      * @var int
      */
-    private $length;
+    private $length = 0;
 
     /**
      * @var QuizStep[]|Collection
@@ -55,6 +55,13 @@ class Quiz
      * @ORM\OneToMany(targetEntity="QuizStep", mappedBy="quiz", cascade={"persist"})
      */
     private $steps;
+
+    /**
+     * @ORM\Column(type="boolean")
+     *
+     * @var bool
+     */
+    private $isComplete = false;
 
     public function __construct()
     {
@@ -99,5 +106,15 @@ class Quiz
     public function setSteps(ArrayCollection $steps): void
     {
         $this->steps = $steps;
+    }
+
+    public function isComplete(): bool
+    {
+        return $this->isComplete;
+    }
+
+    public function setIsComplete(bool $isComplete): void
+    {
+        $this->isComplete = $isComplete;
     }
 }

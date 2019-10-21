@@ -66,20 +66,18 @@ class QuizStep
      *
      * @var bool
      */
-    private $isAnswered;
+    private $isAnswered = false;
 
     /**
      * @ORM\Column(type="boolean")
      *
      * @var bool
      */
-    private $isCorrect;
+    private $isCorrect = false;
 
     public function __construct()
     {
         $this->words = new ArrayCollection();
-        $this->isAnswered = false;
-        $this->isCorrect  = false;
     }
 
     public function getId(): int
