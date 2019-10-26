@@ -35,6 +35,7 @@ class QuizStepBuilder
 
             if ($step->getWords()->count() === 0) {
                 $step->setCorrectWord($word);
+                $step->setQuiz($quiz);
             }
 
             $step->getWords()->add($word);
