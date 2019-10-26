@@ -110,6 +110,9 @@ class QuizStep
         $this->correctWord = $correctWord;
     }
 
+    /**
+     * @return Collection|Word[]
+     */
     public function getWords(): Collection
     {
         return $this->words;

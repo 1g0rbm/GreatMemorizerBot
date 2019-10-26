@@ -4,6 +4,7 @@ namespace Ig0rbm\Memo\Tests\Service\Quiz;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
+use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,22 +34,46 @@ class QuizStepBuilderUnitTest extends TestCase
      */
     public function testBuildReturnWordCollection(): void
     {
+        $answerCount = 5;
+        $quiz        = new Quiz();
+        $quiz->setLength(5);
+
         $this->wordRepo
             ->expects($this->once())
             ->method('getRandomWords')
-            ->with('en', 5)
+            ->with('en', $quiz->getLength() * $answerCount)
             ->willReturn($this->createWordCollection());
 
-        $step = $this->service->build();
+        $collection = $this->service->buildForQuiz($quiz, $answerCount);
 
-        $this->assertInstanceOf(QuizStep::class, $step);
-        $this->assertEquals('home', $step->getCorrectWord()->getText());
-        $this->assertEquals(5, $step->getWords()->count());
+        $this->assertInstanceOf(ArrayCollection::class, $collection);
+        $this->assertInstanceOf(QuizStep::class, $collection->first());
+        $this->assertEquals(5, $collection->count());
     }
 
     private function createWordCollection(): ArrayCollection
     {
         return new ArrayCollection([
+            $this->createWord('home', 'noun'),
+            $this->createWord('love', 'noun'),
+            $this->createWord('run', 'noun'),
+            $this->createWord('health', 'noun'),
+            $this->createWord('wind', 'noun'),
+            $this->createWord('home', 'noun'),
+            $this->createWord('love', 'noun'),
+            $this->createWord('run', 'noun'),
+            $this->createWord('health', 'noun'),
+            $this->createWord('wind', 'noun'),
+            $this->createWord('home', 'noun'),
+            $this->createWord('love', 'noun'),
+            $this->createWord('run', 'noun'),
+            $this->createWord('health', 'noun'),
+            $this->createWord('wind', 'noun'),
+            $this->createWord('home', 'noun'),
+            $this->createWord('love', 'noun'),
+            $this->createWord('run', 'noun'),
+            $this->createWord('health', 'noun'),
+            $this->createWord('wind', 'noun'),
             $this->createWord('home', 'noun'),
             $this->createWord('love', 'noun'),
             $this->createWord('run', 'noun'),

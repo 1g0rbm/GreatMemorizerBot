@@ -98,6 +98,9 @@ class Quiz
         $this->length = $length;
     }
 
+    /**
+     * @return Collection|QuizStep[]
+     */
     public function getSteps(): Collection
     {
         return $this->steps;

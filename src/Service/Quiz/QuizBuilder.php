@@ -39,10 +39,7 @@ class QuizBuilder
         $quiz = new Quiz();
         $quiz->setChat($chat);
         $quiz->setLength($stepsCount);
-
-        for ($i = 0; $i < $stepsCount; $i++) {
-            $quiz->getSteps()->add($this->quizStepBuilder->buildForQuiz($quiz, $answersCount));
-        }
+        $quiz->setSteps($this->quizStepBuilder->buildForQuiz($quiz, $answersCount));
 
         $this->quizRepository->addQuiz($quiz);
         $this->flusher->flush();

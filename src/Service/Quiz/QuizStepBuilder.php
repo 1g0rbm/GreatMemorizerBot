@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Quiz;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
@@ -20,14 +21,29 @@ class QuizStepBuilder
     /**
      * @throws DBALException
      */
-    public function buildForQuiz(Quiz $quiz, int $answersCount): QuizStep
+    public function buildForQuiz(Quiz $quiz, int $answersCount): ArrayCollection
     {
-        $words = $this->wordRepository->getRandomWords('en', $answersCount);
-        $step  = new QuizStep();
-        $step->setCorrectWord($words->first());
-        $step->setWords($words);
-        $step->setQuiz($quiz);
+        $step       = new QuizStep();
+        $collection = new ArrayCollection();
+        $words      = $this->wordRepository->getRandomWords(
+            'en',
+            $answersCount * $quiz->getLength()
+        );
 
-        return $step;
+        foreach ($words as $word) {
+            $step = isset($step) && $step->getWords()->count() === $answersCount ? new QuizStep() : $step;
+
+            if ($step->getWords()->count() === 0) {
+                $step->setCorrectWord($word);
+            }
+
+            $step->getWords()->add($word);
+
+            if ($step->getWords()->count() === $answersCount) {
+                $collection->add($step);
+            }
+        }
+
+        return $collection;
     }
 }

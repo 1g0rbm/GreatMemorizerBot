@@ -21,14 +21,16 @@ class WordRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return ArrayCollection|Word[]
      * @throws DBALException
      */
-    public function getRandomWords(string $langCode, int $limit): Collection
+    public function getRandomWords(string $langCode, int $limit): ArrayCollection
     {
         $conn     = $this->getConnection();
         $idsQuery = 'SELECT w.id 
                      FROM memo.public.words w
                      WHERE w.lang_code = :langCode
+                     AND w.pos <> \'unclear\'
                      ORDER BY random()
                      LIMIT :limit';
 
