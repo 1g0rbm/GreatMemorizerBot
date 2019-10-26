@@ -4,13 +4,13 @@ namespace Ig0rbm\Memo\Tests\Service\Quiz;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
-use Ig0rbm\Memo\Entity\Quiz\Quiz;
-use Ig0rbm\Memo\Entity\Quiz\QuizStep;
-use Ig0rbm\Memo\Entity\Translation\Word;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 use Ig0rbm\Memo\Service\Quiz\QuizStepBuilder;
+use Ig0rbm\Memo\Entity\Quiz\Quiz;
+use Ig0rbm\Memo\Entity\Quiz\QuizStep;
+use Ig0rbm\Memo\Entity\Translation\Word;
 
 class QuizStepBuilderUnitTest extends TestCase
 {
