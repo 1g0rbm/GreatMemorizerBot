@@ -33,7 +33,7 @@ class QuizStepSerializer
             /** @var Word $translation */
             $translation = reset($arr);
 
-            $line[] = new InlineButton($translation->getText(), '/quiz');
+            $line[] = new InlineButton($translation->getText(), '/quiz_answer ' . $translation->getText());
 
             if (count($line) === 2) {
                 $this->builder->addLine($line);

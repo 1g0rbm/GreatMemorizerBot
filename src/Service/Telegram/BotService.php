@@ -29,6 +29,9 @@ class BotService
     /** @var TelegramApiService */
     private $telegramApiService;
 
+    /** @var TextParser */
+    private $textParser;
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -40,15 +43,17 @@ class BotService
         CommandParser $commandParser,
         CommandActionParser $actionParser,
         TelegramApiService $telegramApiService,
+        TextParser $textParser,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger
     ) {
-        $this->messageParser = $messageParser;
-        $this->commandParser = $commandParser;
-        $this->actionParser = $actionParser;
+        $this->messageParser      = $messageParser;
+        $this->commandParser      = $commandParser;
+        $this->actionParser       = $actionParser;
         $this->telegramApiService = $telegramApiService;
-        $this->dispatcher = $dispatcher;
-        $this->logger = $logger;
+        $this->textParser         = $textParser;
+        $this->dispatcher         = $dispatcher;
+        $this->logger             = $logger;
     }
 
     /**
@@ -90,7 +95,12 @@ class BotService
      */
     private function defineCommand(MessageFrom $from): Command
     {
-        $command = $from->getCallbackCommand() ?: $from->getText()->getCommand();
+        $callback = $from->getCallbackQuery();
+        if ($callback) {
+            $command = $callback->getData()->getCommand();
+        }
+
+        $command = $command ?? $from->getText()->getCommand();
 
         $commandsBag = $this->commandParser->createCommandCollection();
         if (!$commandsBag->has($command)) {

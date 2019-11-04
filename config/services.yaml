@@ -14,6 +14,9 @@ parameters:
         /quiz:
             text_response: 'Let`s quiz start'
             action_class: Ig0rbm\Memo\TelegramAction\QuizAction
+        /quiz_answer:
+            text_response: 'Question not found'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizAnswerAction
         /show:
             text_response: 'Yor list is empty'
             action_class: Ig0rbm\Memo\TelegramAction\ShowAction
@@ -114,4 +117,7 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\QuizAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\QuizAnswerAction:
         public: true

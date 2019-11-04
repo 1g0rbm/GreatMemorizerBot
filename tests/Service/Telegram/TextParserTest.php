@@ -27,7 +27,7 @@ class TextParserTest extends TestCase
 
     public function testParseReturnTextWithText(): void
     {
-        $textString = 'string';
+        $textString = 'delete:word1';
         $text = $this->service->parse($textString);
 
         $this->assertSame($textString, $text->getText());

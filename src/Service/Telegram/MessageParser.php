@@ -126,7 +126,7 @@ class MessageParser
         $query->setId($rawCallbackQuery['id']);
         $query->setFrom($this->createFrom($rawCallbackQuery['from']));
         $query->setChatInstance($rawCallbackQuery['chat_instance']);
-        $query->setData($rawCallbackQuery['data']);
+        $query->setData($this->textParser->parse($rawCallbackQuery['data']));
 
         return $query;
     }

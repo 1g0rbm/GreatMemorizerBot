@@ -39,7 +39,7 @@ class EditAction extends AbstractTelegramAction
 
         $callbackQuery = $messageFrom->getCallbackQuery();
         if ($callbackQuery) {
-            $this->cleaner->clean($messageFrom->getChat(), $callbackQuery->getData());
+            $this->cleaner->clean($messageFrom->getChat(), $callbackQuery->getData()->getText());
         }
 
         $wordList = $this->repository->findDistinctByChat($messageFrom->getChat());
