@@ -39,9 +39,15 @@ class AnswerChecker
         }
 
         $this->do($step, $answer);
+
+        $step = $this->rotator->rotate($quiz);
+        if ($step === null) {
+            $quiz->setIsComplete(true);
+        }
+
         $this->flusher->flush();
 
-        return $this->rotator->rotate($quiz);
+        return $step;
     }
 
     private function do(QuizStep $step, string $answer): QuizStep

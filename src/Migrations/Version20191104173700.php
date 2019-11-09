@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20191021210946 extends AbstractMigration
+final class Version20191104173700 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -28,7 +28,7 @@ final class Version20191021210946 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_A412FA921A9A7125 ON quiz (chat_id)');
         $this->addSql('CREATE TABLE quiz_steps (id INT NOT NULL, quiz_id INT DEFAULT NULL, correct_word_id INT DEFAULT NULL, is_answered BOOLEAN NOT NULL, is_correct BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_C85173F2853CD175 ON quiz_steps (quiz_id)');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_C85173F2821AB4F ON quiz_steps (correct_word_id)');
+        $this->addSql('CREATE UNIQUE INDEX step_correct_word ON quiz_steps (quiz_id, correct_word_id)');
         $this->addSql('CREATE TABLE quiz_step2words (quiz_step_id INT NOT NULL, word_id INT NOT NULL, PRIMARY KEY(quiz_step_id, word_id))');
         $this->addSql('CREATE INDEX IDX_905AD2CB61E8B33C ON quiz_step2words (quiz_step_id)');
         $this->addSql('CREATE INDEX IDX_905AD2CBE357438D ON quiz_step2words (word_id)');
@@ -44,7 +44,6 @@ final class Version20191021210946 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE quiz_steps DROP CONSTRAINT FK_C85173F2853CD175');
         $this->addSql('ALTER TABLE quiz_step2words DROP CONSTRAINT FK_905AD2CB61E8B33C');
         $this->addSql('DROP SEQUENCE quiz_id_seq CASCADE');

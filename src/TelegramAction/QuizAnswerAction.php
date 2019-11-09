@@ -2,61 +2,49 @@
 
 namespace Ig0rbm\Memo\TelegramAction;
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
-use Ig0rbm\Memo\Entity\Translation\Word;
-use Ig0rbm\Memo\Service\Quiz\QuizManager;
-use Psr\Log\LoggerInterface;
+use Ig0rbm\Memo\Service\Quiz\AnswerChecker;
+use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
+use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 
 class QuizAnswerAction extends AbstractTelegramAction
 {
-    /** @var QuizManager */
-    private $quizManager;
+    /** @var AnswerChecker */
+    private $answerChecker;
+    /**
+     * @var QuizStepSerializer
+     */
+    private $serializer;
 
-    /** @var LoggerInterface */
-    private $logger;
-
-    public function __construct(QuizManager $quizManager, LoggerInterface $logger)
+    public function __construct(AnswerChecker $answerChecker, QuizStepSerializer $serializer)
     {
-        $this->quizManager = $quizManager;
-        $this->logger = $logger;
+        $this->answerChecker = $answerChecker;
+        $this->serializer    = $serializer;
     }
 
     /**
-     * @throws DBALException
-     * @throws ORMException
+     * @throws QuizStepException
      */
     public function run(MessageFrom $messageFrom, Command $command): MessageTo
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
-        $quiz = $this->quizManager->getQuizByChat($messageFrom->getChat());
-
-        foreach ($quiz->getSteps() as $step) {
-            if (false === $step->isAnswered()) {
-                break;
-            }
-        }
-
-        /** @var Word $correctTranslation */
-        $correctTranslation = $step->getCorrectWord()->getTranslations()->first();
-
-        $this->logger->critical(
-            'ANSWER',
-            ['correct' => $correctTranslation->getText(), 'answer' => $messageFrom->getCallbackQuery()->getData()->getText()]
+        $step = $this->answerChecker->check(
+            $messageFrom->getChat(),
+            $messageFrom->getCallbackQuery()->getData()->getText()
         );
 
-        if ($correctTranslation->getText() === $messageFrom->getCallbackQuery()->getData()->getText()) {
-            $to->setText('right');
+        if ($step === null) {
+            $to->setText('DONE');
 
             return $to;
         }
 
-        $to->setText('mistake');
+        $to->setText(sprintf('What is russian for "%s"', $step->getCorrectWord()->getText()));
+        $to->setInlineKeyboard($this->serializer->serialize($step));
 
         return $to;
     }

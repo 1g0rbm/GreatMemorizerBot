@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
+use Ig0rbm\Memo\Exception\Quiz\QuizStepBuilderException;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 
 class QuizStepBuilder
@@ -25,24 +26,33 @@ class QuizStepBuilder
     {
         $step       = new QuizStep();
         $collection = new ArrayCollection();
+        $wordsCount = $answersCount * $quiz->getLength();
         $words      = $this->wordRepository->getRandomWords(
             'en',
-            $answersCount * $quiz->getLength()
+            'noun',
+            $wordsCount
         );
 
-        foreach ($words as $word) {
-            $step = isset($step) && $step->getWords()->count() === $answersCount ? new QuizStep() : $step;
+        if ($words->count() % $answersCount !== 0) {
+            throw QuizStepBuilderException::becauseThereAreWrongCountOfWordsFoundInDB($wordsCount, $words->count());
+        }
 
-            if ($step->getWords()->count() === 0) {
+        $stepAnswerCounter = 1;
+        foreach ($words as $word) {
+            $step = isset($step) && $stepAnswerCounter === 1 ? new QuizStep() : $step;
+
+            if ($stepAnswerCounter === 1) {
                 $step->setCorrectWord($word);
                 $step->setQuiz($quiz);
             }
 
             $step->getWords()->add($word);
 
-            if ($step->getWords()->count() === $answersCount) {
+            if ($stepAnswerCounter === $answersCount) {
                 $collection->add($step);
             }
+
+            $stepAnswerCounter = $answersCount === $stepAnswerCounter ? 1 : $stepAnswerCounter + 1;
         }
 
         return $collection;

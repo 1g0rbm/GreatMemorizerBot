@@ -4,7 +4,6 @@ namespace Ig0rbm\Memo\Repository\Translation;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\ORMException;
@@ -12,30 +11,41 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
+use Psr\Log\LoggerInterface;
 
 class WordRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
     {
         parent::__construct($registry, Word::class);
+        $this->logger = $logger;
     }
 
     /**
      * @return ArrayCollection|Word[]
      * @throws DBALException
      */
-    public function getRandomWords(string $langCode, int $limit): ArrayCollection
+    public function getRandomWords(string $langCode, string $pos, int $limit): ArrayCollection
     {
         $conn     = $this->getConnection();
         $idsQuery = 'SELECT w.id 
                      FROM memo.public.words w
                      WHERE w.lang_code = :langCode
-                     AND w.pos <> \'unclear\'
+                     AND w.pos = :pos
                      ORDER BY random()
                      LIMIT :limit';
 
         $stmt = $conn->prepare($idsQuery);
-        $stmt->execute(['langCode' => $langCode, 'limit' => $limit]);
+        $stmt->execute([
+            'langCode' => $langCode,
+            'pos' => $pos,
+            'limit' => $limit
+        ]);
 
         $ids = array_map(
             static function (array $item) {
@@ -43,6 +53,8 @@ class WordRepository extends ServiceEntityRepository
             },
             $stmt->fetchAll()
         );
+
+        $this->logger->critical('IDS: ', ['ids' => $ids]);
 
         $words = $this->getEntityManager()
             ->createQuery(
@@ -52,6 +64,7 @@ class WordRepository extends ServiceEntityRepository
             ->setParameter('ids', $ids)
             ->getResult();
 
+        shuffle($words);
         return new ArrayCollection($words);
     }
 

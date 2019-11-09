@@ -10,7 +10,10 @@ use Ig0rbm\Memo\Entity\Translation\Word;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="quiz_steps")
+ * @ORM\Table(
+ *     name="quiz_steps",
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="step_correct_word", columns={"quiz_id", "correct_word_id"})}
+ * )
  * @ORM\Entity(repositoryClass="Ig0rbm\Memo\Repository\Quiz\QuizStepRepository")
  */
 class QuizStep
