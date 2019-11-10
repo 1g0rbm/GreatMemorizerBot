@@ -32,17 +32,18 @@ class QuizAnswerAction extends AbstractTelegramAction
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
-        $step = $this->answerChecker->check(
+        $quiz = $this->answerChecker->check(
             $messageFrom->getChat(),
             $messageFrom->getCallbackQuery()->getData()->getText()
         );
 
-        if ($step === null) {
+        if ($quiz->isComplete()) {
             $to->setText('DONE');
 
             return $to;
         }
 
+        $step = $quiz->getCurrentStep();
         $to->setText(sprintf('What is russian for "%s"', $step->getCorrectWord()->getText()));
         $to->setInlineKeyboard($this->serializer->serialize($step));
 

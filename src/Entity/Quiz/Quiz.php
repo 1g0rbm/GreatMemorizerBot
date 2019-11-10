@@ -57,6 +57,14 @@ class Quiz
     private $steps;
 
     /**
+     * @var QuizStep
+     *
+     * @ORM\OneToOne(targetEntity="QuizStep")
+     * @ORM\JoinColumn(name="current_step_id", referencedColumnName="id")
+     */
+    private $currentStep;
+
+    /**
      * @ORM\Column(type="boolean")
      *
      * @var bool
@@ -109,6 +117,16 @@ class Quiz
     public function setSteps(ArrayCollection $steps): void
     {
         $this->steps = $steps;
+    }
+
+    public function getCurrentStep(): QuizStep
+    {
+        return $this->currentStep;
+    }
+
+    public function setCurrentStep(QuizStep $currentStep): void
+    {
+        $this->currentStep = $currentStep;
     }
 
     public function isComplete(): bool

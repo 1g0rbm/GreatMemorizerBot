@@ -128,11 +128,14 @@ class AnswerCheckerUnitTest extends TestCase
         $this->flusher->expects($this->once())
             ->method('flush');
 
-        $step = $this->service->check($chat, $answer2);
+        $quiz = $this->service->check($chat, $answer2);
+        $step = $quiz->getCurrentStep();
+
         /** @var Word $word */
         $word = $step->getCorrectWord()->getTranslations()->first();
 
         $this->assertEquals($answer3, $word->getText());
+        $this->assertFalse($quiz->isComplete());
     }
 
     /**
@@ -158,7 +161,9 @@ class AnswerCheckerUnitTest extends TestCase
         $this->flusher->expects($this->once())
             ->method('flush');
 
-        $this->assertNull($this->service->check($chat, $answer1));
+        $quiz = $this->service->check($chat, $answer1);
+
+        $this->assertTrue($quiz->isComplete());
     }
 
     /**

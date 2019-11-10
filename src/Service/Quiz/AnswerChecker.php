@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Quiz;
 
+use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Service\EntityFlusher;
 use Ig0rbm\Memo\Repository\Quiz\QuizRepository;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
@@ -29,7 +30,7 @@ class AnswerChecker
     /**
      * @throws QuizStepException
      */
-    public function check(Chat $chat, string $answer): ?QuizStep
+    public function check(Chat $chat, string $answer): Quiz
     {
         $quiz = $this->quizRepository->getIncompleteQuizByChat($chat);
         $step = $this->rotator->rotate($quiz);
@@ -43,11 +44,13 @@ class AnswerChecker
         $step = $this->rotator->rotate($quiz);
         if ($step === null) {
             $quiz->setIsComplete(true);
+        } else {
+            $quiz->setCurrentStep($step);
         }
 
         $this->flusher->flush();
 
-        return $step;
+        return $quiz;
     }
 
     private function do(QuizStep $step, string $answer): QuizStep
