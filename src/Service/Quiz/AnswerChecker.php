@@ -37,7 +37,7 @@ class AnswerChecker
         $quiz = $this->quizRepository->getIncompleteQuizByChat($chat);
         $step = $quiz->getCurrentStep();
 
-        if($step === null) {
+        if($step->isAnswered()) {
             throw QuizStepException::becauseThereAreNotUnansweredSteps($quiz->getId());
         }
 

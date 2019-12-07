@@ -5,6 +5,7 @@ namespace Ig0rbm\Memo\Tests\Service\Quiz;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionException;
+use Doctrine\ORM\NonUniqueResultException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Service\Quiz\Rotator;
@@ -40,6 +41,7 @@ class AnswerCheckerUnitTest extends TestCase
     }
 
     /**
+     * @throws NonUniqueResultException
      * @throws QuizStepException
      */
     public function testCheckThrowExceptionIfThereIsNotQuiz(): void
@@ -61,28 +63,7 @@ class AnswerCheckerUnitTest extends TestCase
     }
 
     /**
-     * @throws QuizStepException
-     */
-    public function testCheckThrowExceptionIfThereAreNotQuizSteps(): void
-    {
-        $answer = 'answer';
-        $chat   = $this->getChat();
-        $quiz   = $this->getQuiz();
-
-        $this->quizRepository->expects($this->once())
-            ->method('getIncompleteQuizByChat')
-            ->with($chat)
-            ->willReturn($quiz);
-
-        $this->flusher->expects($this->never())
-            ->method('flush');
-
-        $this->expectException(QuizStepException::class);
-
-        $this->service->check($chat, $answer);
-    }
-
-    /**
+     * @throws NonUniqueResultException
      * @throws QuizStepException
      */
     public function testThrowExceptionIfThereAreNotUnansweredQuizSteps(): void
@@ -90,7 +71,8 @@ class AnswerCheckerUnitTest extends TestCase
         $answer = 'answer';
         $chat   = $this->getChat();
         $quiz   = $this->getQuiz();
-        $quiz->getSteps()->add($this->getStep($answer, true));
+        $quiz->getSteps()->add($this->getStep($answer, true, $quiz));
+        $quiz->setCurrentStep($quiz->getSteps()->first());
 
         $this->quizRepository->expects($this->once())
             ->method('getIncompleteQuizByChat')
@@ -106,6 +88,7 @@ class AnswerCheckerUnitTest extends TestCase
     }
 
     /**
+     * @throws NonUniqueResultException
      * @throws QuizStepException
      */
     public function testCheckAndSwipeReturnStepIfThereIsAnotherStep(): void
@@ -116,9 +99,12 @@ class AnswerCheckerUnitTest extends TestCase
         $chat    = $this->getChat();
         $quiz    = $this->getQuiz();
 
-        $quiz->getSteps()->add($this->getStep($answer1, true));
-        $quiz->getSteps()->add($this->getStep($answer2, false));
-        $quiz->getSteps()->add($this->getStep($answer3, false));
+        $step2 = $this->getStep($answer2, false, $quiz);
+        $quiz->getSteps()->add($this->getStep($answer1, true, $quiz));
+        $quiz->getSteps()->add($step2);
+        $quiz->getSteps()->add($this->getStep($answer3, false, $quiz));
+
+        $quiz->setCurrentStep($this->getStep($answer2, false, $quiz));
 
         $this->quizRepository->expects($this->once())
             ->method('getIncompleteQuizByChat')
@@ -134,11 +120,12 @@ class AnswerCheckerUnitTest extends TestCase
         /** @var Word $word */
         $word = $step->getCorrectWord()->getTranslations()->first();
 
-        $this->assertEquals($answer3, $word->getText());
+        $this->assertEquals($answer2, $word->getText());
         $this->assertFalse($quiz->isComplete());
     }
 
     /**
+     * @throws NonUniqueResultException
      * @throws QuizStepException
      */
     public function testCheckAndSwipeReturnNullIfThereIsNotAnotherStep(): void
@@ -149,9 +136,11 @@ class AnswerCheckerUnitTest extends TestCase
         $chat    = $this->getChat();
         $quiz    = $this->getQuiz();
 
-        $quiz->getSteps()->add($this->getStep($answer1, true));
-        $quiz->getSteps()->add($this->getStep($answer2, true));
-        $quiz->getSteps()->add($this->getStep($answer3, false));
+        $quiz->getSteps()->add($this->getStep($answer1, true, $quiz));
+        $quiz->getSteps()->add($this->getStep($answer2, true, $quiz));
+        $quiz->getSteps()->add($this->getStep($answer3, false, $quiz));
+
+        $quiz->setCurrentStep($quiz->getSteps()->last());
 
         $this->quizRepository->expects($this->once())
             ->method('getIncompleteQuizByChat')
@@ -224,11 +213,15 @@ class AnswerCheckerUnitTest extends TestCase
         return $word;
     }
 
-    private function getStep(string $answer, bool $isAnswered): QuizStep
+    private function getStep(string $answer, bool $isAnswered, ?Quiz $quiz = null): QuizStep
     {
         $step = new QuizStep();
         $step->setIsAnswered($isAnswered);
         $step->setCorrectWord($this->getWord($answer));
+
+        if ($quiz) {
+            $step->setQuiz($quiz);
+        }
 
         return $step;
     }
