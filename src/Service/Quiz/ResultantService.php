@@ -8,22 +8,16 @@ use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Exception\Quiz\ResultantException;
 use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
 
-use Psr\Log\LoggerInterface;
 use function implode;
 
 class ResultantService
 {
     /** @var MessageBuilder */
     private $builder;
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
-    public function __construct(MessageBuilder $builder, LoggerInterface $logger)
+    public function __construct(MessageBuilder $builder)
     {
         $this->builder = $builder;
-        $this->logger = $logger;
     }
 
     public function create(Quiz $quiz): string
@@ -37,11 +31,8 @@ class ResultantService
             return $stepA->getId() < $stepB->getId() ? -1 : 1;
         });
 
-        $logger    = $this->logger;
         $builder   = $this->builder;
-        $resultArr = array_map(static function (QuizStep $step) use ($builder, $logger) {
-
-            $logger->critical('AAAAAAAAA', ['step' => $step->getId()]);
+        $resultArr = array_map(static function (QuizStep $step) use ($builder) {
 
             /** @var Word $translation */
             $translation = $step->getCorrectWord()->getTranslations()->first();
