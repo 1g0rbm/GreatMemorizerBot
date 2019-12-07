@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Quiz;
 
+use Doctrine\ORM\NonUniqueResultException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Service\EntityFlusher;
 use Ig0rbm\Memo\Repository\Quiz\QuizRepository;
@@ -29,11 +30,12 @@ class AnswerChecker
 
     /**
      * @throws QuizStepException
+     * @throws NonUniqueResultException
      */
     public function check(Chat $chat, string $answer): Quiz
     {
         $quiz = $this->quizRepository->getIncompleteQuizByChat($chat);
-        $step = $this->rotator->rotate($quiz);
+        $step = $quiz->getCurrentStep();
 
         if($step === null) {
             throw QuizStepException::becauseThereAreNotUnansweredSteps($quiz->getId());
@@ -41,7 +43,7 @@ class AnswerChecker
 
         $this->do($step, $answer);
 
-        $step = $this->rotator->rotate($quiz);
+        $step = $this->rotator->rotate($step->getQuiz());
         if ($step === null) {
             $quiz->setIsComplete(true);
         } else {

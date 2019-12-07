@@ -54,8 +54,6 @@ class WordRepository extends ServiceEntityRepository
             $stmt->fetchAll()
         );
 
-        $this->logger->critical('IDS: ', ['ids' => $ids]);
-
         $words = $this->getEntityManager()
             ->createQuery(
                 'SELECT w

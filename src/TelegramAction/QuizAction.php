@@ -10,7 +10,6 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
-use Psr\Log\LoggerInterface;
 
 class QuizAction extends AbstractTelegramAction
 {
@@ -20,17 +19,12 @@ class QuizAction extends AbstractTelegramAction
     /** @var QuizStepSerializer */
     private $serializer;
 
-    /** @var LoggerInterface */
-    private $logger;
-
     public function __construct(
         QuizManager $quizManager,
-        QuizStepSerializer $serializer,
-        LoggerInterface $logger
+        QuizStepSerializer $serializer
     ) {
         $this->quizManager = $quizManager;
         $this->serializer  = $serializer;
-        $this->logger      = $logger;
     }
 
     /**
@@ -44,12 +38,7 @@ class QuizAction extends AbstractTelegramAction
         $to->setChatId($messageFrom->getChat()->getId());
 
         $quiz = $this->quizManager->getQuizByChat($messageFrom->getChat());
-
-        foreach ($quiz->getSteps() as $step) {
-            if (false === $step->isAnswered()) {
-                break;
-            }
-        }
+        $step = $quiz->getCurrentStep();
 
         if (!isset($step)) {
             throw QuizStepException::becauseThereAreNotQuizSteps($quiz->getId());

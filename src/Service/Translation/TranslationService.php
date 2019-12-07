@@ -9,7 +9,7 @@ use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 use Ig0rbm\Memo\Service\EntityFlusher;
-use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
+use Ig0rbm\Memo\Service\Telegram\TranslationMessageBuilder;
 
 class TranslationService
 {
@@ -25,7 +25,7 @@ class TranslationService
     /** @var DirectionParser */
     private $directionParser;
 
-    /** @var MessageBuilder */
+    /** @var TranslationMessageBuilder */
     private $messageBuilder;
 
     public function __construct(
@@ -33,7 +33,7 @@ class TranslationService
         TextTranslationService $textTranslation,
         WordRepository $wordRepository,
         DirectionParser $directionParser,
-        MessageBuilder $messageBuilder
+        TranslationMessageBuilder $messageBuilder
     ) {
         $this->wordTranslation = $wordTranslation;
         $this->textTranslation = $textTranslation;

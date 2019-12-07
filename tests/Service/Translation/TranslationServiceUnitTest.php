@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Text;
-use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
+use Ig0rbm\Memo\Service\Telegram\TranslationMessageBuilder;
 use Ig0rbm\Memo\Service\Translation\Yandex\DictionaryParser;
 use Ig0rbm\Memo\Service\Translation\DirectionParser;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
@@ -30,7 +30,7 @@ class TranslationServiceUnitTest extends TestCase
     /** @var DirectionParser|MockObject */
     private $directionParser;
 
-    /** @var MessageBuilder|MockObject */
+    /** @var TranslationMessageBuilder|MockObject */
     private $messageBuilder;
 
     /** @var WordRepository|MockObject */
@@ -40,7 +40,7 @@ class TranslationServiceUnitTest extends TestCase
     {
         parent::setUp();
         $this->directionParser = $this->createMock(DirectionParser::class);
-        $this->messageBuilder = $this->createMock(MessageBuilder::class);
+        $this->messageBuilder = $this->createMock(TranslationMessageBuilder::class);
         $this->wordRepository = $this->createMock(WordRepository::class);
         $this->wordTranslationService = $this->createMock(WordTranslationService::class);
         $this->textTranslationService = $this->createMock(TextTranslationService::class);

@@ -53,6 +53,7 @@ class Quiz
      * @var QuizStep[]|Collection
      *
      * @ORM\OneToMany(targetEntity="QuizStep", mappedBy="quiz", cascade={"persist"})
+     * @ORM\OrderBy({"id" = "ASC"})
      */
     private $steps;
 

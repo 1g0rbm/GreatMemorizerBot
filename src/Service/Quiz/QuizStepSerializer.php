@@ -9,6 +9,8 @@ use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
 use Psr\Log\LoggerInterface;
 
+use function shuffle;
+
 class QuizStepSerializer
 {
     /** @var Builder */
@@ -26,8 +28,12 @@ class QuizStepSerializer
 
     public function serialize(QuizStep $quizStep): InlineKeyboard
     {
+        /** @var Word[] $words */
+        $words = $quizStep->getWords()->toArray();
+        shuffle($words);
+
         $line = [];
-        foreach ($quizStep->getWords() as $word) {
+        foreach ($words as $word) {
             $line = count($line) % 2 === 0 ? [] : $line;
             $arr = $word->getTranslations()->toArray();
             /** @var Word $translation */
