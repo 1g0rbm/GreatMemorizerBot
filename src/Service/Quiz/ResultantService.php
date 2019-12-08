@@ -26,14 +26,8 @@ class ResultantService
             ResultantException::becauseQuizIsNotComplete($quiz->getId());
         }
 
-        $steps = $quiz->getSteps()->toArray();
-        usort($steps, static function (QuizStep $stepA, QuizStep $stepB) {
-            return $stepA->getId() < $stepB->getId() ? -1 : 1;
-        });
-
         $builder   = $this->builder;
-        $resultArr = array_map(static function (QuizStep $step) use ($builder) {
-
+        $result = $quiz->getSteps()->map(static function (QuizStep $step) use ($builder) {
             /** @var Word $translation */
             $translation = $step->getCorrectWord()->getTranslations()->first();
             $builder->appendLn($step->isCorrect() ? '✅' : '❌')
@@ -43,8 +37,8 @@ class ResultantService
                 ->appendLn($translation->getText());
 
             return $builder->flush();
-        }, $steps);
+        });
 
-        return implode(PHP_EOL, $resultArr);
+        return implode(PHP_EOL, $result->toArray());
     }
 }
