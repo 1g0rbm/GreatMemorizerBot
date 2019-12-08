@@ -24,10 +24,10 @@ memo-composer-install:
 	docker-compose run --rm memo-php-cli composer install
 
 memo-test:
-	docker-compose run --rm memo-php-cli php bin/phpunit
+	docker-compose run --rm memo-php-cli php bin/phpunit $(arg)
 
 memo-cli:
-	docker-compose run --rm memo-php-cli
+	docker-compose run --rm memo-php-cli $(arg)
 
 run-production-build:
 	docker-compose -f docker-compose-production.yml up -d
@@ -42,9 +42,12 @@ docker-down-staging:
 	docker-compose -f docker-compose-staging.yml down --remove-orphans
 
 memo-composer-install-staging:
-	docker-compose -f docker-compose-staging.yml run --rm memo-php-cli composer install
+	docker-compose -f docker-compose-staging.yml run --rm memo-php-cli-stage composer install
 
-build-image:
+memo-cli-staging:
+	docker-compose -f docker-compose-staging.yml run --rm memo-php-cli-stage $(arg)
+
+build-image: memo-test
 	docker build --pull --file=./docker/production/nginx.dockerfile --tag ${REGISTRY_HOST}/memo-nginx:${REGISTRY_PRODUCTION_TAG} .
 	docker build --pull --file=./docker/production/php-fpm.dockerfile --tag ${REGISTRY_HOST}/memo-php-fpm:${REGISTRY_PRODUCTION_TAG} .
 	docker build --pull --file=./docker/production/postgres.dockerfile --tag ${REGISTRY_HOST}/memo-postgres:${REGISTRY_PRODUCTION_TAG} .
