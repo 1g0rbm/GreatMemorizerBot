@@ -2,7 +2,11 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
+use ReflectionMethod;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Doctrine\ORM\ORMException;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\Text;
@@ -11,11 +15,8 @@ use Ig0rbm\Memo\Service\Telegram\TextParser;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Telegram\Message\From;
 use Ig0rbm\Memo\Service\Telegram\MessageParser;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Faker\Factory;
 use Faker\Generator;
-use ReflectionMethod;
 
 class MessageParserUnitTest extends TestCase
 {
@@ -24,9 +25,6 @@ class MessageParserUnitTest extends TestCase
 
     /** @var MockObject|ValidatorInterface */
     private $validator;
-
-    /** @var MockObject|TextParser */
-    private $textParser;
 
     /** @var MockObject|InitializeAccountService */
     private $initializeAccountService;
@@ -38,11 +36,10 @@ class MessageParserUnitTest extends TestCase
     {
         parent::setUp();
         $this->validator = $this->getMockBuilder(ValidatorInterface::class)->getMock();
-        $this->textParser = $this->createMock(TextParser::class);
         $this->initializeAccountService = $this->createMock(InitializeAccountService::class);
         $this->faker = Factory::create();
 
-        $this->service = new MessageParser($this->validator, $this->textParser, $this->initializeAccountService);
+        $this->service = new MessageParser($this->validator, new TextParser(), $this->initializeAccountService);
     }
 
     public function testCreateChatReturnValidChat(): void
@@ -88,6 +85,9 @@ class MessageParserUnitTest extends TestCase
         $this->assertSame($rawMessage['message']['from']['is_bot'], $from->isBot());
     }
 
+    /**
+     * @throws ORMException
+     */
     public function testCreateMessageReturnValidMessage(): void
     {
         $this->validator->expects($this->any())
@@ -105,6 +105,9 @@ class MessageParserUnitTest extends TestCase
         $this->assertNull($message->getReply());
     }
 
+    /**
+     * @throws ORMException
+     */
     public function testCreateMessageReturnValidMessageWithCallbackQuery(): void
     {
         $this->validator->expects($this->any())
@@ -120,9 +123,12 @@ class MessageParserUnitTest extends TestCase
         $this->assertInstanceOf(From::class, $message->getFrom());
         $this->assertInstanceOf(Chat::class, $message->getChat());
         $this->assertNull($message->getReply());
-        $this->assertSame($rawMessage['callback_query']['data'], $message->getCallbackCommand());
+        $this->assertSame($rawMessage['callback_query']['data'], $message->getCallbackQuery()->getData()->getCommand());
     }
 
+    /**
+     * @throws ORMException
+     */
     public function testCreateMessageWithReplyReturnMessage(): void
     {
         $this->validator->expects($this->any())
@@ -140,6 +146,9 @@ class MessageParserUnitTest extends TestCase
         $this->assertInstanceOf(MessageFrom::class, $message->getReply());
     }
 
+    /**
+     * @throws ORMException
+     */
     public function testCreateCallbackQueryMessage(): void
     {
         $this->validator->expects($this->any())
@@ -155,7 +164,7 @@ class MessageParserUnitTest extends TestCase
         $this->assertInstanceOf(From::class, $message->getFrom());
         $this->assertInstanceOf(Chat::class, $message->getChat());
         $this->assertInstanceOf(CallbackQuery::class, $message->getCallbackQuery());
-        $this->assertSame($rawMessage['callback_query']['data'], $message->getCallbackQuery()->getData());
+        $this->assertSame($rawMessage['callback_query']['data'], $message->getCallbackQuery()->getData()->getText());
         $this->assertNull($message->getCallbackCommand());
     }
 

@@ -2,74 +2,53 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
-use PHPUnit\Framework\TestCase;
-use Ig0rbm\HandyBag\HandyBag;
-use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
-use Faker\Factory;
-use Faker\Generator;
+use PHPUnit\Framework\TestCase;
 
 class MessageBuilderUnitTest extends TestCase
 {
     /** @var MessageBuilder */
     private $service;
 
-    /** @var Generator */
-    private $faker;
-
     public function setUp(): void
     {
         parent::setUp();
+
         $this->service = new MessageBuilder();
-        $this->faker = Factory::create('en_EN');
     }
 
-    public function testBuildReturnValidString(): void
+    public function testAppendLn(): void
     {
-        $bag = new WordsBag();
-        $posList = ['noun', 'verb', 'adjective'];
-        foreach ($posList as $pos) {
-            $word = $this->getWord($pos);
-            $bag->set($word->getPos(), $word);
-        }
+        $str = 'test';
+        $this->service->appendLn($str);
 
-        $string = $this->service->buildFromWords($bag);
-
-        $word = $bag->get('adjective');
-        $this->assertStringEndsWith(sprintf(
-            '*%s: **%s **[%s]*%s    %s%s',
-            $word->getText(),
-            $word->getPos(),
-            $word->getTranscription(),
-            "\n",
-            $word->getTranslations()->first()->getText(),
-            "\n"
-        ), $string);
+        $this->assertSame($str . PHP_EOL, $this->service->flush());
     }
 
-    private function getTranslationCollection(): ArrayCollection
+    public function testAppendLineBreak(): void
     {
-        $word = new Word();
-        $word->setText($this->faker->word);
-        $word->setTranscription($this->faker->word);
-        $word->setPos('aaa');
+        $str = 'test';
+        $this->service->append($str)->addLineBreak();
 
-        $translationCollection = new ArrayCollection();
-        $translationCollection->add($word);
-
-        return $translationCollection;
+        $this->assertStringEndsWith(PHP_EOL, $this->service->flush());
     }
 
-    private function getWord(string $pos): Word
+    public function testAppendAddStringToLine(): void
     {
-        $word = new Word();
-        $word->setText($this->faker->word);
-        $word->setTranscription($this->faker->word);
-        $word->setTranslations($this->getTranslationCollection());
-        $word->setPos($pos);
+        $str = 'test';
+        $this->service->append($str);
 
-        return $word;
+        $this->assertSame($str, $this->service->flush());
+        $this->assertSame('', $this->service->flush());
+    }
+
+    public function testAppendAddSeveralStringsToLine(): void
+    {
+        $str1 = 'test';
+        $str2 = 'bbb';
+
+        $this->service->append($str1)->append($str2);
+
+        $this->assertSame($str1 . $str2, $this->service->flush());
     }
 }

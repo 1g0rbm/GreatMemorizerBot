@@ -35,7 +35,7 @@ class CallbackQuery
     /**
      * @Assert\Type("string")
      *
-     * @var string
+     * @var Text
      */
     private $data;
 
@@ -88,17 +88,17 @@ class CallbackQuery
     }
 
     /**
-     * @return string
+     * @return Text
      */
-    public function getData(): string
+    public function getData(): Text
     {
         return $this->data;
     }
 
     /**
-     * @param string $data
+     * @param Text $data
      */
-    public function setData(string $data): void
+    public function setData(Text $data): void
     {
         $this->data = $data;
     }

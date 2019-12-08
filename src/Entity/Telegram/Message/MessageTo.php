@@ -2,10 +2,10 @@
 
 namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ig0rbm\Memo\Entity\Telegram\Keyboard\ReplyKeyboardRemove;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class MessageTo
 {

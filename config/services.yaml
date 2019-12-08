@@ -7,10 +7,16 @@ parameters:
     telegram_commands:
         /translate:
             text_response: 'What word do you want to translate?'
-            action_class: Ig0rbm\Memo\TelegramAction\TranslationAction
+            action_class: Ig0rbm\Memo\TelegramAction\QuizAction
         /save:
             text_response: 'What word do you wont to save?'
             action_class: Ig0rbm\Memo\TelegramAction\SaveAction
+        /quiz:
+            text_response: 'Let`s quiz start'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizAction
+        /quiz_answer:
+            text_response: 'Question not found'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizAnswerAction
         /show:
             text_response: 'Yor list is empty'
             action_class: Ig0rbm\Memo\TelegramAction\ShowAction
@@ -81,6 +87,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: 'memo.word_list_event', method: 'onWordListAction'}
 
+    Ig0rbm\Memo\Service\Quiz\QuizStepBuilder: ~
+
     ##############################################################################################################
     #∨                                                                                                          ∨#
     #∨                                         telegram actions is here                                         ∨#
@@ -106,4 +114,10 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\QuizAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\QuizAnswerAction:
         public: true

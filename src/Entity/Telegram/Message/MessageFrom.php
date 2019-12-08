@@ -168,6 +168,6 @@ class MessageFrom
             return null;
         }
 
-        return $this->callbackQuery->getCommand();
+        return $this->callbackQuery->getData()->getCommand();
     }
 }

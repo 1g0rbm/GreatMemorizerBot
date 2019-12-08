@@ -3,18 +3,67 @@
 namespace Ig0rbm\Memo\Repository\Translation;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\ORMException;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMInvalidArgumentException;
-use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
+use Psr\Log\LoggerInterface;
 
 class WordRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
     {
         parent::__construct($registry, Word::class);
+        $this->logger = $logger;
+    }
+
+    /**
+     * @return ArrayCollection|Word[]
+     * @throws DBALException
+     */
+    public function getRandomWords(string $langCode, string $pos, int $limit): ArrayCollection
+    {
+        $conn     = $this->getConnection();
+        $idsQuery = 'SELECT w.id 
+                     FROM memo.public.words w
+                     WHERE w.lang_code = :langCode
+                     AND w.pos = :pos
+                     ORDER BY random()
+                     LIMIT :limit';
+
+        $stmt = $conn->prepare($idsQuery);
+        $stmt->execute([
+            'langCode' => $langCode,
+            'pos' => $pos,
+            'limit' => $limit
+        ]);
+
+        $ids = array_map(
+            static function (array $item) {
+                return $item['id'];
+            },
+            $stmt->fetchAll()
+        );
+
+        $words = $this->getEntityManager()
+            ->createQuery(
+                'SELECT w
+                      FROM Ig0rbm\Memo\Entity\Translation\Word w
+                      WHERE w.id IN(:ids)')
+            ->setParameter('ids', $ids)
+            ->getResult();
+
+        shuffle($words);
+        return new ArrayCollection($words);
     }
 
     public function findOneByText(string $text): ?Word
@@ -48,5 +97,10 @@ class WordRepository extends ServiceEntityRepository
     public function addWord(Word $word): void
     {
         $this->getEntityManager()->persist($word);
+    }
+
+    private function getConnection(): Connection
+    {
+        return $this->getEntityManager()->getConnection();
     }
 }
