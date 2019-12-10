@@ -47,6 +47,9 @@ memo-composer-install-staging:
 memo-cli-staging:
 	docker-compose -f docker-compose-staging.yml run --rm memo-php-cli-stage $(arg)
 
+memo-migrate:
+	docker exec -it $(container) "/app/bin/migrate.sh"
+
 build-image: memo-test
 	docker build --pull --file=./docker/production/nginx.dockerfile --tag ${REGISTRY_HOST}/memo-nginx:${REGISTRY_PRODUCTION_TAG} .
 	docker build --pull --file=./docker/production/php-fpm.dockerfile --tag ${REGISTRY_HOST}/memo-php-fpm:${REGISTRY_PRODUCTION_TAG} .
