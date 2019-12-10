@@ -66,5 +66,6 @@ deploy-production:
 	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${STAGING_HOST}; rm -rf docker-compose.yml'
 	scp docker-compose-production.yml ${PRODUCTION_USER}@${PRODUCTION_IP}:/var/www/${PRODUCTION_HOST}/docker-compose.yml
 	scp .env.prod ${PRODUCTION_USER}@${PRODUCTION_IP}:/var/www/${PRODUCTION_HOST}/.env
+	scp Makefile ${PRODUCTION_USER}@${PRODUCTION_IP}:/var/www/${PRODUCTION_HOST}/Makefile
 	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${PRODUCTION_HOST}; docker-compose pull'
 	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${PRODUCTION_HOST}; docker-compose up --build -d'
