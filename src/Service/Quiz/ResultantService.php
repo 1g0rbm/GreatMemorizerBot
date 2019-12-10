@@ -12,8 +12,7 @@ use function implode;
 
 class ResultantService
 {
-    /** @var MessageBuilder */
-    private $builder;
+    private MessageBuilder $builder;
 
     public function __construct(MessageBuilder $builder)
     {

@@ -1,17 +1,10 @@
 <?php
 
-
 namespace Ig0rbm\Memo\Service\Telegram;
 
-/**
- * @package Ig0rbm\Memo\Service\Telegram
- */
 class TokenChecker
 {
-    /**
-     * @var string
-     */
-    private $telegramSecretKey;
+    private string $telegramSecretKey;
 
     public function __construct(string $telegramSecretKey)
     {

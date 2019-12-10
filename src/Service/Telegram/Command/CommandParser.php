@@ -11,8 +11,8 @@ class CommandParser
     public const KEY_TEXT_RESPONSE = 'text_response';
     public const KEY_ACTION_CLASS = 'action_class';
 
-    /** @var array */
-    private $rawCommands;
+    /** @var array[] */
+    private array $rawCommands;
 
     public function __construct(array $rawCommands)
     {

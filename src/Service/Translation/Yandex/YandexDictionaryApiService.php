@@ -14,18 +14,15 @@ class YandexDictionaryApiService implements ApiWordTranslationInterface
 {
     private const LOOKUP_URI = '/api/v1/dicservice.json/lookup';
 
-    /** @var string */
-    private $token;
+    private string $token;
 
-    /** @var Client */
-    private $client;
+    private Client $client;
 
-    /** @var DictionaryParser */
-    private $parser;
+    private DictionaryParser $parser;
 
     public function __construct(string $token, Client $client, DictionaryParser $parser)
     {
-        $this->token = $token;
+        $this->token  = $token;
         $this->client = $client;
         $this->parser = $parser;
     }

@@ -30,6 +30,14 @@ class DictionaryParser
         return $translations;
     }
 
+    /**
+     * @param mixed[] $rawWord
+     * @param Direction $direction
+     *
+     * @return ArrayCollection
+     *
+     * @throws DictionaryParseException
+     */
     public function createWordsCollection(array $rawWord, Direction $direction): ArrayCollection
     {
         $collection = new ArrayCollection();
@@ -49,7 +57,9 @@ class DictionaryParser
      * @param mixed[] $item
      * @param Word $word
      * @param Direction $direction
+     *
      * @return Word
+     *
      * @throws DictionaryParseException
      */
     private function build(array $item, Word $word, Direction $direction): Word

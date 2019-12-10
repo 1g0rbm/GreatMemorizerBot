@@ -12,18 +12,13 @@ use Ig0rbm\Memo\Service\Telegraph\Request\EditPage;
 
 class WordListManager
 {
-    /** @var ApiService */
-    private $telegraphApi;
+    private ApiService $telegraphApi;
 
-    /** @var WordListBuilder */
-    private $builder;
+    private WordListBuilder $builder;
 
-    /** @var AccountRepository */
-    private $accountRepository;
-    /**
-     * @var EntityFlusher
-     */
-    private $flusher;
+    private AccountRepository $accountRepository;
+
+    private EntityFlusher $flusher;
 
     public function __construct(
         ApiService $telegraphApi,

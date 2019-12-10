@@ -11,16 +11,15 @@ use Ig0rbm\Memo\Repository\Translation\DirectionRepository;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
 use Ig0rbm\Memo\Service\Translation\DirectionSwitcher;
 
+use function array_push;
+
 class ShowDirectionButtonAction extends AbstractTelegramAction
 {
-    /** @var DirectionRepository */
-    private $directionRepository;
+    private DirectionRepository $directionRepository;
 
-    /** @var DirectionSwitcher */
-    private $directionSwitcher;
+    private DirectionSwitcher $directionSwitcher;
 
-    /** @var Builder */
-    private $builder;
+    private Builder $builder;
 
     public function __construct(
         DirectionRepository $directionRepository,

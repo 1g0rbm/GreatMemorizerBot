@@ -13,14 +13,11 @@ use Ig0rbm\Memo\Service\InitializeAccountService;
 
 class MessageParser
 {
-    /** @var ValidatorInterface */
-    private $validator;
+    private ValidatorInterface $validator;
 
-    /** @var TextParser */
-    private $textParser;
+    private TextParser $textParser;
 
-    /** @var InitializeAccountService */
-    private $initializeAccount;
+    private InitializeAccountService $initializeAccount;
 
     public function __construct(
         ValidatorInterface $validator,

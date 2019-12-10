@@ -5,6 +5,8 @@ namespace Ig0rbm\Memo\Service\Telegram;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\Text;
 
+use function preg_match;
+
 class TextParser
 {
     public function parse(string $rawText): Text

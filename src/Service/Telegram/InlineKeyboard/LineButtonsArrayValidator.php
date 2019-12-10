@@ -2,15 +2,14 @@
 
 namespace Ig0rbm\Memo\Service\Telegram\InlineKeyboard;
 
-use Ig0rbm\Memo\Exception\Telegram\InlineKeyboard\InlineKeyboardBuildingException;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Ig0rbm\Memo\Exception\Telegram\InlineKeyboard\InlineKeyboardBuildingException;
 use Ig0rbm\Memo\Validator\Constraints\Telegram\InlineKeyboard\InlineButton as AssertInlineButton;
 
 class LineButtonsArrayValidator
 {
-    /** @var ValidatorInterface */
-    private $validator;
+    private ValidatorInterface $validator;
 
     public function __construct(ValidatorInterface $validator)
     {

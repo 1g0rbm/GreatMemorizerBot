@@ -9,22 +9,19 @@ use Ig0rbm\Memo\Repository\Translation\WordRepository;
 
 class WordTranslationService
 {
-    /** @var ApiWordTranslationInterface */
-    private $wordTranslation;
+    private ApiWordTranslationInterface $wordTranslation;
 
-    /** @var WordRepository */
-    private $wordRepository;
+    private WordRepository $wordRepository;
 
-    /** @var WordsPersistService */
-    private $wordsPersistService;
+    private WordsPersistService $wordsPersistService;
 
     public function __construct(
         ApiWordTranslationInterface $wordTranslation,
         WordRepository $wordRepository,
         WordsPersistService $wordsPersistService
     ) {
-        $this->wordTranslation = $wordTranslation;
-        $this->wordRepository = $wordRepository;
+        $this->wordTranslation     = $wordTranslation;
+        $this->wordRepository      = $wordRepository;
         $this->wordsPersistService = $wordsPersistService;
     }
 

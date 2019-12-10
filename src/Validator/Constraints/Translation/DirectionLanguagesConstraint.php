@@ -10,6 +10,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class DirectionLanguagesConstraint extends Constraint
 {
-    /** @var string */
-    public $message = "Field LangFrom {{ lang_from }} can't match with field LangTo {{ lang_to }}";
+    public string $message = "Field LangFrom {{ lang_from }} can't match with field LangTo {{ lang_to }}";
 }

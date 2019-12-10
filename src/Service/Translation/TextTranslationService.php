@@ -7,8 +7,7 @@ use Ig0rbm\Memo\Entity\Translation\Text;
 
 class TextTranslationService
 {
-    /** @var ApiTextTranslationInterface */
-    private $apiTranslation;
+    private ApiTextTranslationInterface $apiTranslation;
 
     public function __construct(ApiTextTranslationInterface $apiTranslation)
     {

@@ -6,8 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class EntityFlusher
 {
-    /** @var EntityManagerInterface */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $em)
     {

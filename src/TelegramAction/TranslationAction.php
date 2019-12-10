@@ -13,14 +13,11 @@ use Ig0rbm\Memo\Service\Translation\TranslationService;
 
 class TranslationAction extends AbstractTelegramAction
 {
-    /** @var TranslationService */
-    private $translationService;
+    private TranslationService $translationService;
 
-    /** @var AccountRepository */
-    private $accountRepository;
+    private AccountRepository $accountRepository;
 
-    /** @var Builder */
-    private $builder;
+    private Builder $builder;
 
     public function __construct(
         TranslationService $translationService,

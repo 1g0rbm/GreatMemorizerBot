@@ -10,5 +10,5 @@ use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery as EntityCallbackQuery;
  */
 class CallbackQuery extends Constraint
 {
-    public $message = 'Field must be type of ' . EntityCallbackQuery::class . '. Instance of {{ instance }} was passed';
+    public string $message = 'Field must be type of ' . EntityCallbackQuery::class . '. Instance of {{ instance }} was passed';
 }

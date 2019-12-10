@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
+use Exception;
 use Traversable;
 use Iterator;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -12,9 +13,11 @@ use Ig0rbm\Memo\Entity\Translation\Word;
 
 class TranslationMessageBuilder
 {
-    /** @var string */
-    private $string = '';
+    private string $string = '';
 
+    /**
+     * @throws Exception
+     */
     public function buildFromCollection(Collection $collection): string
     {
         return $this->buildFromIterable($collection->getIterator());

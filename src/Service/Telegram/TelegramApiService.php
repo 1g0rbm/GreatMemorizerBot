@@ -2,31 +2,28 @@
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
-use Ig0rbm\Memo\Entity\Telegram\Keyboard\ReplyKeyboardRemove;
-use Ig0rbm\Memo\Entity\Telegram\Message\InlineKeyboard;
 use Throwable;
 use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Exception\Telegram\SendMessageException;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Serializer;
+use Ig0rbm\Memo\Entity\Telegram\Keyboard\ReplyKeyboardRemove;
+use Ig0rbm\Memo\Entity\Telegram\Message\InlineKeyboard;
 use GuzzleHttp\Client;
 
 class TelegramApiService
 {
-    /** @var Client */
-    private $client;
+    private Client $client;
 
-    /** @var Serializer */
-    private $serializer;
+    private Serializer $serializer;
 
-    /** @var string */
-    private $token;
+    private string $token;
 
     public function __construct(Client $client, Serializer $serializer, string $token)
     {
-        $this->client   = $client;
+        $this->client     = $client;
         $this->serializer = $serializer;
-        $this->token    = $token;
+        $this->token      = $token;
     }
 
     public function sendMessage(MessageTo $message): string

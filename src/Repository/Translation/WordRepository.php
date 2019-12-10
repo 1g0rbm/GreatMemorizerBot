@@ -11,19 +11,14 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
-use Psr\Log\LoggerInterface;
+
+use function array_map;
 
 class WordRepository extends ServiceEntityRepository
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Word::class);
-        $this->logger = $logger;
     }
 
     /**
@@ -47,19 +42,12 @@ class WordRepository extends ServiceEntityRepository
             'limit' => $limit
         ]);
 
-        $ids = array_map(
-            static function (array $item) {
-                return $item['id'];
-            },
-            $stmt->fetchAll()
-        );
-
         $words = $this->getEntityManager()
             ->createQuery(
                 'SELECT w
                       FROM Ig0rbm\Memo\Entity\Translation\Word w
                       WHERE w.id IN(:ids)')
-            ->setParameter('ids', $ids)
+            ->setParameter('ids', array_map(static fn(array $item) => $item['id'], $stmt->fetchAll()))
             ->getResult();
 
         shuffle($words);

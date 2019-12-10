@@ -14,20 +14,15 @@ use Ig0rbm\Memo\Service\WordList\Telegraph\WordListBuilder;
 
 class WordListShowService
 {
-    /** @var WordListRepository */
-    private $wordListRepository;
+    private WordListRepository $wordListRepository;
 
-    /** @var AccountRepository */
-    private $accountRepository;
+    private AccountRepository $accountRepository;
 
-    /** @var ApiService */
-    private $apiService;
+    private ApiService $apiService;
 
-    /** @var WordListBuilder */
-    private $builder;
+    private WordListBuilder $builder;
 
-    /** @var EntityFlusher */
-    private $flusher;
+    private EntityFlusher $flusher;
 
     public function __construct(
         WordListRepository $wordListRepository,

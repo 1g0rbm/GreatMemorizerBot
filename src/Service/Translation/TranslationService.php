@@ -4,29 +4,21 @@ namespace Ig0rbm\Memo\Service\Translation;
 
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
-use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Translation\Direction;
-use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
-use Ig0rbm\Memo\Service\EntityFlusher;
 use Ig0rbm\Memo\Service\Telegram\TranslationMessageBuilder;
 
 class TranslationService
 {
-    /** @var WordTranslationService */
-    private $wordTranslation;
+    private WordTranslationService $wordTranslation;
 
-    /** @var TextTranslationService */
-    private $textTranslation;
+    private TextTranslationService $textTranslation;
 
-    /** @var WordRepository */
-    private $wordRepository;
+    private WordRepository $wordRepository;
 
-    /** @var DirectionParser */
-    private $directionParser;
+    private DirectionParser $directionParser;
 
-    /** @var TranslationMessageBuilder */
-    private $messageBuilder;
+    private TranslationMessageBuilder $messageBuilder;
 
     public function __construct(
         WordTranslationService $wordTranslation,

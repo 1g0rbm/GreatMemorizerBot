@@ -10,5 +10,5 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom as EntityMessageFrom;
  */
 class MessageFrom extends Constraint
 {
-    public $message = 'Field must be type of ' . EntityMessageFrom::class . '. Instance of {{ instance }} was passed';
+    public string $message = 'Field must be type of ' . EntityMessageFrom::class . '. Instance of {{ instance }} was passed';
 }

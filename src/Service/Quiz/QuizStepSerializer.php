@@ -7,23 +7,16 @@ use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton;
 use Ig0rbm\Memo\Entity\Telegram\Message\InlineKeyboard;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
-use Psr\Log\LoggerInterface;
 
 use function shuffle;
 
 class QuizStepSerializer
 {
-    /** @var Builder */
-    private $builder;
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private Builder $builder;
 
-    public function __construct(Builder $builder, LoggerInterface $logger)
+    public function __construct(Builder $builder)
     {
         $this->builder = $builder;
-        $this->logger = $logger;
     }
 
     public function serialize(QuizStep $quizStep): InlineKeyboard

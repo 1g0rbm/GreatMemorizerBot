@@ -14,16 +14,12 @@ use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 
 class QuizAction extends AbstractTelegramAction
 {
-    /** @var QuizManager */
-    private $quizManager;
+    private QuizManager $quizManager;
 
-    /** @var QuizStepSerializer */
-    private $serializer;
+    private QuizStepSerializer $serializer;
 
-    public function __construct(
-        QuizManager $quizManager,
-        QuizStepSerializer $serializer
-    ) {
+    public function __construct(QuizManager $quizManager, QuizStepSerializer $serializer)
+    {
         $this->quizManager = $quizManager;
         $this->serializer  = $serializer;
     }

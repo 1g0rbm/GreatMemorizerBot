@@ -7,31 +7,35 @@ use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Ig0rbm\Memo\Service\Telegram\Action\ActionContainer;
 
+use function class_exists;
+
 class CommandActionParser
 {
-    /** @var CommandParser */
-    private $commandParser;
+    private CommandParser $commandParser;
 
-    /** @var ActionContainer */
-    private $container;
+    private ActionContainer $container;
 
     public function __construct(CommandParser $commandParser, ActionContainer $container)
     {
         $this->commandParser = $commandParser;
-        $this->container = $container;
+        $this->container     = $container;
     }
 
+    /**
+     * @throws ParseCommandException
+     */
     public function createActionList(): HandyBag
     {
-        $collection = $this->commandParser->createCommandCollection();
+        $collection        = $this->commandParser->createCommandCollection();
         $actionsCollection = new HandyBag();
+        $container         = $this->container;
 
-        $collection->walk(function ($name, Command $command) use ($actionsCollection) {
+        $collection->walk(static function ($name, Command $command) use ($actionsCollection, $container) {
             if (false === class_exists($command->getActionClass())) {
                 throw ParseCommandException::becauseActionClassNotExist($command->getActionClass());
             }
 
-            $actionsCollection->set($command->getActionClass(), $this->container->get($command->getActionClass()));
+            $actionsCollection->set($command->getActionClass(), $container->get($command->getActionClass()));
         });
 
         return $actionsCollection;

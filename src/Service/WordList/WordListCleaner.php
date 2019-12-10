@@ -13,22 +13,19 @@ use Ig0rbm\Memo\Service\EntityFlusher;
 
 class WordListCleaner
 {
-    /** @var WordListRepository */
-    private $repository;
+    private WordListRepository $repository;
 
-    /** @var EntityFlusher */
-    private $flusher;
+    private EntityFlusher $flusher;
 
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         WordListRepository $repository,
         EntityFlusher $flusher,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->repository = $repository;
-        $this->flusher = $flusher;
+        $this->repository      = $repository;
+        $this->flusher         = $flusher;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -39,9 +36,7 @@ class WordListCleaner
             throw WordListCleanerException::becauseThereIsNoWordListForChat($chat->getId());
         }
 
-        $collection = $wordList->getWords()->filter(function (Word $word) use ($cleanWord) {
-            return $word->getText() !== $cleanWord;
-        });
+        $collection = $wordList->getWords()->filter(static fn (Word $word) => $word->getText() !== $cleanWord);
 
         $wordList->setWords($collection);
         $this->flusher->flush();

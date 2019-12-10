@@ -7,5 +7,5 @@ namespace Ig0rbm\Memo\Validator\Constraints\Translation;
  */
 class DirectionAvailableLanguagesConstraint
 {
-    public $message = 'Passing language({{ language }}) must be in the set of available languages.';
+    public string $message = 'Passing language({{ language }}) must be in the set of available languages.';
 }

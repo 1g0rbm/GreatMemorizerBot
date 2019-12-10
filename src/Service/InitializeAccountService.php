@@ -11,17 +11,13 @@ use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 
 class InitializeAccountService
 {
-    /** @var ChatRepository */
-    private $chatRepository;
+    private ChatRepository $chatRepository;
 
-    /** @var AccountRepository */
-    private $accountRepository;
+    private AccountRepository $accountRepository;
 
-    /** @var DirectionRepository */
-    private $directionRepository;
+    private DirectionRepository $directionRepository;
 
-    /** @var EntityFlusher */
-    private $flusher;
+    private EntityFlusher $flusher;
 
     public function __construct(
         ChatRepository $chatRepository,
@@ -29,10 +25,10 @@ class InitializeAccountService
         DirectionRepository $directionRepository,
         EntityFlusher $flusher
     ) {
-        $this->chatRepository = $chatRepository;
-        $this->accountRepository = $accountRepository;
+        $this->chatRepository      = $chatRepository;
+        $this->accountRepository   = $accountRepository;
         $this->directionRepository = $directionRepository;
-        $this->flusher = $flusher;
+        $this->flusher             = $flusher;
     }
 
     /**

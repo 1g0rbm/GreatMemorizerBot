@@ -12,14 +12,11 @@ use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 
 class AnswerChecker
 {
-    /** @var QuizRepository */
-    private $quizRepository;
+    private QuizRepository $quizRepository;
 
-    /** @var Rotator */
-    private $rotator;
+    private Rotator $rotator;
 
-    /** @var EntityFlusher */
-    private $flusher;
+    private EntityFlusher $flusher;
 
     public function __construct(QuizRepository $quizRepository, Rotator $rotator, EntityFlusher $flusher)
     {
@@ -37,18 +34,14 @@ class AnswerChecker
         $quiz = $this->quizRepository->getIncompleteQuizByChat($chat);
         $step = $quiz->getCurrentStep();
 
-        if($step->isAnswered()) {
+        if ($step->isAnswered()) {
             throw QuizStepException::becauseThereAreNotUnansweredSteps($quiz->getId());
         }
 
         $this->do($step, $answer);
 
         $step = $this->rotator->rotate($step->getQuiz());
-        if ($step === null) {
-            $quiz->setIsComplete(true);
-        } else {
-            $quiz->setCurrentStep($step);
-        }
+        $step === null ? $quiz->setIsComplete(true) : $quiz->setCurrentStep($step);
 
         $this->flusher->flush();
 

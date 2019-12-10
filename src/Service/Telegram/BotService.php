@@ -17,26 +17,19 @@ use Psr\Log\LoggerInterface;
 
 class BotService
 {
-    /** @var MessageParser */
-    private $messageParser;
+    private MessageParser $messageParser;
 
-    /** @var CommandParser */
-    private $commandParser;
+    private CommandParser $commandParser;
 
-    /** @var CommandActionParser */
-    private $actionParser;
+    private CommandActionParser $actionParser;
 
-    /** @var TelegramApiService */
-    private $telegramApiService;
+    private TelegramApiService $telegramApiService;
 
-    /** @var TextParser */
-    private $textParser;
+    private TextParser $textParser;
 
-    /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(
         MessageParser $messageParser,

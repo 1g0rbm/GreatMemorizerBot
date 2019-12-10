@@ -9,5 +9,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class InlineButton extends Constraint
 {
-    public $message = 'Element must be type of ' . InlineButton::class . '. Instance of {{ instance }} was passed.';
+    public string $message = 'Element must be type of ' . InlineButton::class . '. Instance of {{ instance }} was passed.';
 }

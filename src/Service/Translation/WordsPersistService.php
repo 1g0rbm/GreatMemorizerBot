@@ -10,16 +10,14 @@ use Ig0rbm\Memo\Service\EntityFlusher;
 
 class WordsPersistService
 {
-    /** @var WordRepository */
-    private $repository;
+    private WordRepository $repository;
 
-    /** @var EntityFlusher */
-    private $flusher;
+    private EntityFlusher $flusher;
 
     public function __construct(WordRepository $repository, EntityFlusher $flusher)
     {
         $this->repository = $repository;
-        $this->flusher = $flusher;
+        $this->flusher    = $flusher;
     }
 
     /**

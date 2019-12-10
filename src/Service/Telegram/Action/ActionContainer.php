@@ -6,8 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ActionContainer
 {
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -18,6 +17,7 @@ class ActionContainer
     {
         /** @var ActionInterface $actionName */
         $actionName = $this->container->get($actionName);
+
         return $actionName;
     }
 }

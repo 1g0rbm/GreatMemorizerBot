@@ -11,8 +11,7 @@ use Ig0rbm\Memo\Repository\Translation\WordRepository;
 
 class QuizStepBuilder
 {
-    /** @var WordRepository */
-    private $wordRepository;
+    private WordRepository $wordRepository;
 
     public function __construct(WordRepository $wordRepository)
     {

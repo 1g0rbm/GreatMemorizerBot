@@ -8,8 +8,6 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 
 /**
  * All telegram actions must implements this interface
- *
- * @package Ig0rbm\Memo\Service\Telegram\Action
  */
 interface ActionInterface
 {

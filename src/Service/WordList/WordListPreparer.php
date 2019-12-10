@@ -9,16 +9,14 @@ use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 
 class WordListPreparer
 {
-    /** @var WordListRepository */
-    private $wordListRepository;
+    private WordListRepository $wordListRepository;
 
-    /** @var ChatRepository */
-    private $chatRepository;
+    private ChatRepository $chatRepository;
 
     public function __construct(WordListRepository $wordListRepository, ChatRepository $chatRepository)
     {
         $this->wordListRepository = $wordListRepository;
-        $this->chatRepository = $chatRepository;
+        $this->chatRepository     = $chatRepository;
     }
 
     public function prepare(Chat $chat): WordList

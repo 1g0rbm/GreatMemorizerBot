@@ -13,14 +13,11 @@ use Ig0rbm\Memo\Service\Quiz\ResultantService;
 
 class QuizAnswerAction extends AbstractTelegramAction
 {
-    /** @var AnswerChecker */
-    private $answerChecker;
+    private AnswerChecker $answerChecker;
 
-    /** @var QuizStepSerializer */
-    private $serializer;
+    private QuizStepSerializer $serializer;
 
-    /** @var ResultantService */
-    private $resultant;
+    private ResultantService $resultant;
 
     public function __construct(
         AnswerChecker $answerChecker,

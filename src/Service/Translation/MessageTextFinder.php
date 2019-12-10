@@ -6,8 +6,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 
 class MessageTextFinder
 {
-    /** @var TranslationTextParser */
-    private $translationTextParser;
+    private TranslationTextParser $translationTextParser;
 
     public function __construct(TranslationTextParser $translationTextParser)
     {

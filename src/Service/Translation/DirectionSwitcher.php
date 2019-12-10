@@ -11,14 +11,11 @@ use Ig0rbm\Memo\Service\EntityFlusher;
 
 class DirectionSwitcher
 {
-    /** @var DirectionRepository */
-    private $directionRepository;
+    private DirectionRepository $directionRepository;
 
-    /** @var AccountRepository */
-    private $accountRepository;
+    private AccountRepository $accountRepository;
 
-    /** @var EntityFlusher */
-    private $flusher;
+    private EntityFlusher $flusher;
 
     public function __construct(
         DirectionRepository $directionRepository,
@@ -26,8 +23,8 @@ class DirectionSwitcher
         EntityFlusher $flusher
     ) {
         $this->directionRepository = $directionRepository;
-        $this->accountRepository = $accountRepository;
-        $this->flusher = $flusher;
+        $this->accountRepository   = $accountRepository;
+        $this->flusher             = $flusher;
     }
 
     public function switch(Chat $chat, int $directionId): Direction

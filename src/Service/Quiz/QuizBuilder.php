@@ -11,14 +11,11 @@ use Ig0rbm\Memo\Service\EntityFlusher;
 
 class QuizBuilder
 {
-    /** @var QuizRepository */
-    private $quizRepository;
+    private QuizRepository $quizRepository;
 
-    /** @var QuizStepBuilder */
-    private $quizStepBuilder;
+    private QuizStepBuilder $quizStepBuilder;
 
-    /** @var EntityFlusher */
-    private $flusher;
+    private EntityFlusher $flusher;
 
     public function __construct(
         QuizRepository $quizRepository,

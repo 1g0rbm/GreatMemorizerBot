@@ -9,9 +9,9 @@ class Rotator
 {
     public function rotate(Quiz $quiz): ?QuizStep
     {
-        $step = $quiz->getSteps()->filter(static function (QuizStep $step) {
-            return $step->isAnswered() === false && $step;
-        })->first();
+        $step = $quiz->getSteps()
+            ->filter(static fn(QuizStep $step) => $step->isAnswered() === false && $step)
+            ->first();
 
         return $step ?: null;
     }

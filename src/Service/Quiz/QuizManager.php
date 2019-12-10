@@ -10,11 +10,9 @@ use Ig0rbm\Memo\Repository\Quiz\QuizRepository;
 
 class QuizManager
 {
-    /** @var QuizBuilder */
-    private $quizBuilder;
+    private QuizBuilder $quizBuilder;
 
-    /** @var QuizRepository */
-    private $quizRepository;
+    private QuizRepository $quizRepository;
 
     public function __construct(QuizBuilder $quizBuilder, QuizRepository $quizRepository)
     {

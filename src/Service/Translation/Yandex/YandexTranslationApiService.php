@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Translation\Yandex;
 
+use Throwable;
 use Symfony\Component\HttpFoundation\Request;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Text;
@@ -9,32 +10,30 @@ use Ig0rbm\Memo\Exception\Translation\Yandex\TranslationException;
 use Ig0rbm\Memo\Service\Translation\ApiTextTranslationInterface;
 use Ig0rbm\Memo\Exception\Translation\Yandex\TranslationParseException;
 use GuzzleHttp\Client;
-use Throwable;
 
 class YandexTranslationApiService implements ApiTextTranslationInterface
 {
     public const LOOKUP_URI = '/api/v1.5/tr.json/translate';
 
-    /** @var string */
-    private $token;
+    private string $token;
 
-    /** @var Client */
-    private $client;
+    private Client $client;
 
-    /** @var TranslationParser */
-    private $translationParser;
+    private TranslationParser $translationParser;
 
     public function __construct(string $token, Client $client, TranslationParser $translationParser)
     {
-        $this->token = $token;
-        $this->client = $client;
+        $this->token             = $token;
+        $this->client            = $client;
         $this->translationParser = $translationParser;
     }
 
     /**
      * @param Direction $direction
      * @param string $phrase
+     *
      * @return Text
+     *
      * @throws TranslationException
      * @throws TranslationParseException
      */

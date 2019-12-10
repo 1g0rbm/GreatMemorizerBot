@@ -8,8 +8,7 @@ use function in_array;
 
 class MessageBuilder
 {
-    /** @var string */
-    private $string = '';
+    private string $string = '';
 
     public const BOLD   = '*%s*';
     public const NORMAL = '%s';

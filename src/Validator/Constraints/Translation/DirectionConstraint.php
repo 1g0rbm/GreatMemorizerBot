@@ -10,6 +10,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class DirectionConstraint extends Constraint
 {
-    /** @var string */
-    public $message = 'Field must be type of ' . Direction::class . '. Instance of {{ instance }} was passed.';
+    public string $message = 'Field must be type of ' . Direction::class . '. Instance of {{ instance }} was passed.';
 }

@@ -13,14 +13,11 @@ use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 
 class WordListManager
 {
-    /** @var EntityManagerInterface */
-    private $em;
+    private EntityManagerInterface $em;
 
-    /** @var WordListPreparer */
-    private $wordListPreparer;
+    private WordListPreparer $wordListPreparer;
 
-    /** @var EventDispatcherInterface */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -35,11 +32,7 @@ class WordListManager
     public function add(Chat $chat, WordsBag $bag): void
     {
         $wordList = $this->wordListPreparer->prepare($chat);
-        $bag->walk(
-            static function ($key, Word $word) use ($wordList) {
-                $wordList->addWord($word);
-            }
-        );
+        $bag->walk(static fn ($key, Word $word) => $wordList->addWord($word));
 
         if (false === $this->em->getUnitOfWork()->isInIdentityMap($wordList)) {
             $this->em->persist($wordList);

@@ -13,14 +13,11 @@ use Ig0rbm\Memo\Service\WordList\WordListCleaner;
 
 class EditAction extends AbstractTelegramAction
 {
-    /** @var Builder */
-    private $builder;
+    private Builder $builder;
 
-    /** @var WordListRepository */
-    private $repository;
+    private WordListRepository $repository;
 
-    /** @var WordListCleaner */
-    private $cleaner;
+    private WordListCleaner $cleaner;
 
     public function __construct(Builder $builder, WordListRepository $repository, WordListCleaner $cleaner)
     {

@@ -14,17 +14,13 @@ use Ig0rbm\Memo\Service\WordList\WordListManager;
 
 class SaveAction extends AbstractTelegramAction
 {
-    /** @var WordTranslationService */
-    private $wordTranslation;
+    private WordTranslationService $wordTranslation;
 
-    /** @var DirectionParser */
-    private $directionParser;
+    private DirectionParser $directionParser;
 
-    /** @var WordListManager */
-    private $manager;
+    private WordListManager $manager;
 
-    /** @var MessageTextFinder */
-    private $textFinder;
+    private MessageTextFinder $textFinder;
 
     public function __construct(
         WordTranslationService $wordTranslation,
@@ -34,8 +30,8 @@ class SaveAction extends AbstractTelegramAction
     ) {
         $this->wordTranslation = $wordTranslation;
         $this->directionParser = $directionParser;
-        $this->manager = $manager;
-        $this->textFinder = $textFinder;
+        $this->manager         = $manager;
+        $this->textFinder      = $textFinder;
     }
 
     /**

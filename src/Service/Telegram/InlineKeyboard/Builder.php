@@ -7,11 +7,9 @@ use Ig0rbm\Memo\Entity\Telegram\Message\InlineKeyboard;
 
 class Builder
 {
-    /** @var InlineKeyboard */
-    private $keyboard;
+    private InlineKeyboard $keyboard;
 
-    /** @var LineButtonsArrayValidator */
-    private $buttonsArrayValidator;
+    private LineButtonsArrayValidator $buttonsArrayValidator;
 
     public function __construct(LineButtonsArrayValidator $buttonsArrayValidator)
     {
