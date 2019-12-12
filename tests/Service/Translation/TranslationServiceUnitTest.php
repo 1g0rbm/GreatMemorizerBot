@@ -2,10 +2,11 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Translation;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\ORMException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Ig0rbm\HandyBag\HandyBag;
+use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Text;
 use Ig0rbm\Memo\Service\Telegram\TranslationMessageBuilder;
@@ -18,8 +19,7 @@ use Ig0rbm\Memo\Repository\Translation\WordRepository;
 
 class TranslationServiceUnitTest extends TestCase
 {
-    /** @var TranslationService */
-    private $service;
+    private TranslationService $service;
 
     /** @var WordTranslationService|MockObject */
     private $wordTranslationService;
@@ -55,6 +55,7 @@ class TranslationServiceUnitTest extends TestCase
     }
 
     /**
+     * @throws DictionaryParseException
      * @throws ORMException
      */
     public function testReturnValidTranslateForWord(): void
@@ -83,6 +84,7 @@ class TranslationServiceUnitTest extends TestCase
     }
 
     /**
+     * @throws DictionaryParseException
      * @throws ORMException
      */
     public function testReturnValidTranslateForText(): void
@@ -114,7 +116,15 @@ class TranslationServiceUnitTest extends TestCase
         $this->assertSame($text->getText(), $this->service->translate($this->getDirection(), $wordForTranslate));
     }
 
-    private function getWordsCollection(Direction $direction, array $dictionary): HandyBag
+    /**
+     * @param Direction $direction
+     * @param array $dictionary
+     *
+     * @return Collection
+     *
+     * @throws DictionaryParseException
+     */
+    private function getWordsCollection(Direction $direction, array $dictionary): Collection
     {
         return (new DictionaryParser())->parse(json_encode($dictionary), $direction);
     }

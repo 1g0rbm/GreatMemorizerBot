@@ -2,8 +2,8 @@
 
 namespace Ig0rbm\Memo\Service\Translation;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\ORMException;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 use Ig0rbm\Memo\Service\EntityFlusher;
@@ -23,10 +23,10 @@ class WordsPersistService
     /**
      * @throws ORMException
      */
-    public function save(WordsBag $collection): void
+    public function save(Collection $collection): void
     {
         /** @var Word $word */
-        foreach ($collection->getIterator() as $word) {
+        foreach ($collection->toArray() as $word) {
             if ($this->repository->findOneByText($word->getText())) {
                 return;
             }

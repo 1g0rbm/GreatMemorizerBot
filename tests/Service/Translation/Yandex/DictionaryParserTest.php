@@ -3,16 +3,16 @@
 namespace Ig0rbm\Memo\Tests\Service\Yandex;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ig0rbm\HandyBag\HandyBag;
-use Ig0rbm\Memo\Entity\Translation\Direction;
+use Doctrine\Common\Collections\Collection;
 use PHPUnit\Framework\TestCase;
+use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
+use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Translation\Yandex\DictionaryParser;
 
 class DictionaryParserTest extends TestCase
 {
-    /** @var DictionaryParser */
-    private $service;
+    private DictionaryParser $service;
 
     public function setUp(): void
     {
@@ -20,24 +20,27 @@ class DictionaryParserTest extends TestCase
         $this->service = new DictionaryParser();
     }
 
+    /**
+     * @throws DictionaryParseException
+     */
     public function testParseReturnWordsCollection(): void
     {
         $dictionary = $this->getDictionaryWithNounAndAdjective();
         $direction = $this->getDirection();
 
         $words = $this->service->parse(json_encode($dictionary), $direction);
-        $this->assertInstanceOf(HandyBag::class, $words);
+        $this->assertInstanceOf(Collection::class, $words);
         $this->assertSame(count($dictionary['def']), $words->count());
 
         /** @var Word $noun */
-        $noun = $words->get('noun');
+        $noun = $words->filter(fn(Word $word) => $word->getPos() === 'noun')->first();
         $this->assertSame($dictionary['def'][0]['text'], $noun->getText());
         $this->assertSame($dictionary['def'][0]['pos'], $noun->getPos());
         $this->assertSame($dictionary['def'][0]['ts'], $noun->getTranscription());
         $this->assertSame($direction->getLangFrom(), $noun->getLangCode());
 
         /** @var Word $adjective */
-        $adjective = $words->get('adjective');
+        $adjective = $words->filter(fn(Word $word) => $word->getPos() === 'adjective')->first();
         $this->assertSame($dictionary['def'][1]['text'], $adjective->getText());
         $this->assertSame($dictionary['def'][1]['pos'], $adjective->getPos());
         $this->assertSame($dictionary['def'][1]['ts'], $adjective->getTranscription());
@@ -60,24 +63,27 @@ class DictionaryParserTest extends TestCase
         $this->assertSame($direction->getLangTo(), $synonym->getLangCode());
     }
 
+    /**
+     * @throws DictionaryParseException
+     */
     public function testParseWhenUnclearPosReturnWordsCollection(): void
     {
         $dictionary = $this->getDictionaryWithAdverbAndUnclear();
         $direction = $this->getDirection();
 
         $words = $this->service->parse(json_encode($dictionary), $direction);
-        $this->assertInstanceOf(HandyBag::class, $words);
+        $this->assertInstanceOf(Collection::class, $words);
         $this->assertSame(count($dictionary['def']), $words->count());
 
         /** @var Word $noun */
-        $noun = $words->get('adverb');
+        $noun = $words->filter(fn(Word $word) => $word->getPos() === 'adverb')->first();
         $this->assertSame($dictionary['def'][0]['text'], $noun->getText());
         $this->assertSame($dictionary['def'][0]['pos'], $noun->getPos());
         $this->assertSame($dictionary['def'][0]['ts'], $noun->getTranscription());
         $this->assertSame($direction->getLangFrom(), $noun->getLangCode());
 
         /** @var Word $adjective */
-        $adjective = $words->get('unclear');
+        $adjective = $words->filter(fn(Word $word) => $word->getPos() === 'unclear')->first();
         $this->assertSame($dictionary['def'][1]['text'], $adjective->getText());
         $this->assertFalse(isset($dictionary['def'][1]['pos']));
         $this->assertSame('unclear', $adjective->getPos());
@@ -101,6 +107,9 @@ class DictionaryParserTest extends TestCase
         $this->assertSame($direction->getLangTo(), $synonym->getLangCode());
     }
 
+    /**
+     * @throws DictionaryParseException
+     */
     public function testParseReturnValidWordWhenDefEmpty(): void
     {
         $dictionary = $this->getEmptyDictionary();
@@ -108,7 +117,7 @@ class DictionaryParserTest extends TestCase
 
         $word = $this->service->parse(json_encode($dictionary), $direction);
 
-        $this->assertInstanceOf(HandyBag::class, $word);
+        $this->assertInstanceOf(Collection::class, $word);
     }
 
     private function getEmptyDictionary(): array

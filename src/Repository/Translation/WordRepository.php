@@ -4,12 +4,12 @@ namespace Ig0rbm\Memo\Repository\Translation;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\ORMException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMInvalidArgumentException;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
 
 use function array_map;
@@ -62,17 +62,17 @@ class WordRepository extends ServiceEntityRepository
         return $word;
     }
 
-    public function findWordsCollection(string $text): ?WordsBag
+    public function findWordsCollection(string $text): ?Collection
     {
+        /** @var Word[] $words */
         $words = $this->findBy(['text' => $text]);
         if (empty($words)) {
             return null;
         }
 
-        $collection = new WordsBag();
-        /** @var Word $word */
+        $collection = new ArrayCollection();
         foreach ($words as $word) {
-            $collection->setWord($word);
+            $collection->add($word);
         }
 
         return $collection;

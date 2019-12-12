@@ -2,8 +2,8 @@
 
 namespace Ig0rbm\Memo\Service\Translation;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\ORMException;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 
@@ -28,15 +28,18 @@ class WordTranslationService
     /**
      * @throws ORMException
      */
-    public function translate(Direction $direction, string $string): WordsBag
+    public function translate(Direction $direction, string $string): Collection
     {
-        $words = $this->wordRepository->findWordsCollection($string);
+        $words = $direction->isSavable() ? $this->wordRepository->findWordsCollection($string) : null;
         if ($words) {
             return $words;
         }
 
         $words = $this->wordTranslation->getTranslate($direction, $string);
-        $this->wordsPersistService->save($words);
+
+        if ($direction->isSavable()) {
+            $this->wordsPersistService->save($words);
+        }
 
         return $words;
     }

@@ -2,10 +2,11 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Translation;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\ORMException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Service\Translation\WordsPersistService;
 use Ig0rbm\Memo\Service\Translation\WordTranslationService;
@@ -14,8 +15,7 @@ use Ig0rbm\Memo\Service\Translation\ApiWordTranslationInterface;
 
 class WordTranslationServiceUnitTest extends TestCase
 {
-    /** @var WordTranslationService */
-    private $service;
+    private WordTranslationService $service;
 
     /** @var ApiWordTranslationInterface|MockObject */
     private $apiWordTranslation;
@@ -48,7 +48,7 @@ class WordTranslationServiceUnitTest extends TestCase
     {
         $text = 'text';
         $direction = $this->getDirection();
-        $bag = $this->getWordsBag();
+        $bag = $this->getCollection();
 
         $this->wordRepository->expects($this->once())
             ->method('findWordsCollection')
@@ -67,7 +67,8 @@ class WordTranslationServiceUnitTest extends TestCase
     {
         $text = 'text';
         $direction = $this->getDirection();
-        $bag = $this->getWordsBag();
+        $direction->setIsSavable(true);
+        $bag = $this->getCollection();
 
         $this->wordRepository->expects($this->once())
             ->method('findWordsCollection')
@@ -88,11 +89,9 @@ class WordTranslationServiceUnitTest extends TestCase
         $this->assertSame($bag, $result);
     }
 
-    private function getWordsBag(): WordsBag
+    private function getCollection(): Collection
     {
-        $bag = new WordsBag();
-
-        return $bag;
+        return new ArrayCollection();
     }
 
     private function getDirection(): Direction
@@ -100,6 +99,7 @@ class WordTranslationServiceUnitTest extends TestCase
         $direction = new Direction();
         $direction->setLangFrom('en');
         $direction->setLangTo('ru');
+        $direction->setIsSavable(true);
 
         return $direction;
     }

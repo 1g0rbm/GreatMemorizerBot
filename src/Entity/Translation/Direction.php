@@ -21,7 +21,7 @@ class Direction
     public const LANG_RU = 'ru';
     public const LANG_EN = 'en';
 
-    public static $availableLanguages = [self::LANG_RU, self::LANG_EN];
+    public static array $availableLanguages = [self::LANG_RU, self::LANG_EN];
 
     /**
      * @ORM\Id
@@ -30,10 +30,8 @@ class Direction
      *
      * @Assert\NotBlank
      * @Assert\Type("integer")
-     *
-     * @var int
      */
-    private $id;
+    private int $id;
 
     /**
      * @Assert\NotBlank;
@@ -41,10 +39,8 @@ class Direction
      * @AssertTranslation\DirectionAvailableLanguagesConstraint
      *
      * @ORM\Column(type="string", length=2)
-     *
-     * @var string
      */
-    private $langFrom;
+    private string $langFrom;
 
     /**
      * @Assert\NotBlank;
@@ -52,10 +48,16 @@ class Direction
      * @AssertTranslation\DirectionAvailableLanguagesConstraint
      *
      * @ORM\Column(type="string", length=2)
-     *
-     * @var string
      */
-    private $langTo;
+    private string $langTo;
+
+    /**
+     * @Assert\NotBlank;
+     * @Assert\Type("boolean")
+     *
+     * @ORM\Column(type="boolean", options={"default": 0})
+     */
+    private bool $isSavable = false;
 
     public function __construct(string $langFrom = Direction::LANG_EN, string $langTo = Direction::LANG_RU)
     {
@@ -96,5 +98,15 @@ class Direction
     public function getDirection(): string
     {
         return sprintf('%s-%s', $this->langFrom, $this->langTo);
+    }
+
+    public function isSavable(): bool
+    {
+        return $this->isSavable;
+    }
+
+    public function setIsSavable(bool $isSavable): void
+    {
+        $this->isSavable = $isSavable;
     }
 }

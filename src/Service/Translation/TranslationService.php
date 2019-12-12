@@ -2,8 +2,8 @@
 
 namespace Ig0rbm\Memo\Service\Translation;
 
+use Exception;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\ORMInvalidArgumentException;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 use Ig0rbm\Memo\Service\Telegram\TranslationMessageBuilder;
@@ -35,12 +35,12 @@ class TranslationService
     }
 
     /**
+     * @throws Exception
      * @throws ORMException
-     * @throws ORMInvalidArgumentException
      */
     public function translate(Direction $direction, string $string): string
     {
-        $words = $this->wordRepository->findWordsCollection($string);
+        $words = $direction->isSavable() ? $this->wordRepository->findWordsCollection($string) : null;
         if ($words) {
             return $this->messageBuilder->buildFromWords($words);
         }

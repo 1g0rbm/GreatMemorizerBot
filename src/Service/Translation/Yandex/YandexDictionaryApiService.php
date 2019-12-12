@@ -2,13 +2,14 @@
 
 namespace Ig0rbm\Memo\Service\Translation\Yandex;
 
+use Throwable;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\Request;
+use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Exception\Translation\Yandex\TranslationException;
 use Ig0rbm\Memo\Service\Translation\ApiWordTranslationInterface;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use GuzzleHttp\Client;
-use Throwable;
 
 class YandexDictionaryApiService implements ApiWordTranslationInterface
 {
@@ -29,8 +30,9 @@ class YandexDictionaryApiService implements ApiWordTranslationInterface
 
     /**
      * @throws TranslationException
+     * @throws DictionaryParseException
      */
-    public function getTranslate(Direction $direction, string $phrase): WordsBag
+    public function getTranslate(Direction $direction, string $phrase): Collection
     {
         try {
             $response = $this->client->request(

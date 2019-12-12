@@ -24,10 +24,8 @@ class Word
      *
      * @Assert\NotBlank
      * @Assert\Type("integer")
-     *
-     * @var int
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="string", length=2)
@@ -35,39 +33,31 @@ class Word
      * @Assert\NotBlank
      * @Assert\Type("string")
      * @Assert\Length(min="2", max="2")
-     *
-     * @var string
      */
-    private $langCode;
+    private string $langCode;
 
     /**
      * @ORM\Column(type="string")
      *
      * @Assert\NotBlank
      * @Assert\Type("string")
-     *
-     * @var string
      */
-    private $text;
+    private string $text;
 
     /**
      * @ORM\Column(type="string", length=100)
      *
      * @Assert\NotBlank
      * @Assert\Type("string")
-     *
-     * @var string
      */
-    private $pos;
+    private string $pos;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      *
      * @Assert\Type("string")
-     *
-     * @var string
      */
-    private $transcription;
+    private ?string $transcription = null;
 
     /**
      * @ORM\ManyToMany(targetEntity="Word", inversedBy="words", cascade={"persist"})
@@ -79,7 +69,7 @@ class Word
      *
      * @var Collection|Word[]
      */
-    private $translations;
+    private Collection $translations;
 
     /**
      * @ORM\ManyToMany(targetEntity="Word", inversedBy="words", cascade={"persist"})
@@ -91,7 +81,7 @@ class Word
      *
      * @var Collection|Word[]
      */
-    private $synonyms;
+    private Collection $synonyms;
 
     public function __construct()
     {

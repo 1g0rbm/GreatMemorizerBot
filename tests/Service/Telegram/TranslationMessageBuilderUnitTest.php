@@ -2,10 +2,9 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
+use Exception;
 use Doctrine\Common\Collections\ArrayCollection;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use PHPUnit\Framework\TestCase;
-use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Telegram\TranslationMessageBuilder;
 use Faker\Factory;
@@ -13,31 +12,33 @@ use Faker\Generator;
 
 class TranslationMessageBuilderUnitTest extends TestCase
 {
-    /** @var TranslationMessageBuilder */
-    private $service;
+    private TranslationMessageBuilder $service;
 
-    /** @var Generator */
-    private $faker;
+    private Generator $faker;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->service = new TranslationMessageBuilder();
-        $this->faker = Factory::create('en_EN');
+        $this->faker   = Factory::create('en_EN');
     }
 
+    /**
+     * @throws Exception
+     */
     public function testBuildReturnValidString(): void
     {
-        $bag = new WordsBag();
+        $bag = new ArrayCollection();
         $posList = ['noun', 'verb', 'adjective'];
         foreach ($posList as $pos) {
             $word = $this->getWord($pos);
-            $bag->set($word->getPos(), $word);
+            $bag->add($word);
         }
 
         $string = $this->service->buildFromWords($bag);
 
-        $word = $bag->get('adjective');
+        /** @var Word $word */
+        $word = $bag->filter(fn(Word $word) => $word->getPos() === 'adjective')->first();
         $this->assertStringEndsWith(sprintf(
             '*%s: **%s **[%s]*%s    %s%s',
             $word->getText(),

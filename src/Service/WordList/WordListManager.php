@@ -2,10 +2,10 @@
 
 namespace Ig0rbm\Memo\Service\WordList;
 
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Event\WordList\Telegraph\WordListEvent;
 use Ig0rbm\Memo\Exception\WordList\WordListException;
@@ -29,10 +29,10 @@ class WordListManager
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function add(Chat $chat, WordsBag $bag): void
+    public function add(Chat $chat, Collection $bag): void
     {
         $wordList = $this->wordListPreparer->prepare($chat);
-        $bag->walk(static fn ($key, Word $word) => $wordList->addWord($word));
+        $bag->map(static fn (Word $word) => $wordList->addWord($word));
 
         if (false === $this->em->getUnitOfWork()->isInIdentityMap($wordList)) {
             $this->em->persist($wordList);
