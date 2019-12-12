@@ -3,16 +3,19 @@
 namespace Ig0rbm\Memo\Service\Translation\Yandex;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
+use Doctrine\Common\Collections\Collection;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
 
 class DictionaryParser
 {
-    public function parse(string $json, Direction $direction): ?WordsBag
+    /**
+     * @throws DictionaryParseException
+     */
+    public function parse(string $json, Direction $direction): ?Collection
     {
-        $translations = new WordsBag();
+        $translations = new ArrayCollection();
         $arr = json_decode($json, true);
 
         if (false === isset($arr['def'])) {
@@ -24,7 +27,7 @@ class DictionaryParser
             $word->setLangCode($direction->getLangFrom());
             $word = $this->build($item, $word, $direction);
 
-            $translations->set($word->getPos(), $word);
+            $translations->add($word);
         }
 
         return $translations;

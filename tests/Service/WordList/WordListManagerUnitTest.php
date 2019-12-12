@@ -2,11 +2,12 @@
 
 namespace Ig0rbm\Memo\Tests\Service\WordList;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
-use Ig0rbm\Memo\Entity\Translation\Word;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\WordList\WordListPreparer;
 use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
@@ -16,8 +17,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WordListManagerUnitTest extends TestCase
 {
-    /** @var WordListManager */
-    private $service;
+    private WordListManager $service;
 
     /** @var EntityManagerInterface|MockObject */
     private $em;
@@ -41,9 +41,9 @@ class WordListManagerUnitTest extends TestCase
 
     public function testAddFlushThenListExistInDB(): void
     {
-        $bag = new WordsBag();
-        $bag->setWord($this->createWord('noun'));
-        $bag->setWord($this->createWord('verb'));
+        $bag = new ArrayCollection();
+        $bag->add($this->createWord('noun'));
+        $bag->add($this->createWord('verb'));
         $chat = new Chat();
         $wordList = new WordList();
 

@@ -5,9 +5,7 @@ namespace Ig0rbm\Memo\Service\Telegram;
 use Exception;
 use Traversable;
 use Iterator;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Text;
 use Ig0rbm\Memo\Entity\Translation\Word;
 
@@ -23,14 +21,16 @@ class TranslationMessageBuilder
         return $this->buildFromIterable($collection->getIterator());
     }
 
-    public function buildFromWords(WordsBag $words): string
+    /**
+     * @throws Exception
+     */
+    public function buildFromWords(Collection $words): string
     {
         return $this->buildFromIterable($words->getIterator());
     }
 
     /**
-     * @param Traversable|Iterator $wordsIterator
-     * @return string
+     * @throws Exception
      */
     public function buildFromIterable(Traversable $wordsIterator): string
     {
@@ -61,6 +61,11 @@ class TranslationMessageBuilder
         return $this->string;
     }
 
+    /**
+     * @param Collection|Word[] $collection
+     * @return $this
+     * @throws Exception
+     */
     private function appendSynonyms(Collection $collection): self
     {
         /** @var Iterator $iterator */
@@ -78,8 +83,11 @@ class TranslationMessageBuilder
     }
 
     /**
-     * @param Collection|ArrayCollection $translation
-     * @return TranslationMessageBuilder
+     * @param Collection $translation
+     *
+     * @return $this
+     *
+     * @throws Exception
      */
     private function appendTranslation(Collection $translation): self
     {

@@ -18,23 +18,18 @@ class SaveActionTest extends WebTestCase
 {
     private const CHAT_ID = 233575306;
 
-    /** @var string */
-    private $secret;
+    private string $secret;
 
-    /** @var Generator */
-    private $faker;
+    private Generator $faker;
 
     /** @var string[] */
-    private $wordList;
+    private array $wordList;
 
-    /** @var WordListRepository */
-    private $wordListRepository;
+    private WordListRepository $wordListRepository;
 
-    /** @var ChatRepository */
-    private $chatRepository;
+    private ChatRepository $chatRepository;
 
-    /** @var WordRepository */
-    private $wordRepository;
+    private WordRepository $wordRepository;
 
     public function setUp()
     {

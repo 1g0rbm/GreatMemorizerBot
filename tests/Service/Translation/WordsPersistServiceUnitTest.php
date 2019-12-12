@@ -2,10 +2,11 @@
 
 namespace Ig0rbm\Memo\Tests\Service\Translation;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\ORMException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Ig0rbm\Memo\Collection\Translation\WordsBag;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\EntityFlusher;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
@@ -13,8 +14,7 @@ use Ig0rbm\Memo\Service\Translation\WordsPersistService;
 
 class WordsPersistServiceUnitTest extends TestCase
 {
-    /** @var WordsPersistService */
-    private $service;
+    private WordsPersistService $service;
 
     /** @var WordRepository|MockObject */
     private $wordRepository;
@@ -37,7 +37,7 @@ class WordsPersistServiceUnitTest extends TestCase
      */
     public function testSaveStoppedWhenThereAreNoWords(): void
     {
-        $bag = new WordsBag();
+        $bag = new ArrayCollection();
 
         $this->wordRepository->expects($this->never())->method('findOneByText');
         $this->wordRepository->expects($this->never())->method('addWord');
@@ -55,28 +55,28 @@ class WordsPersistServiceUnitTest extends TestCase
 
         $this->wordRepository->expects($this->at(0))
             ->method('findOneByText')
-            ->with($bag->getWordByPos(Word::POS_NOUN)->getText());
+            ->with($bag->filter(fn (Word $word) => $word->getPos() === Word::POS_NOUN)->first()->getText());
 
         $this->wordRepository->expects($this->at(1))
             ->method('addWord')
-            ->with($bag->getWordByPos(Word::POS_NOUN));
+            ->with($bag->filter(fn (Word $word) => $word->getPos() === Word::POS_NOUN)->first());
 
         $this->wordRepository->expects($this->at(2))
             ->method('findOneByText')
-            ->with($bag->getWordByPos(Word::POS_VERB)->getText());
+            ->with($bag->filter(fn (Word $word) => $word->getPos() === Word::POS_VERB)->first()->getText());
 
         $this->wordRepository->expects($this->at(3))
             ->method('addWord')
-            ->with($bag->getWordByPos(Word::POS_VERB));
+            ->with($bag->filter(fn (Word $word) => $word->getPos() === Word::POS_VERB)->first());
 
         $this->flusher->expects($this->once())->method('flush');
 
         $this->service->save($bag);
     }
 
-    private function getWordsBagWithTwoWords(): WordsBag
+    private function getWordsBagWithTwoWords(): Collection
     {
-        $bag = new WordsBag();
+        $bag = new ArrayCollection();
 
         $word1 = new Word();
         $word1->setText('word1');
@@ -86,8 +86,8 @@ class WordsPersistServiceUnitTest extends TestCase
         $word2->setText('word2');
         $word2->setPos(Word::POS_VERB);
 
-        $bag->setWord($word1);
-        $bag->setWord($word2);
+        $bag->add($word1);
+        $bag->add($word2);
 
         return $bag;
     }

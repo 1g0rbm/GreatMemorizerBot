@@ -20,8 +20,7 @@ use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
  */
 class   ApiServiceTest extends WebTestCase
 {
-    /** @var ApiService */
-    private $service;
+    private ApiService $service;
 
     public function setUp(): void
     {
