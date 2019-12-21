@@ -6,11 +6,9 @@ class ReplyKeyboardRemove
 {
     public const KEY_NAME = 'remove_keyboard';
 
-    /** @var bool */
-    private $removeKeyboard = true;
+    private bool $removeKeyboard = true;
 
-    /** @var bool */
-    private $selective = false;
+    private bool $selective = false;
 
     public function isRemoveKeyboard(): bool
     {

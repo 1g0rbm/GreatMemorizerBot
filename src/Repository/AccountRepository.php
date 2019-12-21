@@ -15,6 +15,14 @@ class AccountRepository extends ServiceEntityRepository
         parent::__construct($registry, Account::class);
     }
 
+    /**
+     * @return Account[]
+     */
+    public function findAll(): array
+    {
+        return parent::findAll();
+    }
+
     public function findOneByChat(Chat $chat): ?Account
     {
         /** @var Account $account */
