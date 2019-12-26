@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Event\Telegram;
 
 use Symfony\Component\EventDispatcher\Event;
@@ -10,10 +12,8 @@ class BeforeParseRequestEvent extends Event
 
     /**
      * Raw json string receive from telegram
-     *
-     * @var string
      */
-    private $request;
+    private string $request;
 
     public function __construct(string $request)
     {

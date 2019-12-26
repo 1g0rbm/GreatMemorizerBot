@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Account;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Ig0rbm\Memo\Exception\Telegram\AccountException;
 
 class AccountRepository extends ServiceEntityRepository
 {
@@ -21,6 +22,17 @@ class AccountRepository extends ServiceEntityRepository
     public function findAll(): array
     {
         return parent::findAll();
+    }
+
+    public function getOneByChatId(int $chatId): Account
+    {
+        /** @var Account $account */
+        $account = $this->findOneBy(['chatId' => $chatId]);
+        if ($account === null) {
+            throw AccountException::becauseThereIsNotAccountForChat($chatId);
+        }
+
+        return $account;
     }
 
     public function findOneByChat(Chat $chat): ?Account

@@ -83,4 +83,14 @@ class MessageTo
     {
         return $this->replyMarkup->get(ReplyKeyboardRemove::KEY_NAME);
     }
+
+    public function setReplyKeyboard(ReplyKeyboard $replyKeyboard): void
+    {
+        $this->replyMarkup->set(ReplyKeyboard::KEY_NAME, $replyKeyboard);
+    }
+
+    public function getReplyKeyboard(): ?ReplyKeyboard
+    {
+        return $this->replyMarkup->get(ReplyKeyboard::KEY_NAME);
+    }
 }

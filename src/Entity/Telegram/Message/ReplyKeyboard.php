@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 
 class ReplyKeyboard
 {
-    public const KEY_NAME = 'reply_keyboard';
+    public const KEY_NAME = 'keyboard';
 
     private Collection $buttonsLines;
 
@@ -19,7 +19,7 @@ class ReplyKeyboard
     }
 
     /**
-     * @return ArrayCollection|Collection|ReplyButton[]
+     * @return ArrayCollection|Collection
      */
     public function getButtonsLines()
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\Translation;
 
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
@@ -27,17 +29,11 @@ class DirectionSwitcher
         $this->flusher             = $flusher;
     }
 
-    public function switch(Chat $chat, int $directionId): Direction
+    public function switch(Chat $chat, Direction $direction): Direction
     {
         $account = $this->accountRepository->findOneByChat($chat);
         if ($account === null) {
             throw DirectionSwitchException::becauseNotFoundAccountForSwitch($chat->getId());
-        }
-
-        /** @var Direction $direction */
-        $direction = $this->directionRepository->find($directionId);
-        if ($direction === null) {
-            throw DirectionSwitchException::becauseNotFoundDirectionForSwitch($directionId);
         }
 
         $account->setDirection($direction);

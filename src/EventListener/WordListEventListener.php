@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\EventListener;
 
 use Ig0rbm\Memo\Event\WordList\Telegraph\WordListEvent;
 use Ig0rbm\Memo\Service\WordList\Telegraph\WordListManager;
-use Psr\Log\LoggerInterface;
 
 class WordListEventListener
 {
-    /** @var WordListManager */
-    private $manager;
+    private WordListManager $manager;
 
     public function __construct(WordListManager $manager)
     {

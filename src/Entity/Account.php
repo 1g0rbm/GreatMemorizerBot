@@ -29,6 +29,14 @@ class Account
     private int $id;
 
     /**
+     * @ORM\Column(type="integer")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     */
+    private int $chatId;
+
+    /**
      * @Assert\NotBlank
      * @TelegramMessageAssert\Chat
      *
@@ -71,6 +79,16 @@ class Account
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    public function getChatId(): int
+    {
+        return $this->chatId;
+    }
+
+    public function setChatId(int $chatId): void
+    {
+        $this->chatId = $chatId;
     }
 
     public function getChat(): Chat

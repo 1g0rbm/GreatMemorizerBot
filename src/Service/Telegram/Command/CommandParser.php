@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\Telegram\Command;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
@@ -9,7 +12,8 @@ use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 class CommandParser
 {
     public const KEY_TEXT_RESPONSE = 'text_response';
-    public const KEY_ACTION_CLASS = 'action_class';
+    public const KEY_ACTION_CLASS  = 'action_class';
+    public const KEY_ALIASES       = 'aliases';
 
     /** @var array[] */
     private array $rawCommands;
@@ -43,6 +47,10 @@ class CommandParser
             $command->setTextResponse($value[self::KEY_TEXT_RESPONSE]);
             $command->setActionClass($value[self::KEY_ACTION_CLASS]);
             $command->setCommand($commandName);
+
+            if (isset($value[self::KEY_ALIASES])) {
+                $command->setAliases(new ArrayCollection($value[self::KEY_ALIASES]));
+            }
 
             $bag->set($commandName, $command);
         }

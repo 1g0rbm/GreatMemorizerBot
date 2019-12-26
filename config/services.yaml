@@ -26,6 +26,12 @@ parameters:
         /switch:
             text_response: 'Choose translation direction'
             action_class: Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction
+        /change:
+            text_response: 'Yor direction now is %s'
+            action_class: Ig0rbm\Memo\TelegramAction\ChangeDirectionAction
+            aliases:
+                - 'ru-en'
+                - 'en-ru'
         /hello:
             text_response: 'Hello!'
             action_class: Ig0rbm\Memo\TelegramAction\HelloAction
@@ -87,6 +93,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: 'memo.word_list_event', method: 'onWordListAction'}
 
+    Ig0rbm\Memo\EventListener\Telegram\BeforeResponseSendEventListener:
+        tags:
+            - { name: kernel.event_listener, event: 'bot.before_send_response', method: 'onBeforeResponseSend'}
+
     Ig0rbm\Memo\Service\Quiz\QuizStepBuilder: ~
 
     ##############################################################################################################
@@ -120,4 +130,7 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\QuizAnswerAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\ChangeDirectionAction:
         public: true
