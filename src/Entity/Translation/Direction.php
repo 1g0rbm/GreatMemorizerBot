@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Entity\Translation;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Ig0rbm\Memo\Validator\Constraints\Translation as AssertTranslation;
+use Symfony\Component\Validator\Constraints as Assert;
+use function sprintf;
 
 /**
  * @ORM\Entity
@@ -22,6 +25,16 @@ class Direction
     public const LANG_EN = 'en';
 
     public static array $availableLanguages = [self::LANG_RU, self::LANG_EN];
+
+    public static function getRuEn(): string
+    {
+        return sprintf('%s-%s', self::LANG_RU, self::LANG_EN);
+    }
+
+    public static function getEnRu(): string
+    {
+        return sprintf('%s-%s',self::LANG_EN, self::LANG_RU);
+    }
 
     /**
      * @ORM\Id

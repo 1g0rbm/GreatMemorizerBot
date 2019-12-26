@@ -1,19 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Tests\Service\Telegram\Command;
 
-use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
-use Ig0rbm\Memo\Entity\Telegram\Command\Command;
-use Ig0rbm\Memo\Service\Telegram\Command\CommandParser;
-use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Ig0rbm\HandyBag\HandyBag;
+use Ig0rbm\Memo\Entity\Telegram\Command\Command;
+use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
+use Ig0rbm\Memo\Service\Telegram\Command\CommandParser;
+use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
 class CommandParserUnitTest extends TestCase
 {
-    /**
-     * @var CommandParser
-     */
-    private $service;
+
+    private CommandParser $service;
 
     public function setUp(): void
     {
@@ -58,12 +58,28 @@ class CommandParserUnitTest extends TestCase
         $command = $bag->get('/hello');
         $this->assertSame('Hello you too!', $command->getTextResponse());
         $this->assertSame('/hello', $command->getCommand());
+        $this->assertEquals(0, $command->getAliases()->count());
 
         $this->assertTrue($bag->has('default'));
 
         /** @var Command $command */
         $command = $bag->get('default');
         $this->assertTrue($command->isDefault());
+    }
+
+    /**
+     * @throws ParseCommandException
+     */
+    public function testCreateCommandWithAlias(): void
+    {
+        $bag = $this->service->createCommandCollection();
+
+        $this->assertTrue($bag->has('/test'));
+
+        /** @var Command $command */
+        $command = $bag->get('/test');
+        $this->assertEquals(2, $command->getAliases()->count());
+        $this->assertEquals('ru-en', $command->getAliases()->first());
     }
 
     /**
@@ -79,11 +95,16 @@ class CommandParserUnitTest extends TestCase
         return [
             '/hello' => [
                 'text_response' => 'Hello you too!',
-                'action_class' => 'Test/ClassName'
+                'action_class'  => 'Test/ClassName',
+            ],
+            '/test' => [
+                'text_response' => 'Test!',
+                'action_class'  => 'Test/ClassName',
+                'aliases'       => ['ru-en', 'en-ru'],
             ],
             'default' => [
                 'text_response' => 'undefined command',
-                'action_class' => 'Test/ClassName'
+                'action_class'  => 'Test/ClassName'
             ]
         ];
     }

@@ -1,19 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\Telegram;
 
-use Throwable;
 use Doctrine\ORM\ORMException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Ig0rbm\Memo\Entity\Telegram\Command\Command;
+use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Event\Telegram\BeforeParseRequestEvent;
+use Ig0rbm\Memo\Event\Telegram\BeforeSendResponseEvent;
+use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Ig0rbm\Memo\Service\Telegram\Action\ActionInterface;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandActionParser;
-use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandParser;
-use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
-use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Throwable;
+
+use function array_filter;
+use function array_shift;
+use function count;
 
 class BotService
 {
@@ -60,6 +67,9 @@ class BotService
         $message = $this->messageParser->createMessage($raw);
 
         $command = $this->defineCommand($message);
+
+        $this->logger->error('DEFINE COMMAND', ['command' => $command->getCommand()]);
+
         $actionCollection = $this->actionParser->createActionList();
 
         /** @var ActionInterface $action */
@@ -74,6 +84,8 @@ class BotService
             $response->setChatId($message->getChat()->getId());
             $response->setText(sprintf('Error during handle message "%s"', $message->getText()->getText()));
         }
+
+        $this->dispatcher->dispatch(BeforeSendResponseEvent::NAME, new BeforeSendResponseEvent($response));
 
         $this->telegramApiService->sendMessage($response);
     }
@@ -96,10 +108,19 @@ class BotService
         $command = $command ?? $from->getText()->getCommand();
 
         $commandsBag = $this->commandParser->createCommandCollection();
-        if (!$commandsBag->has($command)) {
-            return $commandsBag->get(Command::DEFAULT_COMMAND_NAME);
+        if ($commandsBag->has($command)) {
+            return $commandsBag->get($command);
         }
 
-        return $commandsBag->get($command);
+        $commands = array_filter(
+            $commandsBag->getAll(),
+            fn(Command $command) => $command->getAliases()->contains($from->getText()->getText())
+        );
+
+        $this->logger->error('COMMANDS', ['commands' => array_keys($commands)]);
+
+        return count($commands) > 0 ?
+            array_shift($commands) :
+            $commandsBag->get(Command::DEFAULT_COMMAND_NAME);
     }
 }

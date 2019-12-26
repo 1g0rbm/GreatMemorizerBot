@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-class InlineKeyboard
+class ReplyKeyboard
 {
-    public const KEY_NAME = 'inline_keyboard';
+    public const KEY_NAME = 'keyboard';
 
     private Collection $buttonsLines;
 
@@ -17,17 +19,17 @@ class InlineKeyboard
     }
 
     /**
-     * @return Collection|InlineButton[]
+     * @return ArrayCollection|Collection
      */
-    public function getButtonsLines(): Collection
+    public function getButtonsLines()
     {
         return $this->buttonsLines;
     }
 
     /**
-     * @param Collection|InlineButton[] $buttonsLines
+     * @param ArrayCollection|Collection|ReplyButton[] $buttonsLines
      */
-    public function setButtonsLines(Collection $buttonsLines): void
+    public function setButtonsLines($buttonsLines): void
     {
         $this->buttonsLines = $buttonsLines;
     }

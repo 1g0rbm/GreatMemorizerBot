@@ -3,7 +3,6 @@
 namespace Ig0rbm\Memo\Command\ReplyKeyboard;
 
 use Ig0rbm\Memo\Entity\Telegram\Keyboard\ReplyKeyboardRemove;
-use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
 use Ig0rbm\Memo\Service\Telegram\TelegramApiService;
@@ -15,17 +14,15 @@ class ReplyKeyboardRemoveCommand extends Command
 {
     protected static $defaultName = 'memo:reply-keyboard:remove';
 
-    /** @var TelegramApiService */
-    private $telegramApi;
+    private TelegramApiService $telegramApi;
 
-    /** @var ChatRepository */
-    private $chatRepository;
+    private ChatRepository $chatRepository;
 
     public function __construct(TelegramApiService $telegramApi, ChatRepository $chatRepository)
     {
         parent::__construct();
 
-        $this->telegramApi = $telegramApi;
+        $this->telegramApi    = $telegramApi;
         $this->chatRepository = $chatRepository;
     }
 
@@ -39,7 +36,7 @@ class ReplyKeyboardRemoveCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         $chats = $this->chatRepository->findAll();
-        /** @var Chat $chat */
+
         foreach ($chats as $chat) {
             $to = new MessageTo();
             $to->setChatId($chat->getId());

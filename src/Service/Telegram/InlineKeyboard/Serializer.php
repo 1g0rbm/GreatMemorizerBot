@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\Telegram\InlineKeyboard;
 
-use Exception;
 use Doctrine\Common\Collections\Collection;
+use Exception;
 use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton;
 use Ig0rbm\Memo\Entity\Telegram\Message\InlineKeyboard;
 use Ig0rbm\Memo\Exception\Telegram\InlineKeyboard\InlineKeyboardSerializeException;

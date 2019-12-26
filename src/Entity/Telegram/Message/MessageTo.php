@@ -1,28 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Ig0rbm\Memo\Entity\Telegram\Keyboard\ReplyKeyboardRemove;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class MessageTo
 {
     /**
      * @Assert\NotBlank
      * @Assert\Type("integer")
-     *
-     * @var int
      */
-    private $chatId;
+    private int $chatId;
 
     /**
      * @Assert\Type("string")
-     *
-     * @var string|null
      */
-    private $text;
+    private ?string $text = null;
 
     /**
      * @Assert\NotBlank
@@ -84,5 +82,15 @@ class MessageTo
     public function getReplyKeyboardRemove(): ?ReplyKeyboardRemove
     {
         return $this->replyMarkup->get(ReplyKeyboardRemove::KEY_NAME);
+    }
+
+    public function setReplyKeyboard(ReplyKeyboard $replyKeyboard): void
+    {
+        $this->replyMarkup->set(ReplyKeyboard::KEY_NAME, $replyKeyboard);
+    }
+
+    public function getReplyKeyboard(): ?ReplyKeyboard
+    {
+        return $this->replyMarkup->get(ReplyKeyboard::KEY_NAME);
     }
 }

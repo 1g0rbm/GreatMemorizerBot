@@ -1,46 +1,55 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
 use Exception;
-use Symfony\Component\HttpFoundation\Request;
-use Ig0rbm\Memo\Service\Telegram\TelegramApiService;
-use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
-use Ig0rbm\Memo\Exception\Telegram\SendMessageException;
-use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Serializer;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Faker\Factory;
 use Faker\Generator;
 use GuzzleHttp\Client;
+use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Telegram\SendMessageException;
+use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Serializer as InlineSerializer;
+use Ig0rbm\Memo\Service\Telegram\ReplyKeyboard\Serializer as ReplySerializer;
+use Ig0rbm\Memo\Service\Telegram\TelegramApiService;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class TelegramApiServiceUnitTest extends TestCase
 {
-    private const TEST_DOMAIN = 'http://api.telegram.org';
     private const TEST_TOKEN = 'test_token_string';
 
-    /** @var TelegramApiService */
-    private $service;
+    private TelegramApiService $service;
 
     /** @var Client|MockObject */
-    private $client;
+    private Client $client;
 
-    /** @var Serializer|MockObject */
-    private $serializer;
+    /** @var InlineSerializer|MockObject */
+    private InlineSerializer $inlineSerializer;
 
-    /** @var Generator */
-    private $faker;
+    /** @var ReplySerializer|MockObject */
+    private ReplySerializer $replySerializer;
+
+    private Generator $faker;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->faker = Factory::create();
-        $this->client = $this->createMock(Client::class);
-        $this->serializer = $this->createMock(Serializer::class);
+        $this->faker            = Factory::create();
+        $this->client           = $this->createMock(Client::class);
+        $this->inlineSerializer = $this->createMock(InlineSerializer::class);
+        $this->replySerializer  = $this->createMock(ReplySerializer::class);
 
-        $this->service = new TelegramApiService($this->client, $this->serializer, self::TEST_TOKEN);
+        $this->service = new TelegramApiService(
+            $this->client,
+            $this->inlineSerializer,
+            $this->replySerializer,
+            self::TEST_TOKEN
+        );
     }
 
     public function testSendMessageThrowSendMessageException(): void
@@ -58,7 +67,14 @@ class TelegramApiServiceUnitTest extends TestCase
                         'chat_id' => $message->getChatId(),
                         'text' => $message->getText(),
                         'parse_mode' => 'markdown',
-                        'reply_markup' => json_encode(['inline_keyboard' => [],  'remove_keyboard' => false])
+                        'reply_markup' => json_encode(
+                            [
+                                'inline_keyboard' => [],
+                                'keyboard'  => [],
+                                'remove_keyboard' => false,
+                                'resize_keyboard' => true,
+                            ]
+                        )
                     ]
                 ]
             )->will($this->throwException(new Exception($exceptionMessage)));
@@ -94,7 +110,14 @@ class TelegramApiServiceUnitTest extends TestCase
                         'chat_id' => $message->getChatId(),
                         'text' => $message->getText(),
                         'parse_mode' => 'markdown',
-                        'reply_markup' => json_encode(['inline_keyboard' => [], 'remove_keyboard' => false])
+                        'reply_markup' => json_encode(
+                            [
+                                'inline_keyboard' => [],
+                                'keyboard'  => [],
+                                'remove_keyboard' => false,
+                                'resize_keyboard' => true,
+                            ]
+                        )
                     ]
                 ]
             )->willReturn($response);

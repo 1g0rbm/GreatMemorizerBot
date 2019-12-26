@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Entity\Telegram\Command;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Command
@@ -12,78 +16,74 @@ class Command
     /**
      * @Assert\Regex("#^/#")
      * @Assert\NotBlank
-     *
-     * @var string
      */
-    private $command;
+    private string $command;
 
     /**
      * @Assert\Type("string")
-     *
-     * @var string
      */
-    private $textResponse;
+    private string $textResponse;
 
     /**
      * @Assert\Type("string")
-     *
-     * @var string
      */
-    private $actionClass;
+    private string $actionClass;
 
-    /**
-     * @return bool
-     */
+    private Collection $aliases;
+
+    public function __construct()
+    {
+        $this->aliases = new ArrayCollection();
+    }
+
     public function isDefault(): bool
     {
         return $this->getCommand() === static::DEFAULT_COMMAND_NAME;
     }
 
-    /**
-     * @return string
-     */
     public function getCommand(): string
     {
         return $this->command;
     }
 
-    /**
-     * @param string $command
-     */
     public function setCommand(string $command): void
     {
         $this->command = $command;
     }
 
-    /**
-     * @return string
-     */
     public function getTextResponse(): string
     {
         return $this->textResponse;
     }
 
-    /**
-     * @param string $textResponse
-     */
     public function setTextResponse(string $textResponse): void
     {
         $this->textResponse = $textResponse;
     }
 
-    /**
-     * @return string
-     */
     public function getActionClass(): string
     {
         return $this->actionClass;
     }
 
-    /**
-     * @param string $actionClass
-     */
     public function setActionClass(string $actionClass): void
     {
         $this->actionClass = $actionClass;
+    }
+
+    /**
+     * @return Collection|string[]
+     */
+    public function getAliases(): Collection
+    {
+        return $this->aliases;
+    }
+
+    /**
+     * @param $aliases Collection|string[]
+     */
+    public function setAliases(Collection $aliases): void
+    {
+        $this->aliases = $aliases;
     }
 }

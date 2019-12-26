@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\TelegramAction;
 
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
@@ -11,7 +13,7 @@ use Ig0rbm\Memo\Repository\Translation\DirectionRepository;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
 use Ig0rbm\Memo\Service\Translation\DirectionSwitcher;
 
-use function array_push;
+use function array_map;
 
 class ShowDirectionButtonAction extends AbstractTelegramAction
 {
@@ -38,18 +40,17 @@ class ShowDirectionButtonAction extends AbstractTelegramAction
 
         $callback = $messageFrom->getCallbackQuery();
         if ($callback) {
-            $direction = $this->directionSwitcher->switch($messageFrom->getChat(), $callback->getData()->getText());
-            $to->setText(sprintf('Your direction now is %s', $direction->getDirection()));
+            $direction        = $this->directionRepository->getDirectionById((int) $callback->getData()->getText());
+            $changedDirection = $this->directionSwitcher->switch($messageFrom->getChat(), $direction);
+            $to->setText(sprintf('Your direction now is %s', $changedDirection->getDirection()));
 
             return $to;
         }
 
-        $line       = [];
-        $directions = $this->directionRepository->findAll();
-        /** @var Direction $direction */
-        foreach ($directions as $direction) {
-            array_push($line, new InlineButton($direction->getDirection(), $direction->getId()));
-        }
+        $line = array_map(
+            fn(Direction $direction) => new InlineButton($direction->getDirection(), (string) $direction->getId()),
+            $this->directionRepository->findAll()
+        );
 
         $this->builder->addLine($line);
 

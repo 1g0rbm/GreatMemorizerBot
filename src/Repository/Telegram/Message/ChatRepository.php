@@ -15,6 +15,14 @@ class ChatRepository extends ServiceEntityRepository
         parent::__construct($registry, Chat::class);
     }
 
+    /**
+     * @return Chat[]
+     */
+    public function findAll(): array
+    {
+        return parent::findAll();
+    }
+
     public function findChatById(int $id): ?Chat
     {
         /** @var null|Chat $chat */
