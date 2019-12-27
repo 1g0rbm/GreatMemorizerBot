@@ -41,11 +41,8 @@ class InitializeAccountService
             return $account;
         }
 
-        $chat = $this->chatRepository->findChatById($chat->getId()) ?? $chat;
-
-        $account = new Account();
-        $account->setChat($chat);
-        $account->setDirection($this->directionRepository->getDefaultDirection());
+        $chat    = $this->chatRepository->findChatById($chat->getId()) ?? $chat;
+        $account = Account::createNewFromChatAndDirection($chat, $this->directionRepository->getDefaultDirection());
 
         $this->accountRepository->addAccount($account);
 

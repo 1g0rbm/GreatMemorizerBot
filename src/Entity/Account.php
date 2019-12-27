@@ -63,13 +63,24 @@ class Account
      */
     private ?string $pageListPath = null;
 
+    public static function createNewFromChatAndDirection(Chat $chat, Direction $direction): self
+    {
+        $account                     = new self();
+        $account->chatId             = $chat->getId();
+        $account->chat               = $chat;
+        $account->direction          = $direction;
+        $account->needKeyboardUpdate = true;
+
+        return $account;
+    }
+
     /**
      * @ORM\Column(type="boolean", options={"default" = 0})
      *
      * @Assert\NotBlank
      * @Assert\Type("boolean")
      */
-    private bool $needKeyboardUpdate = false;
+    private bool $needKeyboardUpdate = true;
 
     public function getId(): int
     {
