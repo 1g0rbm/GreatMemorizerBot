@@ -7,6 +7,7 @@ namespace Ig0rbm\Memo\Entity\Translation;
 use Doctrine\ORM\Mapping as ORM;
 use Ig0rbm\Memo\Validator\Constraints\Translation as AssertTranslation;
 use Symfony\Component\Validator\Constraints as Assert;
+
 use function sprintf;
 
 /**
@@ -70,12 +71,13 @@ class Direction
      *
      * @ORM\Column(type="boolean", options={"default": 0})
      */
-    private bool $isSavable = false;
+    private bool $isSavable;
 
     public function __construct(string $langFrom = Direction::LANG_EN, string $langTo = Direction::LANG_RU)
     {
-        $this->langFrom = $langFrom;
-        $this->langTo   = $langTo;
+        $this->langFrom  = $langFrom;
+        $this->langTo    = $langTo;
+        $this->isSavable = false;
     }
 
     public function getId(): int

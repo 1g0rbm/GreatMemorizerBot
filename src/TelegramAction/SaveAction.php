@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\TelegramAction;
 
 use Doctrine\ORM\ORMException;
@@ -7,7 +9,7 @@ use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Exception\WordList\WordListException;
-use Ig0rbm\Memo\Service\Translation\DirectionParser;
+use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Service\Translation\MessageTextFinder;
 use Ig0rbm\Memo\Service\Translation\WordTranslationService;
 use Ig0rbm\Memo\Service\WordList\WordListManager;
@@ -16,7 +18,7 @@ class SaveAction extends AbstractTelegramAction
 {
     private WordTranslationService $wordTranslation;
 
-    private DirectionParser $directionParser;
+    private AccountRepository $accountRepository;
 
     private WordListManager $manager;
 
@@ -24,14 +26,14 @@ class SaveAction extends AbstractTelegramAction
 
     public function __construct(
         WordTranslationService $wordTranslation,
-        DirectionParser $directionParser,
+        AccountRepository $accountRepository,
         WordListManager $manager,
         MessageTextFinder $textFinder
     ) {
-        $this->wordTranslation = $wordTranslation;
-        $this->directionParser = $directionParser;
-        $this->manager         = $manager;
-        $this->textFinder      = $textFinder;
+        $this->wordTranslation   = $wordTranslation;
+        $this->accountRepository = $accountRepository;
+        $this->manager           = $manager;
+        $this->textFinder        = $textFinder;
     }
 
     /**
@@ -42,9 +44,8 @@ class SaveAction extends AbstractTelegramAction
         $messageTo = new MessageTo();
         $messageTo->setChatId($from->getChat()->getId());
 
-        $text = $this->textFinder->find($from);
-
-        $wordsBag = $this->wordTranslation->translate($this->directionParser->parse('en-ru'), $text);
+        $account  = $this->accountRepository->getOneByChatId($from->getChat()->getId());
+        $wordsBag = $this->wordTranslation->translate($account->getDirection(), $this->textFinder->find($from));
 
         if ($wordsBag->count() === 0) {
             $messageTo->setText('Wrong word for save');
