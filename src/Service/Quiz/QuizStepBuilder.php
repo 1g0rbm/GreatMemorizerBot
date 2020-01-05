@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\Quiz;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -7,32 +9,40 @@ use Doctrine\DBAL\DBALException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepBuilderException;
+use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 
 class QuizStepBuilder
 {
     private WordRepository $wordRepository;
 
-    public function __construct(WordRepository $wordRepository)
+    private WordListRepository $wordListRepository;
+
+    public function __construct(WordRepository $wordRepository, WordListRepository $wordListRepository)
     {
-        $this->wordRepository = $wordRepository;
+        $this->wordRepository     = $wordRepository;
+        $this->wordListRepository = $wordListRepository;
     }
 
     /**
      * @throws DBALException
      */
-    public function buildForQuiz(Quiz $quiz, int $answersCount): ArrayCollection
+    public function buildForQuiz(Quiz $quiz): ArrayCollection
     {
+        if ($quiz->getWordListId()) {
+            $this->wordListRepository->getOneById($quiz->getWordListId());
+        }
+
         $step       = new QuizStep();
         $collection = new ArrayCollection();
-        $wordsCount = $answersCount * $quiz->getLength();
+        $wordsCount = $step->getLength() * $quiz->getLength();
         $words      = $this->wordRepository->getRandomWords(
             'en',
             'noun',
             $wordsCount
         );
 
-        if ($words->count() % $answersCount !== 0) {
+        if ($words->count() % $step->getLength() !== 0) {
             throw QuizStepBuilderException::becauseThereAreWrongCountOfWordsFoundInDB($wordsCount, $words->count());
         }
 
@@ -47,11 +57,11 @@ class QuizStepBuilder
 
             $step->getWords()->add($word);
 
-            if ($stepAnswerCounter === $answersCount) {
+            if ($stepAnswerCounter === $step->getLength()) {
                 $collection->add($step);
             }
 
-            $stepAnswerCounter = $answersCount === $stepAnswerCounter ? 1 : $stepAnswerCounter + 1;
+            $stepAnswerCounter = $step->getLength() === $stepAnswerCounter ? 1 : $stepAnswerCounter + 1;
         }
 
         return $collection;

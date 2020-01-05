@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\Quiz;
 
 use Doctrine\DBAL\DBALException;
@@ -31,12 +33,12 @@ class QuizBuilder
      * @throws DBALException
      * @throws ORMException
      */
-    public function build(Chat $chat, int $answersCount = 4, int $stepsCount = 5): Quiz
+    public function build(Chat $chat, ?int $wordListId = null): Quiz
     {
         $quiz = new Quiz();
         $quiz->setChat($chat);
-        $quiz->setLength($stepsCount);
-        $quiz->setSteps($this->quizStepBuilder->buildForQuiz($quiz, $answersCount));
+        $quiz->setWordListId($wordListId);
+        $quiz->setSteps($this->quizStepBuilder->buildForQuiz($quiz));
         $quiz->setCurrentStep($quiz->getSteps()->first());
 
         $this->quizRepository->addQuiz($quiz);

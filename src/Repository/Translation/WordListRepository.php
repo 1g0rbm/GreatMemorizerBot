@@ -9,12 +9,24 @@ use Doctrine\ORM\ORMException;
 use Doctrine\DBAL\DBALException;
 use Ig0rbm\Memo\Entity\Translation\WordList;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Ig0rbm\Memo\Exception\WordList\WordListException;
 
 class WordListRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, WordList::class);
+    }
+
+    public function getOneById(int $wordListId): WordList
+    {
+        /** @var WordList|null $wordList */
+        $wordList = $this->findOneBy(['id' => $wordListId]);
+        if ($wordList === null) {
+            throw WordListException::becauseThereIsNotListForId($wordListId);
+        }
+
+        return $wordList;
     }
 
     public function findByChat(Chat $chat): ?WordList
