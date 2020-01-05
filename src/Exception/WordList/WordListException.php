@@ -19,8 +19,8 @@ class WordListException extends DomainException
         return new self('List already has the same word');
     }
 
-    public static function becauseThereIsNotAccountForChat(Chat $chat): self
+    public static function becauseThereIsNotListForChat(int $chatId): self
     {
-        return new self(sprintf('There isn\'t account for chat_id %d', $chat->getId()));
+        return new self(sprintf('There isn\'t account for chat_id %d', ));
     }
 }

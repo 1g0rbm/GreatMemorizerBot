@@ -128,7 +128,7 @@ class WordListShowServiceTest extends TestCase
         $this->accountRepository->expects($this->once())
             ->method('findOneByChat')
             ->with($chat)
-            ->willThrowException(WordListException::becauseThereIsNotAccountForChat($chat));
+            ->willThrowException(WordListException::becauseThereIsNotListForChat($chat));
 
         $this->expectException(WordListException::class);
 

@@ -12,6 +12,8 @@ use Ig0rbm\Memo\Exception\Quiz\QuizStepBuilderException;
 use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 
+use function intdiv;
+
 class QuizStepBuilder
 {
     private WordRepository $wordRepository;
@@ -29,22 +31,31 @@ class QuizStepBuilder
      */
     public function buildForQuiz(Quiz $quiz): ArrayCollection
     {
-        if ($quiz->getWordListId()) {
-            $this->wordListRepository->getOneById($quiz->getWordListId());
-        }
-
         $step       = new QuizStep();
         $collection = new ArrayCollection();
         $wordsCount = $step->getLength() * $quiz->getLength();
-        $words      = $this->wordRepository->getRandomWords(
-            'en',
-            'noun',
-            $wordsCount
-        );
 
-        if ($words->count() % $step->getLength() !== 0) {
+        if ($quiz->getWordListId()) {
+            $words = $this->wordRepository->getRandomWordsByWordListId(
+                'en',
+                'noun',
+                $quiz->getWordListId(),
+                $step->getLength() * $quiz->getLength()
+            );
+        } else {
+            $words = $this->wordRepository->getRandomWords(
+                'en',
+                'noun',
+                $wordsCount
+            );
+        }
+
+        $count = intdiv($words->count(), $step->getLength());
+        if ($count === 0) {
             throw QuizStepBuilderException::becauseThereAreWrongCountOfWordsFoundInDB($wordsCount, $words->count());
         }
+
+        $quiz->setLength($count);
 
         $stepAnswerCounter = 1;
         foreach ($words as $word) {
@@ -59,6 +70,10 @@ class QuizStepBuilder
 
             if ($stepAnswerCounter === $step->getLength()) {
                 $collection->add($step);
+            }
+
+            if ($collection->count() === $count) {
+                break;
             }
 
             $stepAnswerCounter = $step->getLength() === $stepAnswerCounter ? 1 : $stepAnswerCounter + 1;
