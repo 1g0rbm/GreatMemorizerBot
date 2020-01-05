@@ -15,6 +15,10 @@ use Ig0rbm\Memo\Service\Quiz\QuizStepBuilder;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @group unit
+ * @group quiz
+ */
 class QuizStepBuilderUnitTest extends TestCase
 {
     private QuizStepBuilder $service;
