@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Exception\Quiz;
 
-use Exception;
+use RuntimeException;
 
-class QuizStepException extends Exception
+class QuizStepException extends RuntimeException implements QuizExceptionInterface
 {
     public static function becauseThereAreNotQuizSteps(int $quizId): self
     {

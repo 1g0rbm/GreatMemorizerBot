@@ -6,6 +6,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Quiz\QuizExceptionInterface;
 use Ig0rbm\Memo\Service\Quiz\AnswerChecker;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
@@ -38,13 +39,19 @@ class QuizAnswerAction extends AbstractTelegramAction
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
-        $quiz = $this->answerChecker->check(
-            $messageFrom->getChat(),
-            $messageFrom->getCallbackQuery()->getData()->getText()
-        );
+        try {
+            $quiz = $this->answerChecker->check(
+                $messageFrom->getChat(),
+                $messageFrom->getCallbackQuery()->getData()->getText()
+            );
 
-        if ($quiz->isComplete()) {
-            $to->setText($this->resultant->create($quiz));
+            if ($quiz->isComplete()) {
+                $to->setText($this->resultant->create($quiz));
+
+                return $to;
+            }
+        } catch (QuizExceptionInterface $e) {
+            $to->setText($e->getMessage());
 
             return $to;
         }

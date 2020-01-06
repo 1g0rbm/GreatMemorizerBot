@@ -9,19 +9,20 @@ use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Quiz\QuizExceptionInterface;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
-use Ig0rbm\Memo\Service\Quiz\QuizBuilder;
+use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 
 class WordListQuizAction extends AbstractTelegramAction
 {
-    private QuizBuilder $quizBuilder;
+    private QuizManager $quizManager;
 
     private QuizStepSerializer $serializer;
 
-    public function __construct(QuizBuilder $quizBuilder, QuizStepSerializer $serializer)
+    public function __construct(QuizManager $quizManager, QuizStepSerializer $serializer)
     {
-        $this->quizBuilder = $quizBuilder;
+        $this->quizManager = $quizManager;
         $this->serializer  = $serializer;
     }
 
@@ -35,8 +36,14 @@ class WordListQuizAction extends AbstractTelegramAction
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
-        $quiz = $this->quizBuilder->build($messageFrom->getChat(), true);
-        $step = $quiz->getCurrentStep();
+        try {
+            $quiz = $this->quizManager->getQuizByChat($messageFrom->getChat(), true);
+            $step = $quiz->getCurrentStep();
+        } catch (QuizExceptionInterface $e) {
+            $to->setText($e->getMessage());
+
+            return $to;
+        }
 
         if (!isset($step)) {
             throw QuizStepException::becauseThereAreNotQuizSteps($quiz->getId());
