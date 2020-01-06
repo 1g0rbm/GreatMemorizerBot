@@ -1,48 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Tests\Service\WordList;
 
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Ig0rbm\Memo\Service\EntityFlusher;
-use Ig0rbm\Memo\Entity\Telegraph\Content\ParagraphNode;
-use Ig0rbm\Memo\Entity\Translation\WordList;
-use Ig0rbm\Memo\Service\Telegraph\Request\CreatePage;
-use Ig0rbm\Memo\Service\WordList\Telegraph\WordListBuilder;
-use Ig0rbm\Memo\Repository\AccountRepository;
-use Ig0rbm\Memo\Repository\Translation\WordListRepository;
+use Faker\Factory;
+use Faker\Generator;
 use Ig0rbm\Memo\Entity\Account;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
-use Ig0rbm\Memo\Exception\WordList\WordListException;
-use Ig0rbm\Memo\Service\WordList\WordListShowService;
+use Ig0rbm\Memo\Entity\Telegraph\Content\ParagraphNode;
 use Ig0rbm\Memo\Entity\Telegraph\Page;
+use Ig0rbm\Memo\Entity\Translation\WordList;
+use Ig0rbm\Memo\Exception\WordList\WordListException;
+use Ig0rbm\Memo\Repository\AccountRepository;
+use Ig0rbm\Memo\Repository\Translation\WordListRepository;
+use Ig0rbm\Memo\Service\EntityFlusher;
 use Ig0rbm\Memo\Service\Telegraph\ApiService;
+use Ig0rbm\Memo\Service\Telegraph\Request\CreatePage;
 use Ig0rbm\Memo\Service\Telegraph\Request\GetPage;
-use Faker\Generator;
-use Faker\Factory;
+use Ig0rbm\Memo\Service\WordList\Telegraph\WordListBuilder;
+use Ig0rbm\Memo\Service\WordList\WordListShowService;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class WordListShowServiceTest extends TestCase
 {
-    /** @var WordListShowService */
-    private $service;
+    private WordListShowService $service;
 
     /** @var WordListRepository|MockObject */
-    private $wordListRepository;
+    private WordListRepository $wordListRepository;
 
     /** @var AccountRepository|MockObject */
-    private $accountRepository;
+    private AccountRepository $accountRepository;
 
     /** @var ApiService|MockObject */
-    private $apiService;
+    private ApiService $apiService;
 
     /** @var WordListBuilder|MockObject */
-    private $builder;
+    private WordListBuilder $builder;
 
     /** @var EntityFlusher|MockObject */
-    private $flusher;
+    private EntityFlusher $flusher;
 
-    /** @var Generator */
-    private $faker;
+    private Generator $faker;
 
     public function setUp(): void
     {
@@ -128,7 +128,7 @@ class WordListShowServiceTest extends TestCase
         $this->accountRepository->expects($this->once())
             ->method('findOneByChat')
             ->with($chat)
-            ->willThrowException(WordListException::becauseThereIsNotListForChat($chat));
+            ->willThrowException(WordListException::becauseThereIsNotListForChat($chat->getId()));
 
         $this->expectException(WordListException::class);
 
@@ -185,9 +185,7 @@ class WordListShowServiceTest extends TestCase
 
     private function createAccount(): Account
     {
-        $account = new Account();
-
-        return $account;
+        return new Account();
     }
 
     private function createChat(): Chat

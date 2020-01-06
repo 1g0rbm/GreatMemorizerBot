@@ -20,7 +20,7 @@ class WordListRepository extends ServiceEntityRepository
         parent::__construct($registry, WordList::class);
     }
 
-    public function getOneByChd(Chat $chat): WordList
+    public function getOneByChat(Chat $chat): WordList
     {
         /** @var WordList|null $wordList */
         $wordList = $this->findOneBy(['chat' => $chat]);

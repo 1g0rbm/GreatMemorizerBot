@@ -11,4 +11,9 @@ class QuizStepBuilderException extends RuntimeException
     {
         return new self(sprintf('Need words for quiz %d, but found %d', $needed, $founded), 500);
     }
+
+    public static function becauseThereAreNotEnoughWords(): self
+    {
+        return new self('Not enough words for build quiz');
+    }
 }

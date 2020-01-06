@@ -61,7 +61,7 @@ class QuizStep
     private Collection $words;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", options={"default": 4})
      *
      * @Assert\NotBlank
      * @Assert\Type("integer")

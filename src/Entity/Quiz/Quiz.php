@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Ig0rbm\Memo\Entity\Translation\WordList;
 use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -63,6 +64,12 @@ class Quiz
      * @ORM\Column(type="boolean")
      */
     private bool $isComplete = false;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Ig0rbm\Memo\Entity\Translation\WordList")
+     * @ORM\JoinColumn(name="word_list_id", referencedColumnName="id")
+     */
+    private ?WordList $wordList = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -145,5 +152,15 @@ class Quiz
     public function setWordListId(?int $wordListId): void
     {
         $this->wordListId = $wordListId;
+    }
+
+    public function getWordList(): ?WordList
+    {
+        return $this->wordList;
+    }
+
+    public function setWordList(?WordList $wordList): void
+    {
+        $this->wordList = $wordList;
     }
 }

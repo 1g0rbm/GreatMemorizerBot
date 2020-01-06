@@ -9,21 +9,16 @@ use Doctrine\DBAL\DBALException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepBuilderException;
-use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
-
 use function intdiv;
 
 class QuizStepBuilder
 {
     private WordRepository $wordRepository;
 
-    private WordListRepository $wordListRepository;
-
-    public function __construct(WordRepository $wordRepository, WordListRepository $wordListRepository)
+    public function __construct(WordRepository $wordRepository)
     {
-        $this->wordRepository     = $wordRepository;
-        $this->wordListRepository = $wordListRepository;
+        $this->wordRepository = $wordRepository;
     }
 
     /**
@@ -52,7 +47,7 @@ class QuizStepBuilder
 
         $count = intdiv($words->count(), $step->getLength());
         if ($count === 0) {
-            throw QuizStepBuilderException::becauseThereAreWrongCountOfWordsFoundInDB($wordsCount, $words->count());
+            throw QuizStepBuilderException::becauseThereAreNotEnoughWords();
         }
 
         $quiz->setLength($count);

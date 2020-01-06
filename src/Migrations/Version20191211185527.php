@@ -24,7 +24,6 @@ final class Version20191211185527 extends AbstractMigration
 
         $this->addSql('DROP TABLE word_list');
         $this->addSql('ALTER TABLE directions ADD is_savable BOOLEAN DEFAULT \'false\' NOT NULL');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_C85173F2821AB4F ON quiz_steps (correct_word_id)');
         $this->addSql('UPDATE directions SET is_savable = true WHERE id = 1');
     }
 
