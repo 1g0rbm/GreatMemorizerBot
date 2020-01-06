@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Entity\Quiz;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ig0rbm\Memo\Entity\Translation\Word;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -25,30 +27,24 @@ class QuizStep
      *
      * @Assert\NotBlank
      * @Assert\Type("integer")
-     *
-     * @var int
      */
-    private $id;
+    private int $id;
 
     /**
-     * @var Quiz
-     *
      * @ORM\ManyToOne(targetEntity="Quiz", inversedBy="steps")
      * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id")
      *
      * @Assert\NotBlank
      */
-    private $quiz;
+    private Quiz $quiz;
 
     /**
-     * @var Word
-     *
      * @ORM\OneToOne(targetEntity="Ig0rbm\Memo\Entity\Translation\Word", cascade={"persist"})
      * @ORM\JoinColumn(name="correct_word_id", referencedColumnName="id")
      *
      * @Assert\NotBlank
      */
-    private $correctWord;
+    private Word $correctWord;
 
     /**
      * @ORM\ManyToMany(targetEntity="Ig0rbm\Memo\Entity\Translation\Word", cascade={"persist"})
@@ -62,21 +58,25 @@ class QuizStep
      *
      * @var Word[]|Collection
      */
-    private $words;
+    private Collection $words;
+
+    /**
+     * @ORM\Column(type="integer", options={"default": 4})
+     *
+     * @Assert\NotBlank
+     * @Assert\Type("integer")
+     */
+    private int $length = 4;
 
     /**
      * @ORM\Column(type="boolean")
-     *
-     * @var bool
      */
-    private $isAnswered = false;
+    private bool $isAnswered = false;
 
     /**
      * @ORM\Column(type="boolean")
-     *
-     * @var bool
      */
-    private $isCorrect = false;
+    private bool $isCorrect = false;
 
     public function __construct()
     {
@@ -124,6 +124,16 @@ class QuizStep
     public function setWords(Collection $wrongWords): void
     {
         $this->words = $wrongWords;
+    }
+
+    public function getLength(): int
+    {
+        return $this->length;
+    }
+
+    public function setLength(int $length): void
+    {
+        $this->length = $length;
     }
 
     public function isAnswered(): bool

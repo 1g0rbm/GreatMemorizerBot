@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\WordList;
 
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Event\WordList\Telegraph\WordListEvent;
 use Ig0rbm\Memo\Exception\WordList\WordListException;
-use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WordListManager
 {
@@ -32,18 +34,19 @@ class WordListManager
     public function add(Chat $chat, Collection $bag): void
     {
         $wordList = $this->wordListPreparer->prepare($chat);
-        $bag->map(static fn (Word $word) => $wordList->addWord($word));
+        $bag->map(static function (Word $word) use ($wordList): void {
+            if ($wordList->containsWord($word)) {
+                throw WordListException::becauseListAlreadyHasSameWord();
+            }
+
+            $wordList->addWord($word);
+        });
 
         if (false === $this->em->getUnitOfWork()->isInIdentityMap($wordList)) {
             $this->em->persist($wordList);
         }
 
-        try {
-            $this->em->flush();
-        } catch (UniqueConstraintViolationException $e) {
-            throw WordListException::becauseListAlreadyHasSameWord();
-        }
-
+        $this->em->flush();
         $this->eventDispatcher->dispatch(WordListEvent::NAME, new WordListEvent($wordList));
     }
 }

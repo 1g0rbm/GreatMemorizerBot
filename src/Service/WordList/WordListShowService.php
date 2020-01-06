@@ -42,7 +42,7 @@ class WordListShowService
     {
         $account = $this->accountRepository->findOneByChat($chat);
         if ($account === null) {
-            throw WordListException::becauseThereIsNotAccountForChat($chat);
+            throw WordListException::becauseThereIsNotListForChat($chat->getId());
         }
 
         if ($account->getPageListPath()) {

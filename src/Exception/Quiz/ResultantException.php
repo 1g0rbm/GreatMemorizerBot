@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Exception\Quiz;
 
 use RuntimeException;
 
-class ResultantException extends RuntimeException
+class ResultantException extends RuntimeException implements QuizExceptionInterface
 {
     public static function becauseQuizIsNotComplete(int $quizId): self
     {

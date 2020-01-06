@@ -1,20 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Repository\Translation;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\ORMException;
-use Doctrine\DBAL\DBALException;
-use Ig0rbm\Memo\Entity\Translation\WordList;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Ig0rbm\Memo\Entity\Translation\WordList;
+use Ig0rbm\Memo\Exception\WordList\WordListException;
 
 class WordListRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, WordList::class);
+    }
+
+    public function getOneByChat(Chat $chat): WordList
+    {
+        /** @var WordList|null $wordList */
+        $wordList = $this->findOneBy(['chat' => $chat]);
+        if ($wordList === null) {
+            throw WordListException::becauseThereIsNotListForChat($chat->getId());
+        }
+
+        return $wordList;
+    }
+
+    public function getOneById(int $wordListId): WordList
+    {
+        /** @var WordList|null $wordList */
+        $wordList = $this->findOneBy(['id' => $wordListId]);
+        if ($wordList === null) {
+            throw WordListException::becauseThereIsNotListForId($wordListId);
+        }
+
+        return $wordList;
     }
 
     public function findByChat(Chat $chat): ?WordList

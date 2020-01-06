@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\Quiz;
 
 use Doctrine\DBAL\DBALException;
@@ -24,10 +26,10 @@ class QuizManager
      * @throws DBALException
      * @throws ORMException
      */
-    public function getQuizByChat(Chat $chat): Quiz
+    public function getQuizByChat(Chat $chat, bool $withWordList = false): Quiz
     {
         $quiz = $this->quizRepository->findIncompleteQuizByChat($chat);
 
-        return $quiz ?: $this->quizBuilder->build($chat);
+        return $quiz ?: $this->quizBuilder->build($chat, $withWordList);
     }
 }

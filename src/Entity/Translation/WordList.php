@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Entity\Translation;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -23,10 +25,8 @@ class WordList
      *
      * @Assert\NotBlank
      * @Assert\Type("integer")
-     *
-     * @var integer
      */
-    private $id;
+    private int $id;
 
     /**
      * @Assert\NotBlank
@@ -34,10 +34,8 @@ class WordList
      *
      * @ORM\OneToOne(targetEntity="Ig0rbm\Memo\Entity\Telegram\Message\Chat", cascade={"persist"})
      * @ORM\JoinColumn(name="chat_id", referencedColumnName="id")
-     *
-     * @var Chat
      */
-    private $chat;
+    private Chat $chat;
 
     /**
      * @ORM\ManyToMany(targetEntity="Ig0rbm\Memo\Entity\Translation\Word", cascade={"persist"})
@@ -46,43 +44,29 @@ class WordList
      *     joinColumns={@ORM\JoinColumn(name="word_list_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")}
      * )
-     *
-     * @var Collection|Word[]
      */
-    private $words;
+    private Collection $words;
 
     public function __construct()
     {
         $this->words = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
     public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return Chat
-     */
     public function getChat(): Chat
     {
         return $this->chat;
     }
 
-    /**
-     * @param Chat $chat
-     */
     public function setChat(Chat $chat): void
     {
         $this->chat = $chat;
@@ -107,5 +91,10 @@ class WordList
     public function addWord(Word $word): void
     {
         $this->words->add($word);
+    }
+
+    public function containsWord(Word $word): bool
+    {
+        return $this->words->contains($word);
     }
 }

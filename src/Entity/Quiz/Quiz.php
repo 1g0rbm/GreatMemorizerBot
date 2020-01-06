@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Entity\Quiz;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Ig0rbm\Memo\Entity\Translation\WordList;
+use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -23,10 +26,8 @@ class Quiz
      *
      * @Assert\NotBlank
      * @Assert\Type("integer")
-     *
-     * @var int
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="Ig0rbm\Memo\Entity\Telegram\Message\Chat")
@@ -34,20 +35,16 @@ class Quiz
      *
      * @Assert\NotBlank
      * @TelegramMessageAssert\Chat
-     *
-     * @var Chat
      */
-    private $chat;
+    private Chat $chat;
 
     /**
      * @ORM\Column(type="integer")
      *
      * @Assert\NotBlank
      * @Assert\Type("integer")
-     *
-     * @var int
      */
-    private $length = 0;
+    private int $length = 5;
 
     /**
      * @var QuizStep[]|Collection
@@ -55,22 +52,29 @@ class Quiz
      * @ORM\OneToMany(targetEntity="QuizStep", mappedBy="quiz", cascade={"persist"})
      * @ORM\OrderBy({"id" = "ASC"})
      */
-    private $steps;
+    private Collection $steps;
 
     /**
-     * @var QuizStep
-     *
      * @ORM\OneToOne(targetEntity="QuizStep")
      * @ORM\JoinColumn(name="current_step_id", referencedColumnName="id")
      */
-    private $currentStep;
+    private QuizStep $currentStep;
 
     /**
      * @ORM\Column(type="boolean")
-     *
-     * @var bool
      */
-    private $isComplete = false;
+    private bool $isComplete = false;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Ig0rbm\Memo\Entity\Translation\WordList")
+     * @ORM\JoinColumn(name="word_list_id", referencedColumnName="id")
+     */
+    private ?WordList $wordList = null;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private ?int $wordListId = null;
 
     public function __construct()
     {
@@ -138,5 +142,25 @@ class Quiz
     public function setIsComplete(bool $isComplete): void
     {
         $this->isComplete = $isComplete;
+    }
+
+    public function getWordListId(): ?int
+    {
+        return $this->wordListId;
+    }
+
+    public function setWordListId(?int $wordListId): void
+    {
+        $this->wordListId = $wordListId;
+    }
+
+    public function getWordList(): ?WordList
+    {
+        return $this->wordList;
+    }
+
+    public function setWordList(?WordList $wordList): void
+    {
+        $this->wordList = $wordList;
     }
 }
