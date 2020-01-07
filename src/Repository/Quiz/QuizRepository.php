@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Repository\Quiz;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\ORMException;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
-use Ig0rbm\Memo\Entity\Quiz\QuizStep;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Exception\Quiz\QuizException;
 
