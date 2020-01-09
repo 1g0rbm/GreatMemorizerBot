@@ -100,6 +100,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: 'bot.before_send_response', method: 'onBeforeResponseSend'}
 
+    Ig0rbm\Memo\EventListener\Message\CallbackQueryHandleListener:
+        tags:
+            - { name: kernel.event_listener, event: 'bot.message.callback_query_handle', method: 'onCallbackQueryHandle'}
+
     Ig0rbm\Memo\Service\Quiz\QuizStepBuilder: ~
 
     ##############################################################################################################

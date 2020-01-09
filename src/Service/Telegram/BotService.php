@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ig0rbm\Memo\Service\Telegram;
 
 use Doctrine\ORM\ORMException;
+use Exception;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
@@ -59,6 +60,7 @@ class BotService
     /**
      * @throws ORMException
      * @throws ParseCommandException
+     * @throws Exception
      */
     public function handle(string $raw): void
     {
@@ -68,15 +70,15 @@ class BotService
 
         $command = $this->defineCommand($message);
 
-        $this->logger->error('DEFINE COMMAND', ['command' => $command->getCommand()]);
-
         $actionCollection = $this->actionParser->createActionList();
 
         /** @var ActionInterface $action */
         $action = $actionCollection->get($command->getActionClass());
 
         try {
+            $this->logger->error('BEFORE ACTION', ['command' => $command->getCommand()]);
             $response = $action->run($message, $command);
+            $this->logger->error('AFTER ACTION');
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
 
@@ -116,8 +118,6 @@ class BotService
             $commandsBag->getAll(),
             fn(Command $command) => $command->getAliases()->contains($from->getText()->getText())
         );
-
-        $this->logger->error('COMMANDS', ['commands' => array_keys($commands)]);
 
         return count($commands) > 0 ?
             array_shift($commands) :
