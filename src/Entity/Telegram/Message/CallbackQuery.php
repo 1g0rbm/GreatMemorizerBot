@@ -1,103 +1,73 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
+use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CallbackQuery
 {
     /**
-     * @var int
-     *
      * @Assert\NotBlank
      * @Assert\Type("integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @Assert\NotBlank
      * @TelegramMessageAssert\From
-     *
-     * @var From
      */
-    private $from;
+    private From $from;
 
     /**
      * @Assert\NotBlank
      * @Assert\Type("string")
-     *
-     * @var string
      */
-    private $chatInstance;
+    private string $chatInstance;
 
     /**
      * @Assert\Type("string")
-     *
-     * @var Text
      */
-    private $data;
+    private Text $data;
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
     public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return From
-     */
     public function getFrom(): From
     {
         return $this->from;
     }
 
-    /**
-     * @param From $from
-     */
     public function setFrom(From $from): void
     {
         $this->from = $from;
     }
 
-    /**
-     * @return string
-     */
     public function getChatInstance(): string
     {
         return $this->chatInstance;
     }
 
-    /**
-     * @param string $chatInstance
-     */
     public function setChatInstance(string $chatInstance): void
     {
         $this->chatInstance = $chatInstance;
     }
 
-    /**
-     * @return Text
-     */
     public function getData(): Text
     {
         return $this->data;
     }
 
-    /**
-     * @param Text $data
-     */
     public function setData(Text $data): void
     {
         $this->data = $data;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\TelegramAction;
 
 use Doctrine\ORM\NonUniqueResultException;
@@ -7,8 +9,8 @@ use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Exception\Quiz\QuizExceptionInterface;
-use Ig0rbm\Memo\Service\Quiz\AnswerChecker;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
+use Ig0rbm\Memo\Service\Quiz\AnswerChecker;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 use Ig0rbm\Memo\Service\Quiz\ResultantService;
 
