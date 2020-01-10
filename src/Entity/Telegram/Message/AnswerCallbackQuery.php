@@ -37,6 +37,14 @@ class AnswerCallbackQuery
      */
     private int $cacheTime = 0;
 
+    public static function createWithId(int $callbackQueryId): self
+    {
+        $obj = new self();
+        $obj->setCallbackQueryId($callbackQueryId);
+
+        return $obj;
+    }
+
     public function getCallbackQueryId(): int
     {
         return $this->callbackQueryId;

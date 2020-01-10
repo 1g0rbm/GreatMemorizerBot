@@ -9,6 +9,7 @@ use Exception;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Event\Message\CallbackQueryHandleEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeParseRequestEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeSendResponseEvent;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
@@ -66,19 +67,15 @@ class BotService
     {
         $this->dispatchBeforeParseRequest($raw);
 
-        $message = $this->messageParser->createMessage($raw);
-
-        $command = $this->defineCommand($message);
-
+        $message          = $this->messageParser->createMessage($raw);
+        $command          = $this->defineCommand($message);
         $actionCollection = $this->actionParser->createActionList();
 
         /** @var ActionInterface $action */
         $action = $actionCollection->get($command->getActionClass());
 
         try {
-            $this->logger->error('BEFORE ACTION', ['command' => $command->getCommand()]);
             $response = $action->run($message, $command);
-            $this->logger->error('AFTER ACTION');
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
 
@@ -87,6 +84,7 @@ class BotService
             $response->setText(sprintf('Error during handle message "%s"', $message->getText()->getText()));
         }
 
+        $this->dispatcher->dispatch(CallbackQueryHandleEvent::NAME, new CallbackQueryHandleEvent($message));
         $this->dispatcher->dispatch(BeforeSendResponseEvent::NAME, new BeforeSendResponseEvent($response));
 
         $this->telegramApiService->sendMessage($response);

@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Event\Message;
 
-use Ig0rbm\Memo\Entity\Telegram\Message\AnswerCallbackQuery;
+use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Symfony\Component\EventDispatcher\Event;
 
 class CallbackQueryHandleEvent extends Event
 {
     public const NAME = 'bot.message.callback_query_handle';
 
-    private AnswerCallbackQuery $answerCallbackQuery;
+    private MessageFrom $from;
 
-    public function __construct(AnswerCallbackQuery $answerCallbackQuery)
+    public function __construct(MessageFrom $from)
     {
-        $this->answerCallbackQuery = $answerCallbackQuery;
+        $this->from = $from;
     }
 
-    public function getAnswerCallbackQuery(): AnswerCallbackQuery
+    public function getFrom(): MessageFrom
     {
-        return $this->answerCallbackQuery;
+        return $this->from;
     }
 }

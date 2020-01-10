@@ -7,16 +7,12 @@ namespace Ig0rbm\Memo\TelegramAction;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
-use Ig0rbm\Memo\Entity\Telegram\Message\AnswerCallbackQuery;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
-use Ig0rbm\Memo\Event\Message\CallbackQueryHandleEvent;
 use Ig0rbm\Memo\Exception\Quiz\QuizExceptionInterface;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WordListQuizAction extends AbstractTelegramAction
 {
@@ -24,16 +20,10 @@ class WordListQuizAction extends AbstractTelegramAction
 
     private QuizStepSerializer $serializer;
 
-    private EventDispatcherInterface $dispatcher;
-
-    public function __construct(
-        QuizManager $quizManager,
-        QuizStepSerializer $serializer,
-        EventDispatcherInterface $dispatcher
-    ) {
+    public function __construct(QuizManager $quizManager, QuizStepSerializer $serializer)
+    {
         $this->quizManager = $quizManager;
         $this->serializer  = $serializer;
-        $this->dispatcher  = $dispatcher;
     }
 
     /**
@@ -61,14 +51,6 @@ class WordListQuizAction extends AbstractTelegramAction
 
         $to->setText(sprintf('What is russian for "%s"', $step->getCorrectWord()->getText()));
         $to->setInlineKeyboard($this->serializer->serialize($step));
-
-        $callbackAnswer = new AnswerCallbackQuery();
-        $callbackAnswer->setCallbackQueryId($messageFrom->getCallbackQuery()->getId());
-
-        $this->dispatcher->dispatch(
-            CallbackQueryHandleEvent::NAME,
-            new CallbackQueryHandleEvent($callbackAnswer)
-        );
 
         return $to;
     }
