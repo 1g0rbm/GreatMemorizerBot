@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
+use Exception;
 use GuzzleHttp\Client;
 use Ig0rbm\Memo\Entity\Telegram\Keyboard\ReplyKeyboardRemove;
+use Ig0rbm\Memo\Entity\Telegram\Message\AnswerCallbackQuery;
 use Ig0rbm\Memo\Entity\Telegram\Message\InlineKeyboard;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Entity\Telegram\Message\ReplyKeyboard;
@@ -14,6 +16,9 @@ use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Serializer as InlineSerializer;
 use Ig0rbm\Memo\Service\Telegram\ReplyKeyboard\Serializer as ReplySerializer;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
+
+use function json_encode;
+use function sprintf;
 
 class TelegramApiService
 {
@@ -37,28 +42,50 @@ class TelegramApiService
         $this->token            = $token;
     }
 
+    public function answerCallbackQuery(AnswerCallbackQuery $answerCallbackQuery): string
+    {
+        $fields = array_filter(
+            [
+                'callback_query_id' => $answerCallbackQuery->getCallbackQueryId(),
+                'text' => $answerCallbackQuery->getText(),
+                'show_alert' => $answerCallbackQuery->isShowAlert(),
+            ],
+            fn($item) => $item !== null
+        );
+
+        return $this->send(Request::METHOD_POST, 'answerCallbackQuery', $fields);
+    }
+
+    /**
+     * @throws Exception
+     */
     public function sendMessage(MessageTo $message): string
     {
-        try {
-            $replyMarkup = [
-                InlineKeyboard::KEY_NAME => $this->inlineSerializer->serialize($message->getInlineKeyboard()),
-                ReplyKeyboard::KEY_NAME => $this->replySerializer->serialize($message->getReplyKeyboard()),
-                ReplyKeyboardRemove::KEY_NAME => $message->getReplyKeyboardRemove() ?
-                    $message->getReplyKeyboardRemove()->isRemoveKeyboard() : false,
-                'resize_keyboard' => true,
-            ];
+        $replyMarkup = [
+            InlineKeyboard::KEY_NAME => $this->inlineSerializer->serialize($message->getInlineKeyboard()),
+            ReplyKeyboard::KEY_NAME => $this->replySerializer->serialize($message->getReplyKeyboard()),
+            ReplyKeyboardRemove::KEY_NAME => $message->getReplyKeyboardRemove() ?
+                $message->getReplyKeyboardRemove()->isRemoveKeyboard() : false,
+            'resize_keyboard' => true,
+        ];
 
+        $fields = [
+            'chat_id' => $message->getChatId(),
+            'text' => $message->getText(),
+            'parse_mode' => 'markdown',
+            'reply_markup' => json_encode($replyMarkup),
+        ];
+
+        return $this->send(Request::METHOD_POST, 'sendMessage', $fields);
+    }
+
+    private function send(string $httpMethod, string $telegramMethod, array $fields): string
+    {
+        try {
             $response = $this->client->request(
-                Request::METHOD_POST,
-                '/bot' . $this->token . '/sendMessage',
-                [
-                    'form_params' => [
-                        'chat_id' => $message->getChatId(),
-                        'text' => $message->getText(),
-                        'parse_mode' => 'markdown',
-                        'reply_markup' => json_encode($replyMarkup),
-                    ]
-                ]
+                $httpMethod,
+                sprintf('/bot%s/%s', $this->token, $telegramMethod),
+                ['form_params' => $fields]
             );
         } catch (Throwable $e) {
             throw SendMessageException::becauseTransportError($e->getMessage());
