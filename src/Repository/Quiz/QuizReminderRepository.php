@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Repository\Quiz;
 
-use Doctrine\ORM\ORMException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Quiz\QuizReminder;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class QuizReminderRepository extends ServiceEntityRepository
 {

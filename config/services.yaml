@@ -17,9 +17,20 @@ parameters:
         /quiz_answer:
             text_response: 'Question not found'
             action_class: Ig0rbm\Memo\TelegramAction\QuizAnswerAction
+        /quiz_settings:
+            text_response: 'Choose one'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizSettingsAction
         /word_list_quiz:
             text_response: 'Let`s quiz start'
             action_class: Ig0rbm\Memo\TelegramAction\WordListQuizAction
+        /quiz_reminder:
+            text_response: 'Write remind time with format "hh:mm"'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizReminderAction
+            aliases:
+                - '#^[0-23]{2}:[0-59]{2}$#'
+        /location:
+            action_class: Ig0rbm\Memo\TelegramAction\LocationAction
+            text_response: 'Now we have your location'
         /show:
             text_response: 'Yor list is empty'
             action_class: Ig0rbm\Memo\TelegramAction\ShowAction
@@ -142,5 +153,14 @@ services:
     Ig0rbm\Memo\TelegramAction\QuizAnswerAction:
         public: true
 
+    Ig0rbm\Memo\TelegramAction\QuizSettingsAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\QuizReminderAction:
+        public: true
+
     Ig0rbm\Memo\TelegramAction\ChangeDirectionAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\LocationAction:
         public: true

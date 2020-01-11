@@ -15,6 +15,10 @@ class TextValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, Text::class);
         }
 
+        if ($value === null) {
+            return;
+        }
+
         if (!is_object($value)) {
             throw new UnexpectedValueException($value, \Ig0rbm\Memo\Entity\Telegram\Message\Text::class);
         }

@@ -2,6 +2,7 @@
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
+use Ig0rbm\Memo\Entity\Telegram\Message\Location;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery;
@@ -51,6 +52,11 @@ class MessageParser
             $message->setReply($this->createMessageFrom($msgRaw['reply_to_message']));
         }
 
+
+        if (isset($msgRaw['location'])) {
+            $message->setLocation($this->createLocation($msgRaw['location']));
+        }
+
         if (isset($request['callback_query'])) {
             $message->setCallbackQuery($this->createCallbackQuery($request['callback_query']));
         }
@@ -67,21 +73,34 @@ class MessageParser
      */
     private function createMessageFrom(array $msgRaw): MessageFrom
     {
-        if (isset($msgRaw['text']) === false) {
+        if (!isset($msgRaw['text']) && !isset($msgRaw['reply_to_message']['text'])) {
             throw ParseMessageException::becauseInvalidParameter('There isn\'t "text" parameter');
         }
 
         $account = $this->initializeAccount->initialize($this->createChat($msgRaw['chat']));
-        $from = $this->createFrom($msgRaw['from']);
+        $from    = $this->createFrom($msgRaw['from']);
 
         $message = new MessageFrom();
         $message->setMessageId($msgRaw['message_id']);
         $message->setChat($account->getChat());
         $message->setFrom($from);
         $message->setDate($msgRaw['date']);
-        $message->setText($this->textParser->parse($msgRaw['text']));
+        $message->setText($this->textParser->parse($msgRaw['text'] ?? $msgRaw['reply_to_message']['text']));
 
         return $message;
+    }
+
+    /**
+     * @param array $chatRaw
+     * @return Location
+     */
+    private function createLocation(array $chatRaw): Location
+    {
+        $location = new Location();
+        $location->setLatitude($chatRaw['latitude']);
+        $location->setLongitude($chatRaw['longitude']);
+
+        return $location;
     }
 
     /**

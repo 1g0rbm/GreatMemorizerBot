@@ -105,7 +105,9 @@ class BotService
             $command = $callback->getData()->getCommand();
         }
 
-        $command = $command ?? $from->getText()->getCommand();
+        $text = $from->getText() ?? $from->getReply()->getText();
+
+        $command = $command ?? $text->getCommand();
 
         $commandsBag = $this->commandParser->createCommandCollection();
         if ($commandsBag->has($command)) {
@@ -114,7 +116,7 @@ class BotService
 
         $commands = array_filter(
             $commandsBag->getAll(),
-            fn(Command $command) => $command->getAliases()->contains($from->getText()->getText())
+            fn(Command $command) => $command->getAliases()->contains($text->getText())
         );
 
         return count($commands) > 0 ?

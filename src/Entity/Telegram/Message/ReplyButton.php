@@ -14,13 +14,42 @@ class ReplyButton
      */
     private string $text;
 
-    public function __construct(string $text)
+    /**
+     * @Assert\NotBlank
+     * @Assert\Type("boolean")
+     */
+    private bool $requestLocation = false;
+
+    /**
+     * @Assert\NotBlank
+     * @Assert\Type("boolean")
+     */
+    private bool $requestContact = false;
+
+    public function __construct(string $text, bool $requestLocation = false, bool $requestContact = false)
     {
-        $this->text = $text;
+        $this->text            = $text;
+        $this->requestLocation = $requestLocation;
+        $this->requestContact  = $requestContact;
     }
 
     public function getText(): string
     {
         return $this->text;
+    }
+
+    public function isRequestLocation(): bool
+    {
+        return $this->requestLocation;
+    }
+
+    public function isRequestContact(): bool
+    {
+        return $this->requestContact;
+    }
+
+    public function getData()
+    {
+        return '/test';
     }
 }
