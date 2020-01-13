@@ -73,8 +73,12 @@ class MessageParser
      */
     private function createMessageFrom(array $msgRaw): MessageFrom
     {
-        if (!isset($msgRaw['text']) && !isset($msgRaw['reply_to_message']['text'])) {
-            throw ParseMessageException::becauseInvalidParameter('There isn\'t "text" parameter');
+        if (!isset($msgRaw['text'])) {
+            $msgRaw['text'] = $msgRaw['location'] ? '/location' : null;
+        }
+
+        if (!isset($msgRaw['text'])) {
+            throw ParseMessageException::becauseInvalidParameter('There are not data for define ');
         }
 
         $account = $this->initializeAccount->initialize($this->createChat($msgRaw['chat']));
@@ -85,7 +89,7 @@ class MessageParser
         $message->setChat($account->getChat());
         $message->setFrom($from);
         $message->setDate($msgRaw['date']);
-        $message->setText($this->textParser->parse($msgRaw['text'] ?? $msgRaw['reply_to_message']['text']));
+        $message->setText($this->textParser->parse($msgRaw['text']));
 
         return $message;
     }
