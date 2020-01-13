@@ -1,46 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Entity\Telegraph;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Ig0rbm\Memo\Service\Telegraph\Request\GetAccount;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Account
 {
     /**
      * @Assert\Type("string")
-     *
-     * @var string|null
      */
-    private $shortName;
+    private ?string $shortName = null;
 
     /**
      * @Assert\Type("string")
-     *
-     * @var string|null
      */
-    private $authorName;
+    private ?string $authorName = null;
 
     /**
      * @Assert\Type("string")
-     *
-     * @var string|null
      */
-    private $authorUrl;
+    private ?string $authorUrl = null;
 
     /**
      * @Assert\Type("string")
-     *
-     * @var string|null
      */
-    private $accessToken;
+    private ?string $accessToken = null;
 
     /**
      * @Assert\Type("string")
-     *
-     * @var string|null
      */
-    private $authUrl;
+    private ?string $authUrl = null;
 
     public static function createFromTelegraphResponse(array $response): self
     {
@@ -71,10 +63,8 @@ class Account
 
     /**
      * @Assert\Type("integer")
-     *
-     * @var int|null
      */
-    private $pageCount;
+    private ?int $pageCount = null;
 
     public function getShortName(): string
     {

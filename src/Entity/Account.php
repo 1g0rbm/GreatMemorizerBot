@@ -58,10 +58,15 @@ class Account
      * @ORM\Column(type="string", nullable=true)
      *
      * @Assert\Type("string")
-     *
-     * @var string|null
      */
     private ?string $pageListPath = null;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Assert\Type("string")
+     */
+    private ?string $timeZone = null;
 
     public static function createNewFromChatAndDirection(Chat $chat, Direction $direction): self
     {
@@ -140,5 +145,15 @@ class Account
     public function setNeedKeyboardUpdate(bool $needKeyboardUpdate): void
     {
         $this->needKeyboardUpdate = $needKeyboardUpdate;
+    }
+
+    public function getTimeZone(): ?string
+    {
+        return $this->timeZone;
+    }
+
+    public function setTimeZone(?string $timeZone): void
+    {
+        $this->timeZone = $timeZone;
     }
 }

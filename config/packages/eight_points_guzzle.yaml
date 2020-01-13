@@ -11,3 +11,5 @@ eight_points_guzzle:
             base_url: 'https://dictionary.yandex.net'
         yandex_translation_api:
             base_url: 'https://translate.yandex.net'
+        timezonedb_api:
+            base_url: 'http://api.timezonedb.com/v2.1'

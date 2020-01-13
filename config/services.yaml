@@ -101,6 +101,13 @@ services:
             $token: '%env(TELEGRAPH_ACCESS_TOKEN)%'
         public: true
 
+    Ig0rbm\Memo\Service\TimeZone\ApiService:
+        arguments:
+            $client: '@eight_points_guzzle.client.timezonedb_api'
+            $token: '%env(TIMEZONEDB_API_KEY)%'
+
+    Ig0rbm\Memo\Service\TimeZone\AccountTimeZoneManager: ~
+
     Ig0rbm\Memo\EventListener\WordListEventListener:
         arguments:
             $manager: '@Ig0rbm\Memo\Service\WordList\Telegraph\WordListManager'
