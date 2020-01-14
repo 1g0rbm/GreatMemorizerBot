@@ -28,6 +28,9 @@ parameters:
             action_class: Ig0rbm\Memo\TelegramAction\QuizReminderAction
             aliases:
                 - '#^[0-23]{2}:[0-59]{2}$#'
+        /time_zone:
+            text_response: 'Set your timezone'
+            action_class: Ig0rbm\Memo\TelegramAction\TimezoneAction
         /location:
             action_class: Ig0rbm\Memo\TelegramAction\LocationAction
             text_response: 'Now we have your location'
@@ -170,4 +173,7 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\LocationAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\TimezoneAction:
         public: true

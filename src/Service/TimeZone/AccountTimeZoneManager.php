@@ -34,6 +34,7 @@ class AccountTimeZoneManager
         $timeZone = $this->api->getTimeZone($lat, $lng);
 
         $account->setTimeZone($timeZone->getZoneName());
+        $account->setNeedKeyboardUpdate(true);
 
         $this->flusher->flush();
 
