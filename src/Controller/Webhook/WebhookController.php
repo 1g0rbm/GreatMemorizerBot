@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Controller\Webhook;
 
 use Ig0rbm\Memo\Service\Telegram\BotService;
 use Ig0rbm\Memo\Service\Telegram\TokenChecker;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
-use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
@@ -17,29 +18,20 @@ use Throwable;
  */
 class WebhookController
 {
-    /**
-     * @var BotService
-     */
-    private $bot;
+    private BotService $bot;
 
-    /**
-     * @var TokenChecker
-     */
-    private $tokenChecker;
+    private TokenChecker $tokenChecker;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         BotService $bot,
         TokenChecker $tokenChecker,
         LoggerInterface $logger
     ) {
-        $this->bot = $bot;
+        $this->bot          = $bot;
         $this->tokenChecker = $tokenChecker;
-        $this->logger = $logger;
+        $this->logger       = $logger;
     }
 
     /**

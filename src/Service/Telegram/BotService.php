@@ -23,6 +23,7 @@ use Throwable;
 use function array_filter;
 use function array_shift;
 use function count;
+use function preg_match;
 
 class BotService
 {
@@ -116,7 +117,13 @@ class BotService
 
         $commands = array_filter(
             $commandsBag->getAll(),
-            fn(Command $command) => $command->getAliases()->contains($text->getText())
+            static function (Command $command) use ($text) {
+                $aliases = $command->getAliases()->filter(static function (string $alias) use ($text) {
+                    return preg_match('#' . $alias . '#', $text->getText()) === 1;
+                });
+
+                return $aliases->count() > 0;
+            }
         );
 
         return count($commands) > 0 ?

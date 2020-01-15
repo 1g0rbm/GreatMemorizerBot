@@ -26,8 +26,12 @@ parameters:
         /quiz_reminder:
             text_response: 'Write remind time with format "hh:mm"'
             action_class: Ig0rbm\Memo\TelegramAction\QuizReminderAction
+        /quiz_set_reminder:
+            text_response: 'Your reminder is configure'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizSetReminder
             aliases:
-                - '#^[0-23]{2}:[0-59]{2}$#'
+                - '^[0-23]{2}:[0-59]{2}$'
+
         /time_zone:
             text_response: 'Set your timezone'
             action_class: Ig0rbm\Memo\TelegramAction\TimezoneAction
@@ -176,4 +180,7 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\TimezoneAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\QuizSetReminder:
         public: true
