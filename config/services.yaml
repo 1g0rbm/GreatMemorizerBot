@@ -28,7 +28,7 @@ parameters:
             action_class: Ig0rbm\Memo\TelegramAction\QuizReminderAction
         /quiz_set_reminder:
             text_response: 'Your reminder is configure'
-            action_class: Ig0rbm\Memo\TelegramAction\QuizSetReminder
+            action_class: Ig0rbm\Memo\TelegramAction\QuizSetReminderAction
             aliases:
                 - '^[0-23]{2}:[0-59]{2}$'
 
@@ -182,5 +182,5 @@ services:
     Ig0rbm\Memo\TelegramAction\TimezoneAction:
         public: true
 
-    Ig0rbm\Memo\TelegramAction\QuizSetReminder:
+    Ig0rbm\Memo\TelegramAction\QuizSetReminderAction:
         public: true
