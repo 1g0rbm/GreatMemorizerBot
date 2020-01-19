@@ -42,9 +42,11 @@ parameters:
             text_response: 'Your timezone was set as UTC'
             aliases:
                 - "I don't want to show my location"
-        /show:
+        /list:
             text_response: 'Yor list is empty'
             action_class: Ig0rbm\Memo\TelegramAction\ShowAction
+            aliases:
+                - '📋 list'
         /edit:
             text_response: 'Nothing to edit'
             action_class: Ig0rbm\Memo\TelegramAction\EditAction
