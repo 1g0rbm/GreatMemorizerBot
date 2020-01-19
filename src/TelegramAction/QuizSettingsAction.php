@@ -9,18 +9,14 @@ use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
-use Ig0rbm\Memo\Service\WordList\WordListShowService;
 
-class ShowAction extends AbstractTelegramAction
+class QuizSettingsAction extends AbstractTelegramAction
 {
-    private WordListShowService $showService;
-
     private Builder $builder;
 
-    public function __construct(WordListShowService $showService, Builder $builder)
+    public function __construct(Builder $builder)
     {
-        $this->showService = $showService;
-        $this->builder     = $builder;
+        $this->builder = $builder;
     }
 
     public function run(MessageFrom $messageFrom, Command $command): MessageTo
@@ -28,10 +24,12 @@ class ShowAction extends AbstractTelegramAction
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
-        $wordList = $this->showService->findByChat($messageFrom->getChat());
-        $to->setText($wordList ?? $command->getTextResponse());
+        $this->builder->addLine([
+            new InlineButton('Single', '/word_list_quiz'),
+            new InlineButton('Regular', '/quiz_reminder')
+        ]);
 
-        $this->builder->addLine([new InlineButton('quiz', '/quiz_settings')]);
+        $to->setText($command->getTextResponse());
         $to->setInlineKeyboard($this->builder->flush());
 
         return $to;

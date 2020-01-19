@@ -13,13 +13,15 @@ class ReplyKeyboard
 
     private Collection $buttonsLines;
 
+    private bool $requestLocation = false;
+
     public function __construct()
     {
         $this->buttonsLines = new ArrayCollection();
     }
 
     /**
-     * @return ArrayCollection|Collection
+     * @return ArrayCollection|Collection|ReplyButton[]
      */
     public function getButtonsLines()
     {
@@ -32,5 +34,15 @@ class ReplyKeyboard
     public function setButtonsLines($buttonsLines): void
     {
         $this->buttonsLines = $buttonsLines;
+    }
+
+    public function isRequestLocation(): bool
+    {
+        return $this->requestLocation;
+    }
+
+    public function setRequestLocation(bool $requestLocation): void
+    {
+        $this->requestLocation = $requestLocation;
     }
 }

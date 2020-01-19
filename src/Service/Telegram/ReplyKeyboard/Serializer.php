@@ -25,7 +25,14 @@ class Serializer
                 InlineKeyboardSerializeException::becauseThereAreNoButtonInLine($number);
             }
 
-            $result[$number] = $line->map(fn (ReplyButton $replyButton) => $replyButton->getText())->toArray();
+            $result[$number] = $line->map(static function (ReplyButton $replyButton) {
+                return [
+                    'text' => $replyButton->getText(),
+                    'request_location' => $replyButton->isRequestLocation(),
+                    'request_contact' => $replyButton->isRequestContact()
+                ];
+            })
+            ->toArray();
         }
 
         return $result;

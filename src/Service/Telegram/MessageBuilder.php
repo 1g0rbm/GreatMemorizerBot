@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\Telegram;
 
 use Ig0rbm\Memo\Exception\Telegram\MessageBuilderException;

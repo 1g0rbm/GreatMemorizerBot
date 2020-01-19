@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Validator\Constraints\Telegram\Message;
 
-use Symfony\Component\Validator\Constraint;
 use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery as EntityCallbackQuery;
+use Symfony\Component\Validator\Constraint;
 
 /**
  * @Annotation

@@ -39,7 +39,7 @@ class QuizStep
     private Quiz $quiz;
 
     /**
-     * @ORM\OneToOne(targetEntity="Ig0rbm\Memo\Entity\Translation\Word", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Ig0rbm\Memo\Entity\Translation\Word", cascade={"persist"})
      * @ORM\JoinColumn(name="correct_word_id", referencedColumnName="id")
      *
      * @Assert\NotBlank

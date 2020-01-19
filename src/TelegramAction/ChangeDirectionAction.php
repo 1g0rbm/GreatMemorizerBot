@@ -27,7 +27,10 @@ class ChangeDirectionAction extends AbstractTelegramAction
         $response = new MessageTo();
         $response->setChatId($messageFrom->getChat()->getId());
 
-        [$from, $to] = explode('-', $messageFrom->getText()->getText());
+        [$from, $to] = explode(
+            '-',
+            str_replace(['🇷🇺🇬🇧', '🇬🇧🇷🇺'], '', $messageFrom->getText()->getText())
+        );
 
         $direction = $this->repository->findByFromAndTo($from, $to);
         if ($direction === null) {

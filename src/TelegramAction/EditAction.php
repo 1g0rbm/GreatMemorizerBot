@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\TelegramAction;
 
 use Doctrine\DBAL\DBALException;

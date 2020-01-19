@@ -43,6 +43,8 @@ class BeforeResponseSendEventListener
             new ReplyButton(Direction::getEnRu())
         ]);
 
+        $this->builder->addLine([new ReplyButton('📋 list')]);
+
         $msgTo->setReplyKeyboard($this->builder->flush());
     }
 }

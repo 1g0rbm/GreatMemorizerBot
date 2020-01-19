@@ -1,14 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Tests\Controller\Webhook;
 
+use Faker\Factory;
+use Faker\Generator;
+use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
+use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
-use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
-use Ig0rbm\Memo\Repository\Translation\WordListRepository;
-use Faker\Factory;
-use Faker\Generator;
+
+use function getenv;
+use function json_decode;
+use function sprintf;
 
 /**
  * @group functional

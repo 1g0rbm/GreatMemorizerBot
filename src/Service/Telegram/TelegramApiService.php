@@ -17,6 +17,7 @@ use Ig0rbm\Memo\Service\Telegram\ReplyKeyboard\Serializer as ReplySerializer;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
+use function array_filter;
 use function json_encode;
 use function sprintf;
 
@@ -61,11 +62,14 @@ class TelegramApiService
      */
     public function sendMessage(MessageTo $message): string
     {
+        $replyKeyboard  = $message->getReplyKeyboard();
+        $inlineKeyboard = $message->getInlineKeyboard();
+        $removeKeyboard = $message->getReplyKeyboardRemove();
+
         $replyMarkup = [
-            InlineKeyboard::KEY_NAME => $this->inlineSerializer->serialize($message->getInlineKeyboard()),
-            ReplyKeyboard::KEY_NAME => $this->replySerializer->serialize($message->getReplyKeyboard()),
-            ReplyKeyboardRemove::KEY_NAME => $message->getReplyKeyboardRemove() ?
-                $message->getReplyKeyboardRemove()->isRemoveKeyboard() : false,
+            InlineKeyboard::KEY_NAME => $this->inlineSerializer->serialize($inlineKeyboard),
+            ReplyKeyboard::KEY_NAME => $this->replySerializer->serialize($replyKeyboard),
+            ReplyKeyboardRemove::KEY_NAME => $removeKeyboard ? $removeKeyboard->isRemoveKeyboard() : false,
             'resize_keyboard' => true,
         ];
 

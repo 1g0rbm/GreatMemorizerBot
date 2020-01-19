@@ -17,15 +17,49 @@ parameters:
         /quiz_answer:
             text_response: 'Question not found'
             action_class: Ig0rbm\Memo\TelegramAction\QuizAnswerAction
+        /quiz_settings:
+            text_response: 'Choose one'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizSettingsAction
         /word_list_quiz:
             text_response: 'Let`s quiz start'
             action_class: Ig0rbm\Memo\TelegramAction\WordListQuizAction
-        /show:
+        /quiz_reminder:
+            text_response: 'Write remind time with format "hh:mm"'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizReminderAction
+        /quiz_set_reminder:
+            text_response: 'Your reminder is configure'
+            action_class: Ig0rbm\Memo\TelegramAction\QuizSetReminderAction
+            aliases:
+                - '^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$'
+        /edit_quiz_reminders:
+            text_response: 'There are not reminders for editing'
+            action_class: Ig0rbm\Memo\TelegramAction\EditQuizReminderAction
+            aliases:
+                - '⏰ reminders'
+                - '🤖 press button to delete word'
+        /time_zone:
+            text_response: 'Set your timezone'
+            action_class: Ig0rbm\Memo\TelegramAction\TimezoneAction
+            aliases:
+                - '🕰️ timezone'
+        /location:
+            action_class: Ig0rbm\Memo\TelegramAction\LocationAction
+            text_response: 'Now we have your location'
+        /location_cancel:
+            action_class: Ig0rbm\Memo\TelegramAction\LocationCancelAction
+            text_response: 'Your timezone was set as UTC'
+            aliases:
+                - "I don't want to show my location"
+        /list:
             text_response: 'Yor list is empty'
             action_class: Ig0rbm\Memo\TelegramAction\ShowAction
+            aliases:
+                - '📋 list'
         /edit:
             text_response: 'Nothing to edit'
             action_class: Ig0rbm\Memo\TelegramAction\EditAction
+            aliases:
+                - '📝 list'
         /switch:
             text_response: 'Choose translation direction'
             action_class: Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction
@@ -33,11 +67,19 @@ parameters:
             text_response: 'Yor direction now is %s'
             action_class: Ig0rbm\Memo\TelegramAction\ChangeDirectionAction
             aliases:
-                - 'ru-en'
-                - 'en-ru'
+                - '🇷🇺🇬🇧ru-en'
+                - '🇬🇧🇷🇺en-ru'
         /hello:
             text_response: 'Hello!'
             action_class: Ig0rbm\Memo\TelegramAction\HelloAction
+        /settings:
+            text_response: 'Settings menu'
+            action_class: Ig0rbm\Memo\TelegramAction\SettingsAction
+        /close_settings:
+            text_response: '🤖 menu was closed'
+            action_class: Ig0rbm\Memo\TelegramAction\CloseSettingsAction
+            aliases:
+                - '❌ close settings'
         default:
             text_response: 'Undefined command'
             action_class: Ig0rbm\Memo\TelegramAction\TranslationAction
@@ -89,6 +131,13 @@ services:
             $client: '@eight_points_guzzle.client.telegraph_api'
             $token: '%env(TELEGRAPH_ACCESS_TOKEN)%'
         public: true
+
+    Ig0rbm\Memo\Service\TimeZone\ApiService:
+        arguments:
+            $client: '@eight_points_guzzle.client.timezonedb_api'
+            $token: '%env(TIMEZONEDB_API_KEY)%'
+
+    Ig0rbm\Memo\Service\TimeZone\AccountTimeZoneManager: ~
 
     Ig0rbm\Memo\EventListener\WordListEventListener:
         arguments:
@@ -142,5 +191,32 @@ services:
     Ig0rbm\Memo\TelegramAction\QuizAnswerAction:
         public: true
 
+    Ig0rbm\Memo\TelegramAction\QuizSettingsAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\QuizReminderAction:
+        public: true
+
     Ig0rbm\Memo\TelegramAction\ChangeDirectionAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\LocationAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\TimezoneAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\QuizSetReminderAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\LocationCancelAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\SettingsAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\CloseSettingsAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\EditQuizReminderAction:
         public: true
