@@ -11,7 +11,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="quiz_reminder")
+ * @ORM\Table(
+ *     name="quiz_reminder",
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="chat_reminder_quiz", columns={"chat_id", "time"})}
+ * )
  * @ORM\Entity(repositoryClass="Ig0rbm\Memo\Repository\Quiz\QuizReminderRepository")
  */
 class QuizReminder
