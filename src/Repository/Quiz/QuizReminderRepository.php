@@ -17,6 +17,28 @@ class QuizReminderRepository extends ServiceEntityRepository
         parent::__construct($registry, QuizReminder::class);
     }
 
+    public function deleteReminderByChatAndTime(Chat $chat, string $time): void
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->delete('Ig0rbm\Memo\Entity\Quiz\QuizReminder', 'qr')
+            ->where('qr.chat = :chat')
+            ->andWhere('qr.time = :time')
+            ->setParameters([
+                ':chat' => $chat,
+                ':time' => $time,
+            ]);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @return QuizReminder[]
+     */
+    public function findAllRemindersByChat(Chat $chat): array
+    {
+        return $this->findBy(['chat' => $chat]);
+    }
+
     /**
      * @return QuizReminder[]
      */

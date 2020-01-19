@@ -31,6 +31,12 @@ parameters:
             action_class: Ig0rbm\Memo\TelegramAction\QuizSetReminderAction
             aliases:
                 - '^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$'
+        /edit_quiz_reminders:
+            text_response: 'There are not reminders for editing'
+            action_class: Ig0rbm\Memo\TelegramAction\EditQuizReminderAction
+            aliases:
+                - '⏰ reminders'
+                - '🤖 press button to delete word'
         /time_zone:
             text_response: 'Set your timezone'
             action_class: Ig0rbm\Memo\TelegramAction\TimezoneAction
@@ -210,4 +216,7 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\CloseSettingsAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\EditQuizReminderAction:
         public: true
