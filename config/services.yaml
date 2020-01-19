@@ -37,6 +37,11 @@ parameters:
         /location:
             action_class: Ig0rbm\Memo\TelegramAction\LocationAction
             text_response: 'Now we have your location'
+        /location_cancel:
+            action_class: Ig0rbm\Memo\TelegramAction\LocationCancelAction
+            text_response: 'Your timezone was set as UTC'
+            aliases:
+                - "I don't want to show my location"
         /show:
             text_response: 'Yor list is empty'
             action_class: Ig0rbm\Memo\TelegramAction\ShowAction
@@ -182,4 +187,7 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\QuizSetReminderAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\LocationCancelAction:
         public: true

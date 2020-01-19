@@ -27,7 +27,7 @@ class TimezoneAction extends AbstractTelegramAction
         $to->setText('Send your location for defining your timezone');
 
         $this->builder->addLine([new ReplyButton('send your location', true)]);
-        $this->builder->addLine([new ReplyButton('cancel')]);
+        $this->builder->addLine([new ReplyButton('I don\'t want to show my location')]);
 
         $to->setReplyKeyboard($this->builder->flush());
 
