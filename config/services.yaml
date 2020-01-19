@@ -34,6 +34,8 @@ parameters:
         /time_zone:
             text_response: 'Set your timezone'
             action_class: Ig0rbm\Memo\TelegramAction\TimezoneAction
+            aliases:
+                - '🕰️ timezone'
         /location:
             action_class: Ig0rbm\Memo\TelegramAction\LocationAction
             text_response: 'Now we have your location'
@@ -50,6 +52,8 @@ parameters:
         /edit:
             text_response: 'Nothing to edit'
             action_class: Ig0rbm\Memo\TelegramAction\EditAction
+            aliases:
+                - '📝 list'
         /switch:
             text_response: 'Choose translation direction'
             action_class: Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction
@@ -57,11 +61,19 @@ parameters:
             text_response: 'Yor direction now is %s'
             action_class: Ig0rbm\Memo\TelegramAction\ChangeDirectionAction
             aliases:
-                - 'ru-en'
-                - 'en-ru'
+                - '🇷🇺🇬🇧ru-en'
+                - '🇬🇧🇷🇺en-ru'
         /hello:
             text_response: 'Hello!'
             action_class: Ig0rbm\Memo\TelegramAction\HelloAction
+        /settings:
+            text_response: 'Settings menu'
+            action_class: Ig0rbm\Memo\TelegramAction\SettingsAction
+        /close_settings:
+            text_response: '🤖 menu was closed'
+            action_class: Ig0rbm\Memo\TelegramAction\CloseSettingsAction
+            aliases:
+                - '❌ close settings'
         default:
             text_response: 'Undefined command'
             action_class: Ig0rbm\Memo\TelegramAction\TranslationAction
@@ -192,4 +204,10 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\LocationCancelAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\SettingsAction:
+        public: true
+
+    Ig0rbm\Memo\TelegramAction\CloseSettingsAction:
         public: true
