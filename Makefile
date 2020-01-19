@@ -50,6 +50,9 @@ memo-cli-staging:
 memo-migrate:
 	docker exec -it $(container) "/app/bin/migrate.sh"
 
+memo-reminder-run:
+	docker exec -it $(container) "/app/bin/reminder_run.sh"
+
 build-image: memo-test
 	docker build --pull --file=./docker/production/nginx.dockerfile --tag ${REGISTRY_HOST}/memo-nginx:${REGISTRY_PRODUCTION_TAG} .
 	docker build --pull --file=./docker/production/php-fpm.dockerfile --tag ${REGISTRY_HOST}/memo-php-fpm:${REGISTRY_PRODUCTION_TAG} .
