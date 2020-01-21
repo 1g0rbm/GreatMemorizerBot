@@ -14,7 +14,9 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Ig0rbm\Memo\Entity\Translation\Word;
 
+use function array_combine;
 use function array_map;
+use function implode;
 use function shuffle;
 
 class WordRepository extends ServiceEntityRepository
@@ -25,27 +27,35 @@ class WordRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string[] $pos
+     *
      * @return Collection|Word[]
+     *
      * @throws DBALException
      */
-    public function getRandomWordsByWordListId(string $langCode, string $pos, int $wordListId, int $limit): Collection
+    public function getRandomWordsByWordListId(string $langCode, array $pos, int $wordListId, int $limit): Collection
     {
-        $conn     = $this->getConnection();
-        $idsQuery = 'SELECT w.id, w.text 
-                     FROM memo.public.words w
-                     JOIN lists2words l2w on w.id = l2w.word_id and l2w.word_list_id = :wordListId
-                     WHERE w.lang_code = :langCode
-                         AND w.pos = :pos
-                     ORDER BY random()
-                     LIMIT :limit';
+        $conn           = $this->getConnection();
+        $posPlaceHolder = array_map(fn(string $item) => ':' . $item, $pos);
+        $pos            = array_combine($posPlaceHolder, $pos);
+        $posPlaceHolder = implode(', ', $posPlaceHolder);
+
+        $idsQuery = "SELECT DISTINCT ON(text) id, text
+                     FROM (
+                         SELECT * FROM memo.public.words w
+                             JOIN lists2words l2w on w.id = l2w.word_id and l2w.word_list_id = :wordListId
+                         WHERE w.lang_code = :langCode
+                             AND w.pos IN({$posPlaceHolder})
+                         ORDER BY random()
+                         LIMIT :limit
+                     ) t1";
 
         $stmt = $conn->prepare($idsQuery);
-        $stmt->execute([
+        $stmt->execute(array_merge([
             'langCode'   => $langCode,
-            'pos'        => $pos,
             'wordListId' => $wordListId,
             'limit'      => $limit
-        ]);
+        ], $pos));
 
         $words = $this->findWordsByIds(array_map(static fn(array $item) => $item['id'], $stmt->fetchAll()));
 
@@ -54,25 +64,33 @@ class WordRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string[] $pos
+     *
      * @return ArrayCollection|Word[]
+     *
      * @throws DBALException
      */
-    public function getRandomWords(string $langCode, string $pos, int $limit): ArrayCollection
+    public function getRandomWords(string $langCode, array $pos, int $limit): ArrayCollection
     {
-        $conn     = $this->getConnection();
-        $idsQuery = 'SELECT w.id 
-                     FROM memo.public.words w
-                     WHERE w.lang_code = :langCode
-                     AND w.pos = :pos
-                     ORDER BY random()
-                     LIMIT :limit';
+        $conn           = $this->getConnection();
+        $posPlaceHolder = array_map(fn(string $item) => ':' . $item, $pos);
+        $pos            = array_combine($posPlaceHolder, $pos);
+        $posPlaceHolder = implode(', ', $posPlaceHolder);
+
+        $idsQuery = "SELECT DISTINCT ON(text) id, text 
+                     FROM (
+                         SELECT * FROM memo.public.words w
+                         WHERE w.lang_code = :langCode
+                             AND w.pos IN ($posPlaceHolder)
+                         ORDER BY random()
+                         LIMIT :limit
+                     ) t1";
 
         $stmt = $conn->prepare($idsQuery);
-        $stmt->execute([
+        $stmt->execute(array_merge([
             'langCode' => $langCode,
-            'pos' => $pos,
             'limit' => $limit
-        ]);
+        ], $pos));
 
         $words = $this->findWordsByIds(array_map(static fn(array $item) => $item['id'], $stmt->fetchAll()));
 

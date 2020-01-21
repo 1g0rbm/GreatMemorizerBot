@@ -59,7 +59,13 @@ class QuizAnswerAction extends AbstractTelegramAction
         }
 
         $step = $quiz->getCurrentStep();
-        $to->setText(sprintf('What is russian for "%s"', $step->getCorrectWord()->getText()));
+        $text = sprintf(
+            '🤖 What is russian for "%s" and pos "%s"?',
+            $step->getCorrectWord()->getText(),
+            $step->getCorrectWord()->getPos()
+        );
+
+        $to->setText($text);
         $to->setInlineKeyboard($this->serializer->serialize($step));
 
         return $to;

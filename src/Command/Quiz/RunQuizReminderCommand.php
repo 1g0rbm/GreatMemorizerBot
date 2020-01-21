@@ -79,8 +79,13 @@ class RunQuizReminderCommand extends Command
                 throw QuizStepException::becauseThereAreNotQuizSteps($quiz->getId());
             }
 
-            $this->builder->appendLn('Hi! Time to remember English!')
-                ->appendLn(sprintf('What is russian for "%s"', $step->getCorrectWord()->getText()));
+            $text = sprintf(
+                '🤖 What is russian for "%s" and pos "%s"?',
+                $step->getCorrectWord()->getText(),
+                $step->getCorrectWord()->getPos()
+            );
+
+            $this->builder->appendLn('Hi! Time to remember English!')->appendLn('')->appendLn($text);
 
             $to = new MessageTo();
             $to->setChatId($reminder->getChat()->getId());

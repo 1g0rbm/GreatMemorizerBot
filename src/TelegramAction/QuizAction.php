@@ -47,7 +47,13 @@ class QuizAction extends AbstractTelegramAction
             throw QuizStepException::becauseThereAreNotQuizSteps($quiz->getId());
         }
 
-        $to->setText(sprintf('What is russian for "%s"', $step->getCorrectWord()->getText()));
+        $text = sprintf(
+            '🤖 What is russian for "%s" and pos "%s"?',
+            $step->getCorrectWord()->getText(),
+            $step->getCorrectWord()->getPos()
+        );
+
+        $to->setText($text);
         $to->setInlineKeyboard($this->serializer->serialize($step));
 
         return $to;
