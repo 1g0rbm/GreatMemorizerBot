@@ -50,7 +50,7 @@ class QuizStepBuilderUnitTest extends TestCase
         $this->wordRepo
             ->expects($this->once())
             ->method('getRandomWords')
-            ->with('en', 'noun', $quiz->getLength() * 4)
+            ->with('en', ['noun', 'verb', 'adjective', 'adverb'], $quiz->getLength() * 4)
             ->willReturn($this->createWordCollection());
 
         $collection = $this->service->buildForQuiz($quiz);
