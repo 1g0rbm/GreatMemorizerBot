@@ -72,3 +72,4 @@ deploy-production:
 	scp Makefile ${PRODUCTION_USER}@${PRODUCTION_IP}:/var/www/${PRODUCTION_HOST}/Makefile
 	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${PRODUCTION_HOST}; docker-compose pull'
 	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${PRODUCTION_HOST}; docker-compose up --build -d'
+	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'source ~/.bashrc'
