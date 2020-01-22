@@ -8,25 +8,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
-use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepBuilderException;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 
-use Psr\Log\LoggerInterface;
 use function intdiv;
 
 class QuizStepBuilder
 {
     private WordRepository $wordRepository;
-    /**
-     * @var LoggerInterface
-     */
-    private LoggerInterface $logger;
 
-    public function __construct(WordRepository $wordRepository, LoggerInterface $logger)
+    public function __construct(WordRepository $wordRepository)
     {
         $this->wordRepository = $wordRepository;
-        $this->logger = $logger;
     }
 
     /**
