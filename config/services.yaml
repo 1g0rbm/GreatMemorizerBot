@@ -155,8 +155,7 @@ services:
 
     Ig0rbm\Memo\Service\Quiz\QuizStepBuilder: ~
 
-    Ig0rbm\Memo\TelegramAction\AbstractTelegramAction:
-        abstract: true
+    Ig0rbm\Memo\Service\Telegram\TranslationService: ~
 
     ##############################################################################################################
     #∨                                                                                                          ∨#
@@ -218,7 +217,7 @@ services:
     Ig0rbm\Memo\TelegramAction\SettingsAction:
         public: true
         calls:
-            - [setTranslator, ['@translator']]
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\CloseSettingsAction:
         public: true

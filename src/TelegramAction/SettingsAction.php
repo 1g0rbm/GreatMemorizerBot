@@ -23,7 +23,7 @@ class SettingsAction extends AbstractTelegramAction
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
-        $to->setText($this->translator->trans($command->getTextResponse()));
+        $to->setText($this->translator->translate($command->getTextResponse(), $to->getChatId()));
 
         $this->builder->addLine([
             new ReplyButton('🕰️ timezone'),
