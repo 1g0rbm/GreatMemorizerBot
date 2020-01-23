@@ -36,7 +36,7 @@ class QuizStepBuilderUnitTest extends TestCase
         $this->wordRepo = $this->createMock(WordRepository::class);
         $this->wordListRepo = $this->createMock(WordListRepository::class);
 
-        $this->service = new QuizStepBuilder($this->wordRepo, $this->wordListRepo);
+        $this->service = new QuizStepBuilder($this->wordRepo);
     }
 
     /**
