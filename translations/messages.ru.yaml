@@ -1,3 +1,6 @@
 button:
     menu:
         list: '📋 список'
+
+messages:
+    settings_menu: 'Меню настроек'
