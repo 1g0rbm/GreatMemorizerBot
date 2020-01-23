@@ -9,6 +9,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepBuilderException;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
+use Ig0rbm\Memo\Service\Quiz\QuestionBuilder;
 use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 
@@ -18,10 +19,16 @@ class QuizAction extends AbstractTelegramAction
 
     private QuizStepSerializer $serializer;
 
-    public function __construct(QuizManager $quizManager, QuizStepSerializer $serializer)
-    {
-        $this->quizManager = $quizManager;
-        $this->serializer  = $serializer;
+    private QuestionBuilder $questionBuilder;
+
+    public function __construct(
+        QuizManager $quizManager,
+        QuizStepSerializer $serializer,
+        QuestionBuilder $questionBuilder
+    ) {
+        $this->quizManager     = $quizManager;
+        $this->serializer      = $serializer;
+        $this->questionBuilder = $questionBuilder;
     }
 
     /**
@@ -47,13 +54,7 @@ class QuizAction extends AbstractTelegramAction
             throw QuizStepException::becauseThereAreNotQuizSteps($quiz->getId());
         }
 
-        $text = sprintf(
-            '🤖 What is russian for "%s" and pos "%s"?',
-            $step->getCorrectWord()->getText(),
-            $step->getCorrectWord()->getPos()
-        );
-
-        $to->setText($text);
+        $to->setText($this->questionBuilder->build($step));
         $to->setInlineKeyboard($this->serializer->serialize($step));
 
         return $to;

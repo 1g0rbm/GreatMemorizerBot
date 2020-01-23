@@ -11,6 +11,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Exception\Quiz\QuizExceptionInterface;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Service\Quiz\AnswerChecker;
+use Ig0rbm\Memo\Service\Quiz\QuestionBuilder;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 use Ig0rbm\Memo\Service\Quiz\ResultantService;
 
@@ -22,14 +23,18 @@ class QuizAnswerAction extends AbstractTelegramAction
 
     private ResultantService $resultant;
 
+    private QuestionBuilder $questionBuilder;
+
     public function __construct(
         AnswerChecker $answerChecker,
         QuizStepSerializer $serializer,
-        ResultantService $resultant
+        ResultantService $resultant,
+        QuestionBuilder $questionBuilder
     ) {
-        $this->answerChecker = $answerChecker;
-        $this->serializer    = $serializer;
-        $this->resultant     = $resultant;
+        $this->answerChecker   = $answerChecker;
+        $this->serializer      = $serializer;
+        $this->resultant       = $resultant;
+        $this->questionBuilder = $questionBuilder;
     }
 
     /**
@@ -59,13 +64,8 @@ class QuizAnswerAction extends AbstractTelegramAction
         }
 
         $step = $quiz->getCurrentStep();
-        $text = sprintf(
-            '🤖 What is russian for "%s" and pos "%s"?',
-            $step->getCorrectWord()->getText(),
-            $step->getCorrectWord()->getPos()
-        );
 
-        $to->setText($text);
+        $to->setText($this->questionBuilder->build($step));
         $to->setInlineKeyboard($this->serializer->serialize($step));
 
         return $to;

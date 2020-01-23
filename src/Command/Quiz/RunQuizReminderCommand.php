@@ -10,6 +10,7 @@ use Exception;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Repository\Quiz\QuizReminderRepository;
+use Ig0rbm\Memo\Service\Quiz\QuestionBuilder;
 use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
@@ -32,12 +33,15 @@ class RunQuizReminderCommand extends Command
 
     private MessageBuilder $builder;
 
+    private QuestionBuilder $questionBuilder;
+
     public function __construct(
         TelegramApiService $telegramApi,
         QuizReminderRepository $reminderRepository,
         QuizManager $quizManager,
         QuizStepSerializer $stepSerializer,
-        MessageBuilder $builder
+        MessageBuilder $builder,
+        QuestionBuilder $questionBuilder
     ) {
         parent::__construct(self::NAME);
 
@@ -46,6 +50,7 @@ class RunQuizReminderCommand extends Command
         $this->quizManager        = $quizManager;
         $this->stepSerializer     = $stepSerializer;
         $this->builder            = $builder;
+        $this->questionBuilder    = $questionBuilder;
     }
 
     public function configure(): void
@@ -79,13 +84,9 @@ class RunQuizReminderCommand extends Command
                 throw QuizStepException::becauseThereAreNotQuizSteps($quiz->getId());
             }
 
-            $text = sprintf(
-                'What is russian for "%s" and pos "%s"?',
-                $step->getCorrectWord()->getText(),
-                $step->getCorrectWord()->getPos()
-            );
-
-            $this->builder->appendLn('🤖 Hi! Time to remember English!')->appendLn('')->appendLn($text);
+            $this->builder->appendLn('Hi! Time to remember English!')
+                ->appendLn('')
+                ->appendLn($this->questionBuilder->build($step));
 
             $to = new MessageTo();
             $to->setChatId($reminder->getChat()->getId());
