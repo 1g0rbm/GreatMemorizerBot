@@ -20,8 +20,8 @@ docker-pull:
 docker-build:
 	docker-compose build
 
-memo-composer-install:
-	docker-compose run --rm memo-php-cli composer install
+memo-composer:
+	docker-compose run --rm memo-php-cli composer $(arg)
 
 memo-test:
 	docker-compose run --rm memo-php-cli php bin/phpunit $(arg)

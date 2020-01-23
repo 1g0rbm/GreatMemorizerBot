@@ -10,6 +10,7 @@ use Ig0rbm\Memo\Event\Telegram\BeforeSendResponseEvent;
 use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Service\EntityFlusher;
 use Ig0rbm\Memo\Service\Telegram\ReplyKeyboard\Builder;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BeforeResponseSendEventListener
 {
@@ -19,11 +20,18 @@ class BeforeResponseSendEventListener
 
     private EntityFlusher $flusher;
 
-    public function __construct(AccountRepository $accountRepository, Builder $builder, EntityFlusher $flusher)
-    {
+    private TranslatorInterface $translator;
+
+    public function __construct(
+        AccountRepository $accountRepository,
+        Builder $builder,
+        EntityFlusher $flusher,
+        TranslatorInterface $translator
+    ) {
         $this->accountRepository = $accountRepository;
         $this->builder           = $builder;
         $this->flusher           = $flusher;
+        $this->translator        = $translator;
     }
 
     public function onBeforeResponseSend(BeforeSendResponseEvent $event): void
@@ -43,7 +51,7 @@ class BeforeResponseSendEventListener
             new ReplyButton(Direction::getEnRu())
         ]);
 
-        $this->builder->addLine([new ReplyButton('📋 list')]);
+        $this->builder->addLine([new ReplyButton($this->translator->trans('button.menu.list'))]);
 
         $msgTo->setReplyKeyboard($this->builder->flush());
     }
