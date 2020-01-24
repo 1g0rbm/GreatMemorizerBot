@@ -36,7 +36,7 @@ parameters:
             action_class: Ig0rbm\Memo\TelegramAction\EditQuizReminderAction
             aliases:
                 - '⏰ reminders'
-                - '🤖 press button to delete word'
+                - '🤖 press button to delete reminder'
         /time_zone:
             text_response: 'Set your timezone'
             action_class: Ig0rbm\Memo\TelegramAction\TimezoneAction

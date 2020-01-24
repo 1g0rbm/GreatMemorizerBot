@@ -47,7 +47,7 @@ class EditQuizReminderAction extends AbstractTelegramAction
             $this->builder->addLine([new InlineButton($reminder->getTime(), $reminder->getTime())]);
         }
 
-        $to->setText('press button to delete word');
+        $to->setText('🤖 press button to delete reminder');
         $to->setInlineKeyboard($this->builder->flush());
 
         return $to;
