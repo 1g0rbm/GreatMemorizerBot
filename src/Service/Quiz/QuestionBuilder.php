@@ -6,16 +6,23 @@ namespace Ig0rbm\Memo\Service\Quiz;
 
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
 
-use function sprintf;
+use Ig0rbm\Memo\Service\Telegram\TranslationService;
 
 final class QuestionBuilder
 {
+    private TranslationService $translation;
+
+    public function __construct(TranslationService $translation)
+    {
+        $this->translation = $translation;
+    }
+
     public function build(QuizStep $step): string
     {
-        return sprintf(
-            'What is russian for "%s" and pos "%s"?',
-            $step->getCorrectWord()->getText(),
-            $step->getCorrectWord()->getPos()
+        return $this->translation->translate(
+            'messages.quiz_question',
+            $step->getQuiz()->getChat()->getId(),
+            ['text' => $step->getCorrectWord()->getText(), 'pos' => $step->getCorrectWord()->getPos()]
         );
     }
 }

@@ -1,0 +1,19 @@
+button:
+    menu:
+        list: '📋   list'
+        settings:
+            timezone: '🕰   timezone'
+            reminders: '⏰   reminders'
+            list: '📝   list'
+            locale: '🔤   language'
+            close: '❌   close settings'
+
+messages:
+    settings_menu: 'settings menu'
+    change_direction: 'translation from "{from}" ro"{to}"'
+    change_language: 'your interface language is "{language}"'
+    close_settings: '🤖 menu was closed'
+    edit_list: '{command} push button to delete word'
+    edit_reminders: '🤖   push button to delete reminder'
+    no_reminders_for_edit: 'there are not reminders for deleting'
+    quiz_question: 'what is russian for "{text}" and pos "{pos}"?'

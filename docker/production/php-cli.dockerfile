@@ -1,5 +1,7 @@
 FROM php:7.4-cli AS builder
-RUN apt-get update && apt-get install -y unzip
+RUN apt-get update && apt-get install -y unzip libicu-dev g++
+RUN docker-php-ext-configure intl \
+    && docker-php-ext-install intl
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet
 ENV COMPOSER_ALLOW_SUPERUSER 1
 WORKDIR /app

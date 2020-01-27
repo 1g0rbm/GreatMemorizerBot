@@ -22,7 +22,7 @@ class CloseSettingsAction extends AbstractTelegramAction
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
-        $to->setText($command->getTextResponse());
+        $to->setText($this->translator->translate('messages.close_settings', $to->getChatId()));
 
         $account = $this->accountRepository->getOneByChatId($messageFrom->getChat()->getId());
         $account->setNeedKeyboardUpdate(true);

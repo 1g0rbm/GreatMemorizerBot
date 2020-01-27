@@ -29,7 +29,7 @@ class ChangeDirectionAction extends AbstractTelegramAction
 
         [$from, $to] = explode(
             '-',
-            str_replace(['🇷🇺🇬🇧', '🇬🇧🇷🇺'], '', $messageFrom->getText()->getText())
+            str_replace(['🇷🇺🇬🇧   ', '🇬🇧🇷🇺   '], '', $messageFrom->getText()->getText())
         );
 
         $direction = $this->repository->findByFromAndTo($from, $to);
@@ -39,7 +39,11 @@ class ChangeDirectionAction extends AbstractTelegramAction
 
         $this->switcher->switch($messageFrom->getChat(), $direction);
 
-        $response->setText(sprintf('Your direction now is %s', $direction->getDirection()));
+        $response->setText($this->translator->translate(
+            'messages.change_direction',
+            $response->getChatId(),
+            ['from' => $direction->getLangFrom(), 'to' => $direction->getLangTo()]
+        ));
 
         return $response;
     }

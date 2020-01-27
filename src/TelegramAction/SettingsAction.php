@@ -26,12 +26,18 @@ class SettingsAction extends AbstractTelegramAction
         $to->setText($this->translator->translate($command->getTextResponse(), $to->getChatId()));
 
         $this->builder->addLine([
-            new ReplyButton('🕰️ timezone'),
-            new ReplyButton('⏰ reminders'),
-            new ReplyButton('📝 list'),
+            new ReplyButton($this->translator->translate('button.menu.settings.timezone', $to->getChatId())),
+            new ReplyButton($this->translator->translate('button.menu.settings.reminders', $to->getChatId())),
+            new ReplyButton($this->translator->translate('button.menu.settings.list', $to->getChatId())),
         ]);
 
-        $this->builder->addLine([new ReplyButton('❌ close settings')]);
+        $this->builder->addLine([
+            new ReplyButton($this->translator->translate('button.menu.settings.locale', $to->getChatId()))
+        ]);
+
+        $this->builder->addLine([
+            new ReplyButton($this->translator->translate('button.menu.settings.close', $to->getChatId()))
+        ]);
 
         $to->setReplyKeyboard($this->builder->flush());
 
