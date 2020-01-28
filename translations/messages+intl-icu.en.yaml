@@ -17,3 +17,4 @@ messages:
     edit_reminders: '🤖   push button to delete reminder'
     no_reminders_for_edit: 'there are not reminders for deleting'
     quiz_question: 'what is russian for "{text}" and pos "{pos}"?'
+    reminder_successfully_set: 'reminder was successfully set for time "{time}"'

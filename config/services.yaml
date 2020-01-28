@@ -222,6 +222,8 @@ services:
 
     Ig0rbm\Memo\TelegramAction\QuizSetReminderAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\LocationCancelAction:
         public: true
