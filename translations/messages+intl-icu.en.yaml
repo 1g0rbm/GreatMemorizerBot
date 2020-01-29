@@ -18,3 +18,9 @@ messages:
     no_reminders_for_edit: 'there are not reminders for deleting'
     quiz_question: 'what is russian for "{text}" and pos "{pos}"?'
     reminder_successfully_set: 'reminder was successfully set for time "{time}"'
+    timezone_thanks: 'Your TimeZone is "{timezone}"'
+    timezone_set_utc: 'Your timezone was set as "UTC"'
+    quiz_creating_instruction: |
+        For creating reminder send me message with activation time
+        Use pattern *HH:MM*
+        For example *12:55*

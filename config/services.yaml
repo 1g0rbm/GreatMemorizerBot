@@ -208,6 +208,8 @@ services:
 
     Ig0rbm\Memo\TelegramAction\QuizReminderAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\ChangeDirectionAction:
         public: true
@@ -227,6 +229,8 @@ services:
 
     Ig0rbm\Memo\TelegramAction\LocationCancelAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\SettingsAction:
         public: true

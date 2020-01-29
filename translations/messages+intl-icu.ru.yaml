@@ -18,3 +18,9 @@ messages:
     no_reminders_for_edit: 'нет напоминалок для удаления'
     quiz_question: 'как переводится слово "{text}", часть речи "{pos}"?'
     reminder_successfully_set: 'напоминалка установлена на время "{time}"'
+    timezone_thanks: 'Ваш часовой пояс "{timezone}"'
+    timezone_set_utc: 'Вам был установлен часовой пояс "UTC"'
+    quiz_creating_instruction: |
+        Для создания напоминания отправь мне в обратном сообщении время срабатывния
+        Используй шаблон *ЧЧ:ММ*
+        Например *12:55*
