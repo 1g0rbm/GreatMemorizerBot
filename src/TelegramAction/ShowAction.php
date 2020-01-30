@@ -31,7 +31,13 @@ class ShowAction extends AbstractTelegramAction
         $wordList = $this->showService->findByChat($messageFrom->getChat());
         $to->setText($wordList ?? $command->getTextResponse());
 
-        $this->builder->addLine([new InlineButton('quiz', '/quiz_settings')]);
+        $this->builder->addLine([
+            new InlineButton($this->translator->translate(
+                'button.inline.quiz',
+                $to->getChatId()),
+                '/quiz_settings'
+            )
+        ]);
         $to->setInlineKeyboard($this->builder->flush());
 
         return $to;

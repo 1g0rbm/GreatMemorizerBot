@@ -7,6 +7,11 @@ button:
             list: '📝   list'
             locale: '🔤   language'
             close: '❌   close settings'
+    inline:
+        reminder: '⏰ reminder'
+        quiz: '❓ quiz'
+        run_quiz: '🤓 run'
+        save: '💾 save'
 
 messages:
     settings_menu: 'settings menu'
@@ -24,3 +29,8 @@ messages:
         For creating reminder send me message with activation time
         Use pattern *HH:MM*
         For example *12:55*
+    quiz_choose_action: 'choose an action'
+    save:
+        wrong_word: 'wrong word for save'
+        success: 'word was saved successfully'
+        word_exist: 'list already has the same word'

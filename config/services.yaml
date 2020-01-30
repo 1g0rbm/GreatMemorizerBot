@@ -173,9 +173,13 @@ services:
 
     Ig0rbm\Memo\TelegramAction\TranslationAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\SaveAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\HelloAction:
         public: true
@@ -185,7 +189,8 @@ services:
 
     Ig0rbm\Memo\TelegramAction\ShowAction:
         public: true
-
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
     Ig0rbm\Memo\TelegramAction\EditAction:
         public: true
         calls:
@@ -205,6 +210,8 @@ services:
 
     Ig0rbm\Memo\TelegramAction\QuizSettingsAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\QuizReminderAction:
         public: true

@@ -15,7 +15,7 @@ class WordListException extends DomainException
 
     public static function becauseListAlreadyHasSameWord(): self
     {
-        return new self('List already has the same word');
+        return new self('messages.save.word_exist');
     }
 
     public static function becauseThereIsNotListForChat(int $chatId): self

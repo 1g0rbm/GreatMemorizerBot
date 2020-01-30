@@ -52,7 +52,12 @@ class TranslationAction extends AbstractTelegramAction
             return $messageTo;
         }
 
-        $this->builder->addLine([new InlineButton('save', '/save')]);
+        $this->builder->addLine([
+            new InlineButton(
+                $this->translator->translate('button.inline.save', $messageTo->getChatId()),
+                '/save'
+            )
+        ]);
         $messageTo->setInlineKeyboard($this->builder->flush());
 
         return $messageTo;
