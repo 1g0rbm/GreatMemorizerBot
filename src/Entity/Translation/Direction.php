@@ -29,12 +29,12 @@ class Direction
 
     public static function getRuEn(): string
     {
-        return sprintf('🇷🇺🇬🇧%s-%s', self::LANG_RU, self::LANG_EN);
+        return sprintf('🇷🇺🇬🇧   %s-%s', self::LANG_RU, self::LANG_EN);
     }
 
     public static function getEnRu(): string
     {
-        return sprintf('🇬🇧🇷🇺%s-%s',self::LANG_EN, self::LANG_RU);
+        return sprintf('🇬🇧🇷🇺   %s-%s',self::LANG_EN, self::LANG_RU);
     }
 
     /**

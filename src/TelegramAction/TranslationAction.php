@@ -40,7 +40,10 @@ class TranslationAction extends AbstractTelegramAction
         $messageTo->setChatId($messageFrom->getChat()->getId());
 
         if (null === $messageFrom->getText()->getText()) {
-            $messageTo->setText('Wrong text');
+            $messageTo->setText(
+                $this->translator->translate('messages.translation_error', $messageTo->getChatId())
+            );
+
             return $messageTo;
         }
 
@@ -52,7 +55,12 @@ class TranslationAction extends AbstractTelegramAction
             return $messageTo;
         }
 
-        $this->builder->addLine([new InlineButton('save', '/save')]);
+        $this->builder->addLine([
+            new InlineButton(
+                $this->translator->translate('button.inline.save', $messageTo->getChatId()),
+                '/save'
+            )
+        ]);
         $messageTo->setInlineKeyboard($this->builder->flush());
 
         return $messageTo;

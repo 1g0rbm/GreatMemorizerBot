@@ -1,0 +1,44 @@
+button:
+    menu:
+        list: '📋   list'
+        send_location: '🗺️   send location'
+        dont_send_location: '🚫   do not send location'
+        settings:
+            timezone: '🕰   timezone'
+            reminders: '⏰   reminders'
+            list: '📝   list'
+            locale: '🔤   language'
+            close: '❌   close settings'
+    inline:
+        reminder: '⏰ reminder'
+        quiz: '❓ quiz'
+        run_quiz: '🤓 run'
+        save: '💾 save'
+
+messages:
+    settings_menu: 'settings menu'
+    change_direction: 'translation from "{from}" ro"{to}"'
+    change_language: 'your interface language is "{language}"'
+    close_settings: '🤖 menu was closed'
+    edit_list: '{command} push button to delete word'
+    edit_reminders: '🤖   push button to delete reminder'
+    no_reminders_for_edit: 'there are not reminders for deleting'
+    quiz_question: 'what is russian for "{text}" and pos "{pos}"?'
+    reminder_successfully_set: 'reminder was successfully set for time "{time}"'
+    timezone_thanks: 'Your TimeZone is "{timezone}"'
+    timezone_set_utc: 'Your timezone was set as "UTC"'
+    quiz_creating_instruction: |
+        For creating reminder send me message with activation time
+        Use pattern *HH:MM*
+        For example *12:55*
+    quiz_choose_action: 'choose an action'
+    location_request: 'send your location for defining your timezone'
+    translation_error: 'wrong text'
+    save:
+        wrong_word: 'wrong word for save'
+        success: 'word was saved successfully'
+        word_exist: 'list already has the same word'
+    reminder_greetings: 'Hi! Time to remember English!'
+label:
+    question_word: 'question word: '
+    correct_translation: 'correct translation: '

@@ -24,10 +24,17 @@ class TimezoneAction extends AbstractTelegramAction
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
-        $to->setText('Send your location for defining your timezone');
+        $to->setText($this->translator->translate('messages.location_request', $to->getChatId()));
 
-        $this->builder->addLine([new ReplyButton('send your location', true)]);
-        $this->builder->addLine([new ReplyButton('I don\'t want to show my location')]);
+        $this->builder->addLine([
+            new ReplyButton(
+                $this->translator->translate('button.menu.send_location', $to->getChatId()),
+                true
+            )
+        ]);
+        $this->builder->addLine([
+            new ReplyButton($this->translator->translate('button.menu.dont_send_location', $to->getChatId()))
+        ]);
 
         $to->setReplyKeyboard($this->builder->flush());
 

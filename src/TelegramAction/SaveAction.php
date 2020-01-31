@@ -48,16 +48,16 @@ class SaveAction extends AbstractTelegramAction
         $wordsBag = $this->wordTranslation->translate($account->getDirection(), $this->textFinder->find($from));
 
         if ($wordsBag->count() === 0) {
-            $messageTo->setText('Wrong word for save');
+            $messageTo->setText($this->translator->translate('messages.save.wrong_word', $messageTo->getChatId()));
 
             return $messageTo;
         }
 
         try {
             $this->manager->add($from->getChat(), $wordsBag);
-            $messageTo->setText('Word was saved successfully');
+            $messageTo->setText($this->translator->translate('messages.save.success', $messageTo->getChatId()));
         } catch (WordListException $e) {
-            $messageTo->setText($e->getMessage());
+            $messageTo->setText($this->translator->translate($e->getMessage(), $messageTo->getChatId()));
         }
 
         return $messageTo;

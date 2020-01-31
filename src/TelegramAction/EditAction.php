@@ -51,7 +51,14 @@ class EditAction extends AbstractTelegramAction
             $this->builder->addLine([new InlineButton($word['text'], $word['text'])]);
         }
 
-        $to->setText(sprintf('%s press button to delete word', $command->getCommand()));
+        $to->setText(
+            $this->translator->translate(
+                'messages.edit_list',
+                $to->getChatId(),
+                ['command' => $command->getCommand()]
+            )
+        );
+
         $to->setInlineKeyboard($this->builder->flush());
 
         return $to;

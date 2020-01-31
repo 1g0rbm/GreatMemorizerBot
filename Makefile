@@ -44,7 +44,8 @@ docker-down-staging:
 memo-composer-install-staging:
 	docker-compose -f docker-compose-staging.yml run --rm memo-php-cli-stage composer install
 
-memo-cli-staging:
+
+taging:
 	docker-compose -f docker-compose-staging.yml run --rm memo-php-cli-stage $(arg)
 
 memo-migrate:

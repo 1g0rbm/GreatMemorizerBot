@@ -18,6 +18,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Account
 {
+    public const LOCALE_EN = 'en';
+    public const LOCALE_RU = 'ru';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -68,6 +71,13 @@ class Account
      */
     private ?string $timeZone = null;
 
+    /**
+     * @ORM\Column(type="string", options={"default": Account::LOCALE_EN}, length=2)
+     *
+     * @Assert\Type("string")
+     */
+    private string $locale;
+
     public static function createNewFromChatAndDirection(Chat $chat, Direction $direction): self
     {
         $account                     = new self();
@@ -75,6 +85,7 @@ class Account
         $account->chat               = $chat;
         $account->direction          = $direction;
         $account->needKeyboardUpdate = true;
+        $account->locale             = self::LOCALE_EN;
 
         return $account;
     }
@@ -155,5 +166,15 @@ class Account
     public function setTimeZone(?string $timeZone): void
     {
         $this->timeZone = $timeZone;
+    }
+
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(string $locale): void
+    {
+        $this->locale = $locale;
     }
 }

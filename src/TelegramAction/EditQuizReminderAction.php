@@ -27,7 +27,6 @@ class EditQuizReminderAction extends AbstractTelegramAction
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
-        $to->setText($command->getTextResponse());
 
         if ($messageFrom->getCallbackQuery()) {
             $this->quizReminderRepository->deleteReminderByChatAndTime(
@@ -38,7 +37,7 @@ class EditQuizReminderAction extends AbstractTelegramAction
 
         $reminders = $this->quizReminderRepository->findAllRemindersByChat($messageFrom->getChat());
         if (empty($reminders)) {
-            $to->setText($command->getTextResponse());
+            $to->setText($this->translator->translate('messages.no_reminders_for_edit', $to->getChatId()));
 
             return $to;
         }
@@ -47,7 +46,8 @@ class EditQuizReminderAction extends AbstractTelegramAction
             $this->builder->addLine([new InlineButton($reminder->getTime(), $reminder->getTime())]);
         }
 
-        $to->setText('🤖 press button to delete reminder');
+
+        $to->setText($this->translator->translate('messages.edit_reminders', $to->getChatId()));
         $to->setInlineKeyboard($this->builder->flush());
 
         return $to;

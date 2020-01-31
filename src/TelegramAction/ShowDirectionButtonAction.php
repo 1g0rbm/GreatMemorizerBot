@@ -42,7 +42,13 @@ class ShowDirectionButtonAction extends AbstractTelegramAction
         if ($callback) {
             $direction        = $this->directionRepository->getDirectionById((int) $callback->getData()->getText());
             $changedDirection = $this->directionSwitcher->switch($messageFrom->getChat(), $direction);
-            $to->setText(sprintf('Your direction now is %s', $changedDirection->getDirection()));
+            $to->setText(
+                $this->translator->translate(
+                    'messages.change_direction',
+                    $to->getChatId(),
+                    ['direction' => $changedDirection->getDirection()]
+                )
+            );
 
             return $to;
         }

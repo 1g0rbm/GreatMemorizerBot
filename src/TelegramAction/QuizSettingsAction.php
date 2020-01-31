@@ -25,11 +25,17 @@ class QuizSettingsAction extends AbstractTelegramAction
         $to->setChatId($messageFrom->getChat()->getId());
 
         $this->builder->addLine([
-            new InlineButton('Single', '/word_list_quiz'),
-            new InlineButton('Regular', '/quiz_reminder')
+            new InlineButton(
+                $this->translator->translate('button.inline.run_quiz', $to->getChatId()),
+                '/word_list_quiz'
+            ),
+            new InlineButton(
+                $this->translator->translate('button.inline.reminder', $to->getChatId()),
+                '/quiz_reminder'
+            )
         ]);
 
-        $to->setText($command->getTextResponse());
+        $to->setText($this->translator->translate('messages.quiz_choose_action', $to->getChatId()));
         $to->setInlineKeyboard($this->builder->flush());
 
         return $to;

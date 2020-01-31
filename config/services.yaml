@@ -35,13 +35,19 @@ parameters:
             text_response: 'There are not reminders for editing'
             action_class: Ig0rbm\Memo\TelegramAction\EditQuizReminderAction
             aliases:
-                - '⏰ reminders'
-                - '🤖 press button to delete reminder'
+                - '^\⏰\s\s\s.+$'
+                - '^\🤖\s\s\s.+$'
         /time_zone:
             text_response: 'Set your timezone'
             action_class: Ig0rbm\Memo\TelegramAction\TimezoneAction
             aliases:
-                - '🕰️ timezone'
+                - '^\🕰\s\s\s.+$'
+        /locale_edit:
+            text_response: '🤖 push button to set your language'
+            action_class: Ig0rbm\Memo\TelegramAction\AccountLocaleAction
+            aliases:
+                - '^\🔤\s\s\s.+$'
+                - '🤖 push button to set your language'
         /location:
             action_class: Ig0rbm\Memo\TelegramAction\LocationAction
             text_response: 'Now we have your location'
@@ -49,17 +55,17 @@ parameters:
             action_class: Ig0rbm\Memo\TelegramAction\LocationCancelAction
             text_response: 'Your timezone was set as UTC'
             aliases:
-                - "I don't want to show my location"
+                - '^\🚫\s\s\s.+$'
         /list:
             text_response: 'Yor list is empty'
             action_class: Ig0rbm\Memo\TelegramAction\ShowAction
             aliases:
-                - '📋 list'
+                - '^\📋\s\s\s.+$'
         /edit:
             text_response: 'Nothing to edit'
             action_class: Ig0rbm\Memo\TelegramAction\EditAction
             aliases:
-                - '📝 list'
+                - '^\📝\s\s\s.+$'
         /switch:
             text_response: 'Choose translation direction'
             action_class: Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction
@@ -67,7 +73,9 @@ parameters:
             text_response: 'Yor direction now is %s'
             action_class: Ig0rbm\Memo\TelegramAction\ChangeDirectionAction
             aliases:
+                - '🇷🇺🇬🇧\s\s\sru-en'
                 - '🇷🇺🇬🇧ru-en'
+                - '🇬🇧🇷🇺\s\s\sen-ru'
                 - '🇬🇧🇷🇺en-ru'
         /hello:
             text_response: 'Hello!'
@@ -79,7 +87,7 @@ parameters:
             text_response: '🤖 menu was closed'
             action_class: Ig0rbm\Memo\TelegramAction\CloseSettingsAction
             aliases:
-                - '❌ close settings'
+                - '^\❌\s\s\s.+$'
         default:
             text_response: 'Undefined command'
             action_class: Ig0rbm\Memo\TelegramAction\TranslationAction
@@ -155,8 +163,7 @@ services:
 
     Ig0rbm\Memo\Service\Quiz\QuizStepBuilder: ~
 
-    Ig0rbm\Memo\TelegramAction\AbstractTelegramAction:
-        abstract: true
+    Ig0rbm\Memo\Service\Telegram\TranslationService: ~
 
     ##############################################################################################################
     #∨                                                                                                          ∨#
@@ -166,9 +173,13 @@ services:
 
     Ig0rbm\Memo\TelegramAction\TranslationAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\SaveAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\HelloAction:
         public: true
@@ -178,9 +189,12 @@ services:
 
     Ig0rbm\Memo\TelegramAction\ShowAction:
         public: true
-
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
     Ig0rbm\Memo\TelegramAction\EditAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction:
         public: true
@@ -196,32 +210,55 @@ services:
 
     Ig0rbm\Memo\TelegramAction\QuizSettingsAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\QuizReminderAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\ChangeDirectionAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\LocationAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\TimezoneAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\QuizSetReminderAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\LocationCancelAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\SettingsAction:
         public: true
         calls:
-            - [setTranslator, ['@translator']]
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\CloseSettingsAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\EditQuizReminderAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
+
+    Ig0rbm\Memo\TelegramAction\AccountLocaleAction:
+        public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]

@@ -6,6 +6,8 @@ namespace Ig0rbm\Memo\Entity\TimeZone;
 
 final class TimeZone
 {
+    public const DEFAULT = 'UTC';
+
     private string $status;
 
     private ?string $message = null;
