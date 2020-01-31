@@ -1,6 +1,8 @@
 button:
     menu:
         list: '📋   list'
+        send_location: '🗺️   send location'
+        dont_send_location: '🚫   do not send location'
         settings:
             timezone: '🕰   timezone'
             reminders: '⏰   reminders'
@@ -30,6 +32,8 @@ messages:
         Use pattern *HH:MM*
         For example *12:55*
     quiz_choose_action: 'choose an action'
+    location_request: 'send your location for defining your timezone'
+    translation_error: 'wrong text'
     save:
         wrong_word: 'wrong word for save'
         success: 'word was saved successfully'

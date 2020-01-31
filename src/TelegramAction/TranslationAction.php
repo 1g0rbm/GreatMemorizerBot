@@ -40,7 +40,10 @@ class TranslationAction extends AbstractTelegramAction
         $messageTo->setChatId($messageFrom->getChat()->getId());
 
         if (null === $messageFrom->getText()->getText()) {
-            $messageTo->setText('Wrong text');
+            $messageTo->setText(
+                $this->translator->translate('messages.translation_error', $messageTo->getChatId())
+            );
+
             return $messageTo;
         }
 

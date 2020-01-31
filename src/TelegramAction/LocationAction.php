@@ -43,13 +43,15 @@ class LocationAction extends AbstractTelegramAction
             $location->getLongitude()
         );
 
-        $this->builder->appendLn(sprintf('Thanks! Now your TimeZone is "%s"', $account->getTimeZone()))
+        $timezoneMessage = $this->translator->translate(
+            'messages.timezone_thanks',
+            $to->getChatId(),
+            ['timezone' => $account->getTimeZone()]
+        );
+
+        $this->builder->appendLn($timezoneMessage)
             ->appendLn('')
-            ->append('For creating regular quiz you must write message by pattern ')
-            ->append('HH:MM', MessageBuilder::BOLD)
-            ->appendLn('.')
-            ->append('For example ')
-            ->appendLn('12:45', MessageBuilder::BOLD);
+            ->append($this->translator->translate('messages.quiz_creating_instruction', $to->getChatId()));
 
         $to->setText($this->builder->flush());
 
