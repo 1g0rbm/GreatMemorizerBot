@@ -46,6 +46,7 @@ class EditQuizReminderAction extends AbstractTelegramAction
             $this->builder->addLine([new InlineButton($reminder->getTime(), $reminder->getTime())]);
         }
 
+
         $to->setText($this->translator->translate('messages.edit_reminders', $to->getChatId()));
         $to->setInlineKeyboard($this->builder->flush());
 
