@@ -38,3 +38,7 @@ messages:
         wrong_word: 'не могу сохранить это слово'
         success: 'слово добавлено в твой список'
         word_exist: 'список уже содержит это слово'
+    reminder_greetings: 'Привет! Время вспомнить английский!'
+label:
+    question_word: 'слово: '
+    correct_translation: 'правильный перевод: '

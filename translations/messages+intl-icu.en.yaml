@@ -38,3 +38,7 @@ messages:
         wrong_word: 'wrong word for save'
         success: 'word was saved successfully'
         word_exist: 'list already has the same word'
+    reminder_greetings: 'Hi! Time to remember English!'
+label:
+    question_word: 'question word: '
+    correct_translation: 'correct translation: '

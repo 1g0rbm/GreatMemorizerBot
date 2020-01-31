@@ -15,6 +15,7 @@ use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
 use Ig0rbm\Memo\Service\Telegram\TelegramApiService;
+use Ig0rbm\Memo\Service\Telegram\TranslationService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,13 +36,16 @@ class RunQuizReminderCommand extends Command
 
     private QuestionBuilder $questionBuilder;
 
+    private TranslationService $translation;
+
     public function __construct(
         TelegramApiService $telegramApi,
         QuizReminderRepository $reminderRepository,
         QuizManager $quizManager,
         QuizStepSerializer $stepSerializer,
         MessageBuilder $builder,
-        QuestionBuilder $questionBuilder
+        QuestionBuilder $questionBuilder,
+        TranslationService $translation
     ) {
         parent::__construct(self::NAME);
 
@@ -51,6 +55,7 @@ class RunQuizReminderCommand extends Command
         $this->stepSerializer     = $stepSerializer;
         $this->builder            = $builder;
         $this->questionBuilder    = $questionBuilder;
+        $this->translation        = $translation;
     }
 
     public function configure(): void
@@ -84,7 +89,9 @@ class RunQuizReminderCommand extends Command
                 throw QuizStepException::becauseThereAreNotQuizSteps($quiz->getId());
             }
 
-            $this->builder->appendLn('Hi! Time to remember English!')
+            $this->builder->appendLn(
+                $this->translation->translate('messages.reminder_greetings', $reminder->getChat()->getId())
+            )
                 ->appendLn('')
                 ->appendLn($this->questionBuilder->build($step));
 
