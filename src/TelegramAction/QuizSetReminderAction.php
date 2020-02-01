@@ -27,13 +27,13 @@ class QuizSetReminderAction extends AbstractTelegramAction
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
-        $reminder = $this->reminderBuilder->build($messageFrom->getChat(), $messageFrom->getText()->getText());
+        $this->reminderBuilder->build($messageFrom->getChat(), $messageFrom->getText()->getText());
 
         $to->setText(
             $this->translator->translate(
                 'messages.reminder_successfully_set',
                 $to->getChatId(),
-                ['time' => $reminder->getTime()]
+                ['time' => $messageFrom->getText()->getText()]
             )
         );
 

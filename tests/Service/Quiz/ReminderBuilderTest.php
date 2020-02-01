@@ -15,6 +15,7 @@ use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Repository\Quiz\QuizReminderRepository;
 use Ig0rbm\Memo\Service\EntityFlusher;
 use Ig0rbm\Memo\Service\Quiz\ReminderBuilder;
+use Ig0rbm\Memo\Service\TimeZoneConverter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -28,6 +29,9 @@ class ReminderBuilderTest extends TestCase
     /** @var AccountRepository|MockObject */
     private AccountRepository $accountRepository;
 
+    /** @var TimeZoneConverter|MockObject */
+    private TimeZoneConverter $timeZoneConverter;
+
     /** @var EntityFlusher|MockObject */
     private EntityFlusher $flusher;
 
@@ -37,9 +41,15 @@ class ReminderBuilderTest extends TestCase
 
         $this->quizReminderRepository = $this->createMock(QuizReminderRepository::class);
         $this->accountRepository      = $this->createMock(AccountRepository::class);
+        $this->timeZoneConverter      = $this->createMock(TimeZoneConverter::class);
         $this->flusher                = $this->createMock(EntityFlusher::class);
 
-        $this->service = new ReminderBuilder($this->quizReminderRepository, $this->accountRepository, $this->flusher);
+        $this->service = new ReminderBuilder(
+            $this->quizReminderRepository,
+            $this->accountRepository,
+            $this->timeZoneConverter,
+            $this->flusher
+        );
     }
 
     /**
@@ -111,10 +121,14 @@ class ReminderBuilderTest extends TestCase
 
         $this->flusher->expects($this->once())->method('flush');
 
-        $reminder = $this->service->build($chat, $time);
-
         $dt = new DateTime($time, new DateTimeZone($account->getTimeZone()));
         $dt->setTimezone(new DateTimeZone('UTC'));
+
+        $this->timeZoneConverter->expects($this->once())
+            ->method('convert')
+            ->willReturn($dt);
+
+        $reminder = $this->service->build($chat, $time);
 
         $this->assertEquals($dt->format('H:i'), $reminder->getTime());
         $this->assertEquals($chat, $reminder->getChat());

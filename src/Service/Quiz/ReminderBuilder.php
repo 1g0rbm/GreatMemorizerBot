@@ -4,33 +4,35 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Service\Quiz;
 
-use DateTime;
-use DateTimeZone;
 use Exception;
 use Ig0rbm\Memo\Entity\Quiz\QuizReminder;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Ig0rbm\Memo\Entity\TimeZone\TimeZone;
 use Ig0rbm\Memo\Exception\Quiz\ReminderBuildingException;
 use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Repository\Quiz\QuizReminderRepository;
 use Ig0rbm\Memo\Service\EntityFlusher;
+use Ig0rbm\Memo\Service\TimeZoneConverter;
 
 class ReminderBuilder
 {
     private QuizReminderRepository $reminderRepository;
 
-    private EntityFlusher $flusher;
-    /**
-     * @var AccountRepository
-     */
     private AccountRepository $accountRepository;
+
+    private TimeZoneConverter $timeZoneConverter;
+
+    private EntityFlusher $flusher;
 
     public function __construct(
         QuizReminderRepository $reminderRepository,
         AccountRepository $accountRepository,
+        TimeZoneConverter $timeZoneConverter,
         EntityFlusher $flusher
     ) {
         $this->reminderRepository = $reminderRepository;
         $this->accountRepository  = $accountRepository;
+        $this->timeZoneConverter  = $timeZoneConverter;
         $this->flusher            = $flusher;
     }
 
@@ -49,8 +51,7 @@ class ReminderBuilder
             throw ReminderBuildingException::becauseThereIsNoTimeZoneForChat($chat->getId());
         }
 
-        $dt = new DateTime($time, new DateTimeZone($account->getTimeZone()));
-        $dt->setTimezone(new DateTimeZone('UTC'));
+        $dt = $this->timeZoneConverter->convert($time, $account->getTimeZone(), TimeZone::DEFAULT);
 
         $reminder = new QuizReminder();
         $reminder->setChat($chat);
