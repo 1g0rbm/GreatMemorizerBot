@@ -16,6 +16,25 @@ button:
         save: '💾 save'
 
 messages:
+    start: |
+        Hi!
+        I'm GreatMemorizer and I can help you to remember enaglish words
+
+        How do I do it? Quite simply:
+          1) Send to me word and I'll send you translation in response
+          2) Push the button "save" and I'll add that word into remember list
+          3) Push the button "list" and I'll send your remember list
+          4) Push the button "quiz", if you want to take the quiz
+          5) If you want to take the quiz now, push the button "run", but you should to know that you must have at
+        least 4 words
+          6) If you want me to remind you about a quiz, then push the button "reminder" but you should to know that I
+        need to know your location for define your timezone, otherwise I'm going to assume that your timezone is "UTC"
+
+        For edit your data (remember lsit, interface language, reminders, timezone) you should to use command /settings
+
+        Commands /start and /help will show this message :)
+
+        For all questions related to me please write to my author @Ig0rbm
     settings_menu: 'settings menu'
     change_direction: 'translation from "{from}" ro"{to}"'
     change_language: 'your interface language is "{language}"'

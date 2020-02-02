@@ -5,6 +5,12 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     telegram_commands:
+        /start:
+            text_response: ''
+            action_class: Ig0rbm\Memo\TelegramAction\StartAction
+        /help:
+            text_response: ''
+            action_class: Ig0rbm\Memo\TelegramAction\StartAction
         /translate:
             text_response: 'What word do you want to translate?'
             action_class: Ig0rbm\Memo\TelegramAction\QuizAction
@@ -259,6 +265,11 @@ services:
             - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\AccountLocaleAction:
+        public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
+
+    Ig0rbm\Memo\TelegramAction\StartAction:
         public: true
         calls:
             - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
