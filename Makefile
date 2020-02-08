@@ -73,3 +73,6 @@ deploy-production:
 	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${PRODUCTION_HOST}; docker-compose pull'
 	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'cd /var/www/${PRODUCTION_HOST}; docker-compose up --build -d'
 	ssh ${PRODUCTION_USER}@${PRODUCTION_IP} 'source ~/.bashrc'
+
+production-dump:
+	./bin/production_db_dump.sh
