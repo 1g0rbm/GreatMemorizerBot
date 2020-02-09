@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Remember list{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/remember_list.css') }}">
+{% endblock %}
+
+{% block body %}
+    <ul class="remember_list">
+        {% for word in list %}
+            <li class="remember_word">
+                <span class="source">{{ word.text }}</span>:
+                <span class="pos">{{ word.pos }}</span>
+                <span class="transcription">{{ word.transcription }}</span>
+
+                <ul class="word_translation">
+                    {% for translation in word.translations %}
+                        <li class="translation_text">
+                            {{ translation.text }}
+                            {% if translation.synonyms %}
+                                {% for synonym in translation.synonyms %}
+                                    {{ synonym.text }}
+                                {% endfor %}
+                            {% endif %}
+                        </li>
+
+                    {% endfor %}
+                </ul>
+
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -11,13 +11,11 @@ class WordListEventListener
 {
     private WordListManager $manager;
 
-    public function __construct(WordListManager $manager)
+    public function __construct()
     {
-        $this->manager = $manager;
     }
 
     public function onWordListAction(WordListEvent $event): void
     {
-        $this->manager->sendPage($event->getWordList());
     }
 }
