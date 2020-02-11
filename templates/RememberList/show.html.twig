@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Remember list{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/remember_list.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div id="container">
+        <div class="header">
+            <img alt="logo" src="{{ asset('img/logo.png') }}">
+            <div class="header_information">
+                <span class="title">Remember list</span>
+                <span class="memo_name">
+                    GreatMemorizerBot <span class="mid_dot">■</span> <span class="total">Total {{ list|length }}</span>
+                </span>
+            </div>
+        </div>
+        <ol class="remember_list">
+            {% for item in list %}
+                <li class="remember_word">
+                    <span class="source">{{ item.source }}</span>
+                    <span class="transcription">[{{ item.transcription }}]</span>
+                    {% for word in item.words %}
+                        <div class="word_information">
+                            <span class="pos">{{ word.pos }}: </span>
+                            <span class="translation_text">{{ word.translation }} </span>
+                        </div>
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+{% endblock %}
