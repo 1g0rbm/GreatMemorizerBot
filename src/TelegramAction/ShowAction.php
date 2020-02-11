@@ -11,25 +11,27 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
-use Ig0rbm\Memo\Service\Telegram\TranslationMessageBuilder;
-use Ig0rbm\Memo\Service\WordList\WordListShowService;
+
+use function sprintf;
 
 class ShowAction extends AbstractTelegramAction
 {
-    private WordListRepository $wordListRepository;
+    private const WORD_LIST_URI = '/bot/%d/list';
 
-    private TranslationMessageBuilder $translationMessageBuilder;
+    private WordListRepository $wordListRepository;
 
     private Builder $builder;
 
+    private string $botHost;
+
     public function __construct(
         WordListRepository $wordListRepository,
-        TranslationMessageBuilder $translationMessageBuilder,
-        Builder $builder
+        Builder $builder,
+        string $botHost
     ) {
         $this->builder                   = $builder;
         $this->wordListRepository        = $wordListRepository;
-        $this->translationMessageBuilder = $translationMessageBuilder;
+        $this->botHost                   = $botHost;
     }
 
     /**
@@ -42,7 +44,7 @@ class ShowAction extends AbstractTelegramAction
 
         $wordList = $this->wordListRepository->getOneByChat($messageFrom->getChat());
 
-        $to->setText($this->translationMessageBuilder->buildFromWords($wordList->getWords()));
+        $to->setText($this->createWordListUrl($wordList->getId()));
 
         $this->builder->addLine([
             new InlineButton($this->translator->translate(
@@ -54,5 +56,10 @@ class ShowAction extends AbstractTelegramAction
         $to->setInlineKeyboard($this->builder->flush());
 
         return $to;
+    }
+
+    private function createWordListUrl(int $wordListId): string
+    {
+        return sprintf('%s' . self::WORD_LIST_URI, $this->botHost, $wordListId);
     }
 }

@@ -186,6 +186,8 @@ services:
         public: true
 
     Ig0rbm\Memo\TelegramAction\ShowAction:
+        arguments:
+            $botHost: '%env(BOT_HOST)%'
         public: true
         calls:
             - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
