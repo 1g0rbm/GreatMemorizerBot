@@ -1,6 +1,7 @@
 button:
     menu:
         list: '📋   список'
+        settings_btn: '⚙   настройки'
         send_location: '🗺️   отправить местоположение'
         dont_send_location: '🚫   не отправлять местоположение'
         settings:

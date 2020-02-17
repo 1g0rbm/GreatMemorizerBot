@@ -89,6 +89,8 @@ parameters:
         /settings:
             text_response: 'messages.settings_menu'
             action_class: Ig0rbm\Memo\TelegramAction\SettingsAction
+            aliases:
+                - '^\⚙\s\s\s.+$'
         /close_settings:
             text_response: '🤖 menu was closed'
             action_class: Ig0rbm\Memo\TelegramAction\CloseSettingsAction

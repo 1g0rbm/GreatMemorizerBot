@@ -55,6 +55,10 @@ class BeforeResponseSendEventListener
             new ReplyButton($this->translator->translate('button.menu.list', $msgTo->getChatId()))
         ]);
 
+        $this->builder->addLine([
+            new ReplyButton($this->translator->translate('button.menu.settings_btn', $msgTo->getChatId()))
+        ]);
+
         $msgTo->setReplyKeyboard($this->builder->flush());
     }
 }
