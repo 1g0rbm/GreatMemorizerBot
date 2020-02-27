@@ -46,10 +46,7 @@ class BeforeResponseSendEventListener
         $account->setNeedKeyboardUpdate(false);
         $this->flusher->flush();
 
-        $this->builder->addLine([
-            new ReplyButton(Direction::getRuEn()),
-            new ReplyButton(Direction::getEnRu())
-        ]);
+        $this->builder->addLine([new ReplyButton($this->getButtonByDirection($account->getDirection()))]);
 
         $this->builder->addLine([
             new ReplyButton($this->translator->translate('button.menu.list', $msgTo->getChatId()))
@@ -60,5 +57,14 @@ class BeforeResponseSendEventListener
         ]);
 
         $msgTo->setReplyKeyboard($this->builder->flush());
+    }
+
+    private function getButtonByDirection(Direction $direction): string
+    {
+        if ($direction->getDirection() === str_replace('🇬🇧🇷🇺   ', '', Direction::getEnRu())) {
+            return Direction::getRuEn();
+        }
+
+        return Direction::getEnRu();
     }
 }

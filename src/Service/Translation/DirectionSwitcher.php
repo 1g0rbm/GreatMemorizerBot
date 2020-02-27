@@ -37,6 +37,8 @@ class DirectionSwitcher
         }
 
         $account->setDirection($direction);
+        $account->setNeedKeyboardUpdate(true);
+
         $this->flusher->flush();
 
         return $direction;
