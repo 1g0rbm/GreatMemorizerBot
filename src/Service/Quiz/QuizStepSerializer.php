@@ -8,6 +8,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\InlineKeyboard;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
 
+use function mb_strcut;
 use function shuffle;
 use function sprintf;
 
@@ -36,7 +37,10 @@ class QuizStepSerializer
             $translation = reset($arr);
 
             $btnText = $translation->getText() ?? self::WORD_TEXT_ERR;
-            $line[]  = new InlineButton($btnText, sprintf('/quiz_answer %s', $btnText));
+            $line[]  = new InlineButton(
+                $btnText,
+                mb_strcut(sprintf('/quiz_answer %s', $btnText), 0, 64)
+            );
 
             if (count($line) === 2) {
                 $this->builder->addLine($line);

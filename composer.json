@@ -7,6 +7,7 @@
         "ext-dom": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "ext-mbstring": "*",
         "1g0rbm/handybag": "dev-master",
         "doctrine/doctrine-migrations-bundle": "^2.0",
         "eightpoints/guzzle-bundle": "^7.5",
