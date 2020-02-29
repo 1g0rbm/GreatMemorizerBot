@@ -9,9 +9,12 @@ use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
 
 use function shuffle;
+use function sprintf;
 
 class QuizStepSerializer
 {
+    private const WORD_TEXT_ERR = '#ERR_NULL_DATA';
+
     private Builder $builder;
 
     public function __construct(Builder $builder)
@@ -32,7 +35,8 @@ class QuizStepSerializer
             /** @var Word $translation */
             $translation = reset($arr);
 
-            $line[] = new InlineButton($translation->getText(), '/quiz_answer ' . $translation->getText());
+            $btnText = $translation->getText() ?? self::WORD_TEXT_ERR;
+            $line[]  = new InlineButton($btnText, sprintf('/quiz_answer %s', $btnText));
 
             if (count($line) === 2) {
                 $this->builder->addLine($line);
