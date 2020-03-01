@@ -72,7 +72,7 @@ class Account
     private ?string $timeZone = null;
 
     /**
-     * @ORM\Column(type="string", options={"default": Account::LOCALE_EN}, length=2)
+     * @ORM\Column(type="string", options={"default": Account::LOCALE_RU}, length=2)
      *
      * @Assert\Type("string")
      */
@@ -85,7 +85,7 @@ class Account
         $account->chat               = $chat;
         $account->direction          = $direction;
         $account->needKeyboardUpdate = true;
-        $account->locale             = self::LOCALE_EN;
+        $account->locale             = self::LOCALE_RU;
 
         return $account;
     }
