@@ -20,6 +20,22 @@ class WordListRepository extends ServiceEntityRepository
         parent::__construct($registry, WordList::class);
     }
 
+    public function countWords(Chat $chat): int
+    {
+        $query = <<<SQL
+SELECT COUNT(DISTINCT(w.text)) AS cnt
+FROM word_lists wl
+JOIN lists2words l2w ON wl.id = l2w.word_list_id
+JOIN words w on l2w.word_id = w.id
+WHERE wl.chat_id = :chat_id
+SQL;
+
+        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
+        $stmt->execute(['chat_id' => $chat->getId()]);
+
+        return $stmt->fetch()['cnt'];
+    }
+
     public function getOneByChat(Chat $chat): WordList
     {
         /** @var WordList|null $wordList */
@@ -48,6 +64,32 @@ class WordListRepository extends ServiceEntityRepository
         $wordList = $this->findOneBy(['chat' => $chat]);
 
         return $wordList;
+    }
+
+    /**
+     * @return mixed[]
+     * @throws DBALException
+     */
+    public function findDistinctByChatAndLimit(Chat $chat, int $limit, int $offset)
+    {
+        $query = <<<SQL
+SELECT w.text, wl.id as word_list_id
+FROM word_lists wl
+JOIN lists2words l2w ON wl.id = l2w.word_list_id
+JOIN words w on l2w.word_id = w.id
+WHERE wl.chat_id = :chat_id
+GROUP BY w.text, wl.id
+LIMIT :limit OFFSET :offset
+SQL;
+
+        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
+        $stmt->execute([
+            'chat_id' => $chat->getId(),
+            'limit'   => $limit,
+            'offset'  => $offset
+        ]);
+
+        return $stmt->fetchAll(FetchMode::ASSOCIATIVE);
     }
 
     /**
