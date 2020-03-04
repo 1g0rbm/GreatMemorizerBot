@@ -83,6 +83,45 @@ class TelegramApiService
         return $this->send(Request::METHOD_POST, 'sendMessage', $fields);
     }
 
+    /**
+     * @throws Exception
+     */
+    public function editMessageText(int $messageId, MessageTo $message): string
+    {
+        $replyKeyboard  = $message->getReplyKeyboard();
+        $inlineKeyboard = $message->getInlineKeyboard();
+        $removeKeyboard = $message->getReplyKeyboardRemove();
+
+        $replyMarkup = [
+            InlineKeyboard::KEY_NAME => $this->inlineSerializer->serialize($inlineKeyboard),
+            ReplyKeyboard::KEY_NAME => $this->replySerializer->serialize($replyKeyboard),
+            ReplyKeyboardRemove::KEY_NAME => $removeKeyboard ? $removeKeyboard->isRemoveKeyboard() : false,
+            'resize_keyboard' => true,
+        ];
+
+        $fields = [
+            'chat_id'      => $message->getChatId(),
+            'message_id'   => $messageId,
+            'text'         => $message->getText(),
+            'parse_mode'   => 'markdown',
+            'reply_markup' => json_encode($replyMarkup),
+        ];
+
+        return $this->send(Request::METHOD_POST, 'editMessageText', $fields);
+    }
+
+    public function deleteMessage(int $chatId, int $messageId): string
+    {
+        return $this->send(
+            Request::METHOD_GET,
+            'deleteMessage',
+            [
+                'chat_id'    => $chatId,
+                'message_id' => $messageId
+            ]
+        );
+    }
+
     private function send(string $httpMethod, string $telegramMethod, array $fields): string
     {
         try {

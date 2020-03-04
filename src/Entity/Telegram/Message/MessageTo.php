@@ -29,9 +29,12 @@ class MessageTo
      */
     private $replyMarkup;
 
+    private bool $isUpdate;
+
     public function __construct()
     {
         $this->replyMarkup = new ArrayCollection();
+        $this->isUpdate    = false;
     }
 
     public function getChatId(): int
@@ -92,5 +95,15 @@ class MessageTo
     public function getReplyKeyboard(): ?ReplyKeyboard
     {
         return $this->replyMarkup->get(ReplyKeyboard::KEY_NAME);
+    }
+
+    public function isUpdate(): bool
+    {
+        return $this->isUpdate;
+    }
+
+    public function setIsUpdate(bool $isUpdate): void
+    {
+        $this->isUpdate = $isUpdate;
     }
 }

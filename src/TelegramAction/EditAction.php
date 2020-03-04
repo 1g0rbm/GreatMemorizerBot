@@ -73,6 +73,8 @@ class EditAction extends AbstractTelegramAction
             if (! Paginator::isAction($text)) {
                 $this->cleaner->clean($chat, $text);
             }
+
+            $to->setIsUpdate(true);
         }
 
         $wordList = $this->repository->findDistinctByChatAndLimit(

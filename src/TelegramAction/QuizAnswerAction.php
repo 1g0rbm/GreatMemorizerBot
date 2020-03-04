@@ -45,6 +45,7 @@ class QuizAnswerAction extends AbstractTelegramAction
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
+        $to->setIsUpdate(true);
 
         try {
             $quiz = $this->answerChecker->check(

@@ -88,7 +88,11 @@ class BotService
         $this->dispatcher->dispatch(CallbackQueryHandleEvent::NAME, new CallbackQueryHandleEvent($message));
         $this->dispatcher->dispatch(BeforeSendResponseEvent::NAME, new BeforeSendResponseEvent($response));
 
-        $this->telegramApiService->sendMessage($response);
+        if ($response->isUpdate()) {
+            $this->telegramApiService->editMessageText($message->getMessageId(), $response);
+        } else {
+            $this->telegramApiService->sendMessage($response);
+        }
     }
 
     private function dispatchBeforeParseRequest(string $message): void
