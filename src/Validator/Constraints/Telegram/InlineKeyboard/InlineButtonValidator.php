@@ -2,11 +2,11 @@
 
 namespace Ig0rbm\Memo\Validator\Constraints\Telegram\InlineKeyboard;
 
+use Ig0rbm\Memo\Entity\Telegram\Message\InlineButtonInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
-use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton as InlineButtonValue;
 
 class InlineButtonValidator extends ConstraintValidator
 {
@@ -16,11 +16,11 @@ class InlineButtonValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, InlineButton::class);
         }
 
-        if (!is_object($value)) {
-            throw new UnexpectedValueException($value, InlineButtonValue::class);
+        if (! is_object($value)) {
+            throw new UnexpectedValueException($value, InlineButtonInterface::class);
         }
 
-        if (!$value instanceof InlineButtonValue) {
+        if (! $value instanceof InlineButtonInterface) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ instance }}', get_class($value))
                 ->addViolation();

@@ -25,7 +25,7 @@ class InlineKeyboard
     }
 
     /**
-     * @param Collection|InlineButton[] $buttonsLines
+     * @param Collection|InlineButtonInterface[] $buttonsLines
      */
     public function setButtonsLines(Collection $buttonsLines): void
     {

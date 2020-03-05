@@ -9,6 +9,7 @@ use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Entity\Telegram\Message\UrlButton;
 use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
 
@@ -29,9 +30,9 @@ class ShowAction extends AbstractTelegramAction
         Builder $builder,
         string $botHost
     ) {
-        $this->builder                   = $builder;
-        $this->wordListRepository        = $wordListRepository;
-        $this->botHost                   = $botHost;
+        $this->builder            = $builder;
+        $this->wordListRepository = $wordListRepository;
+        $this->botHost            = $botHost;
     }
 
     /**
@@ -41,11 +42,16 @@ class ShowAction extends AbstractTelegramAction
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
+        $to->setText($this->translator->translate('messages.list_actions', $to->getChatId()));
 
         $wordList = $this->wordListRepository->getOneByChat($messageFrom->getChat());
 
-        $to->setText($this->createWordListUrl($wordList->getId()));
-
+        $this->builder->addLine([
+            new UrlButton(
+                $this->translator->translate('button.inline.show_list', $to->getChatId()),
+                $this->createWordListUrl($wordList->getId())
+            )
+        ]);
         $this->builder->addLine([
             new InlineButton($this->translator->translate(
                 'button.inline.quiz',
@@ -53,6 +59,7 @@ class ShowAction extends AbstractTelegramAction
                 '/quiz_settings'
             )
         ]);
+
         $to->setInlineKeyboard($this->builder->flush());
 
         return $to;

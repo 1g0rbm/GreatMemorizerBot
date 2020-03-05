@@ -6,7 +6,7 @@ namespace Ig0rbm\Memo\Service\Telegram\InlineKeyboard;
 
 use Doctrine\Common\Collections\Collection;
 use Exception;
-use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton;
+use Ig0rbm\Memo\Entity\Telegram\Message\InlineButtonInterface;
 use Ig0rbm\Memo\Entity\Telegram\Message\InlineKeyboard;
 use Ig0rbm\Memo\Exception\Telegram\InlineKeyboard\InlineKeyboardSerializeException;
 
@@ -28,14 +28,15 @@ class Serializer
             if ($line->count() === 0) {
                 InlineKeyboardSerializeException::becauseThereAreNoButtonInLine($lineNumber);
             }
-            $result[$lineNumber] = [];
 
+            $result[$lineNumber] = [];
             $buttons = $line->getIterator();
-            /** @var InlineButton $button */
+
+            /** @var InlineButtonInterface $button */
             foreach ($buttons as $buttonNumber => $button) {
                 $result[$lineNumber][$buttonNumber] = [
-                    'text' => $button->getText(),
-                    'callback_data' => $button->getCallbackData(),
+                    'text'            => $button->getText(),
+                    $button->getKey() => $button->getCallbackData(),
                 ];
             }
         }

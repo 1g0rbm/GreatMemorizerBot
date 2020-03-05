@@ -12,7 +12,8 @@ button:
             close: '❌   close settings'
     inline:
         reminder: '⏰ reminder'
-        quiz: '❓ quiz'
+        quiz: '❓ take a quiz'
+        show_list: '👀 see the whole list'
         run_quiz: '🤓 run'
         save: '💾 save'
 
@@ -59,6 +60,7 @@ messages:
         success: 'word was saved successfully'
         word_exist: 'list already has the same word'
     reminder_greetings: 'Hi! Time to remember English!'
+    list_actions: 'Want to see the whole list or take a quiz?'
 label:
     question_word: 'question word: '
     correct_translation: 'correct translation: '

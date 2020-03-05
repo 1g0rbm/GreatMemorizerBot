@@ -6,7 +6,7 @@ namespace Ig0rbm\Memo\Entity\Telegram\Message;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class InlineButton implements InlineButtonInterface
+class UrlButton implements InlineButtonInterface
 {
     /**
      * @Assert\NotBlank
@@ -22,7 +22,7 @@ class InlineButton implements InlineButtonInterface
     /**
      * @Assert\Type("string")
      */
-    private string $keyName = 'callback_data';
+    private string $keyName = 'url';
 
     public function __construct(string $text, ?string $callbackData = null)
     {
