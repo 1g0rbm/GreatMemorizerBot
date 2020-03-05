@@ -57,6 +57,7 @@ class WebhookController
             $this->bot->handle($request->getContent());
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
+
             return new JsonResponse(['ok' => false]);
         }
 

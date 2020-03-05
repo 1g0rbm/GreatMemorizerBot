@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Tests\Controller\Webhook;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Response;
 use Faker\Factory;
 use Faker\Generator;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @group functional
@@ -49,6 +49,7 @@ class WebhookControllerFunctionalTest extends WebTestCase
     public function testWebhookTelegramBotReturnStatus200(): void
     {
         $client = static::createClient();
+
         $client->request(
             'POST',
             sprintf('/webhook/bot/memo/%s', $this->secret),
