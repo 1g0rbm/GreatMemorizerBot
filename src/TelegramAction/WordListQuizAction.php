@@ -58,6 +58,7 @@ class WordListQuizAction extends AbstractTelegramAction
 
         $to->setText($this->questionBuilder->build($step));
         $to->setInlineKeyboard($this->serializer->serialize($step));
+        $to->setIsUpdate(true);
 
         return $to;
     }

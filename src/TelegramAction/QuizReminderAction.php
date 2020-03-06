@@ -51,6 +51,7 @@ class QuizReminderAction extends AbstractTelegramAction
             ->append($this->translator->translate('messages.quiz_creating_instruction', $to->getChatId()));
 
        $to->setText($this->builder->flush());
+       $to->setIsUpdate(true);
 
        return $to;
     }
