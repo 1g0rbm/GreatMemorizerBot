@@ -35,6 +35,9 @@ class TimezoneAction extends AbstractTelegramAction
         $this->builder->addLine([
             new ReplyButton($this->translator->translate('button.menu.dont_send_location', $to->getChatId()))
         ]);
+        $this->builder->addLine([
+            new ReplyButton($this->translator->translate('button.menu.back_to_settings', $to->getChatId()))
+        ]);
 
         $to->setReplyKeyboard($this->builder->flush());
 
