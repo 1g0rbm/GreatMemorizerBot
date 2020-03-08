@@ -119,7 +119,7 @@ class Quiz
         return $this->steps;
     }
 
-    public function setSteps(ArrayCollection $steps): void
+    public function setSteps(Collection $steps): void
     {
         $this->steps = $steps;
     }

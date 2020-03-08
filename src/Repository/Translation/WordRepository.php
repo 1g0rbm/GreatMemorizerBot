@@ -65,23 +65,26 @@ class WordRepository extends ServiceEntityRepository
 
     /**
      * @param string[] $pos
+     * @param int[]    $exclude
      *
      * @return ArrayCollection|Word[]
      *
      * @throws DBALException
      */
-    public function getRandomWords(string $langCode, array $pos, int $limit): ArrayCollection
+    public function getRandomWords(string $langCode, array $pos, int $limit, array $exclude = []): ArrayCollection
     {
-        $conn           = $this->getConnection();
-        $posPlaceHolder = array_map(fn(string $item) => ':' . $item, $pos);
-        $pos            = array_combine($posPlaceHolder, $pos);
-        $posPlaceHolder = implode(', ', $posPlaceHolder);
+        $conn               = $this->getConnection();
+        $posPlaceHolder     = array_map(fn(string $item) => ':' . $item, $pos);
+        $pos                = array_combine($posPlaceHolder, $pos);
+        $posPlaceHolder     = implode(', ', $posPlaceHolder);
+        $excludePlaceholder = implode(', ', $exclude);
 
         $idsQuery = "SELECT DISTINCT ON(text) id, text 
                      FROM (
                          SELECT * FROM memo.public.words w
                          WHERE w.lang_code = :langCode
                              AND w.pos IN ($posPlaceHolder)
+                             AND w.id NOT IN ($excludePlaceholder)
                          ORDER BY random()
                          LIMIT :limit
                      ) t1";
@@ -95,6 +98,7 @@ class WordRepository extends ServiceEntityRepository
         $words = $this->findWordsByIds(array_map(static fn(array $item) => $item['id'], $stmt->fetchAll()));
 
         shuffle($words);
+
         return new ArrayCollection($words);
     }
 

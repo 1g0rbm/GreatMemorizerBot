@@ -19,4 +19,9 @@ class QuizStepBuilderException extends RuntimeException implements QuizException
     {
         return new self('Not enough words for build quiz');
     }
+
+    public static function becauseThereIsNoWordListId(int $quizId): self
+    {
+        return new self(sprintf('There is no word list id in quiz with id = %d', $quizId));
+    }
 }

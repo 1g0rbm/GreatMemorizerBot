@@ -16,7 +16,7 @@ class QuizBuilder
 {
     private QuizRepository $quizRepository;
 
-    private QuizStepBuilder $quizStepBuilder;
+    private QuizStepBuilderByWordList $quizStepBuilderByWordList;
 
     private WordListRepository $wordListRepository;
 
@@ -24,14 +24,14 @@ class QuizBuilder
 
     public function __construct(
         QuizRepository $quizRepository,
-        QuizStepBuilder $quizStepBuilder,
+        QuizStepBuilderByWordList $quizStepBuilderByWordList,
         WordListRepository $wordListRepository,
         EntityFlusher $flusher
     ) {
-        $this->quizRepository     = $quizRepository;
-        $this->quizStepBuilder    = $quizStepBuilder;
-        $this->wordListRepository = $wordListRepository;
-        $this->flusher            = $flusher;
+        $this->quizRepository            = $quizRepository;
+        $this->quizStepBuilderByWordList = $quizStepBuilderByWordList;
+        $this->wordListRepository        = $wordListRepository;
+        $this->flusher                   = $flusher;
     }
 
     /**
@@ -49,7 +49,7 @@ class QuizBuilder
             $quiz->setWordList($wordList);
         }
 
-        $quiz->setSteps($this->quizStepBuilder->buildForQuiz($quiz));
+        $quiz->setSteps($this->quizStepBuilderByWordList->do($quiz));
         $quiz->setCurrentStep($quiz->getSteps()->first());
 
         $this->quizRepository->addQuiz($quiz);

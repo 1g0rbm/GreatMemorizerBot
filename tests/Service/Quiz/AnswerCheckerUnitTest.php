@@ -1,23 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Tests\Service\Quiz;
 
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionException;
 use Doctrine\ORM\NonUniqueResultException;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use Ig0rbm\Memo\Service\Quiz\Rotator;
-use Ig0rbm\Memo\Service\EntityFlusher;
-use Ig0rbm\Memo\Service\Quiz\AnswerChecker;
-use Ig0rbm\Memo\Repository\Quiz\QuizRepository;
-use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
+use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Translation\Word;
-use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Exception\Quiz\QuizException;
+use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
+use Ig0rbm\Memo\Repository\Quiz\QuizRepository;
+use Ig0rbm\Memo\Service\EntityFlusher;
+use Ig0rbm\Memo\Service\Quiz\AnswerChecker;
+use Ig0rbm\Memo\Service\Quiz\Rotator;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 
 class AnswerCheckerUnitTest extends TestCase
 {
@@ -162,7 +164,7 @@ class AnswerCheckerUnitTest extends TestCase
     {
         $answer = 'answer';
         $method = $this->createDoMethod();
-        $step   = $this->getStep($answer, false);
+        $step   = $this->getStep($answer, false, $this->getQuiz());
 
         /** @var QuizStep $resultStep */
         $resultStep = $method->invoke($this->service, $step, $answer);
@@ -179,7 +181,7 @@ class AnswerCheckerUnitTest extends TestCase
         $answer = 'answer';
         $wrong  = 'wrong';
         $method = $this->createDoMethod();
-        $step   = $this->getStep($answer, false);
+        $step   = $this->getStep($answer, false, $this->getQuiz());
 
         /** @var QuizStep $resultStep */
         $resultStep = $method->invoke($this->service, $step, $wrong);
@@ -215,7 +217,7 @@ class AnswerCheckerUnitTest extends TestCase
 
     private function getStep(string $answer, bool $isAnswered, ?Quiz $quiz = null): QuizStep
     {
-        $step = new QuizStep();
+        $step = new QuizStep($quiz);
         $step->setIsAnswered($isAnswered);
         $step->setCorrectWord($this->getWord($answer));
 

@@ -1,17 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Tests\Service\Quiz;
 
-use PHPUnit\Framework\TestCase;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Quiz\Rotator;
+use PHPUnit\Framework\TestCase;
 
 class RotatorUnitTest extends TestCase
 {
-    /** @var Rotator */
-    private $service;
+    private Rotator $service;
 
     public function setUp(): void
     {
@@ -60,7 +61,7 @@ class RotatorUnitTest extends TestCase
 
     private function getStep(string $answer, bool $isAnswered): QuizStep
     {
-        $step = new QuizStep();
+        $step = new QuizStep($this->getQuiz());
         $step->setIsAnswered($isAnswered);
         $step->setCorrectWord($this->getWord($answer));
 

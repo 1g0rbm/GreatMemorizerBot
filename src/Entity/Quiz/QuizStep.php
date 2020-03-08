@@ -20,6 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class QuizStep
 {
+    public const DEFAULT_LENGTH = 4;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -61,12 +63,12 @@ class QuizStep
     private Collection $words;
 
     /**
-     * @ORM\Column(type="integer", options={"default": 4})
+     * @ORM\Column(type="integer", options={"default": QuizStep::DEFAULT_LENGTH})
      *
      * @Assert\NotBlank
      * @Assert\Type("integer")
      */
-    private int $length = 4;
+    private int $length;
 
     /**
      * @ORM\Column(type="boolean")
@@ -78,9 +80,11 @@ class QuizStep
      */
     private bool $isCorrect = false;
 
-    public function __construct()
+    public function __construct(Quiz $quiz)
     {
-        $this->words = new ArrayCollection();
+        $this->words  = new ArrayCollection();
+        $this->length = self::DEFAULT_LENGTH;
+        $this->quiz   = $quiz;
     }
 
     public function getId(): int
