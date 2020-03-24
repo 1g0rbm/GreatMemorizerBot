@@ -54,7 +54,7 @@ class EditAction extends AbstractTelegramAction
         $page = new Page(
             0,
             5,
-            (int) ceil($this->repository->countWords($messageFrom->getChat()) / 5)
+            (int) ceil($this->repository->countUniqueWords($messageFrom->getChat()) / 5)
         );
 
         if ($callbackQuery) {

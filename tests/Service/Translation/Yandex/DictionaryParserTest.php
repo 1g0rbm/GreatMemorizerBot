@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Tests\Service\Yandex;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -9,6 +11,8 @@ use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\Translation\Yandex\DictionaryParser;
+
+use function file_get_contents;
 
 class DictionaryParserTest extends TestCase
 {
@@ -28,7 +32,8 @@ class DictionaryParserTest extends TestCase
         $dictionary = $this->getDictionaryWithNounAndAdjective();
         $direction = $this->getDirection();
 
-        $words = $this->service->parse(json_encode($dictionary), $direction);
+        $words = $this->service->parse($dictionary, $direction);
+
         $this->assertInstanceOf(Collection::class, $words);
         $this->assertSame(count($dictionary['def']), $words->count());
 
@@ -128,105 +133,9 @@ class DictionaryParserTest extends TestCase
         ];
     }
 
-    private function getDictionaryWithNounAndAdjective(): array
+    private function getDictionaryWithNounAndAdjective(): string
     {
-        return [
-            'head' => [],
-            'def' => [
-                [
-                    'text' => 'house',
-                    'pos' => 'noun',
-                    'ts' => 'haʊs',
-                    'tr' => [
-                        [
-                            'text' => 'дом',
-                            'pos' => 'noun',
-                            'syn' => [
-                                [
-                                    'text' => 'здание',
-                                    'pos' => 'noun',
-                                ],
-                                [
-                                    'text' => 'домик',
-                                    'pos' => 'noun',
-                                ],
-                                [
-                                    'text' => 'жилой дом',
-                                    'pos' => 'noun',
-                                ],
-                                [
-                                    'text' => 'домишко',
-                                    'pos' => 'noun',
-                                ],
-                            ],
-                            'ex' => [
-                                [
-                                    'text' => 'auction house',
-                                    [
-                                        'text' => 'аукционный дом',
-                                    ],
-                                ],
-                                [
-                                    'text' => 'father\'s house',
-                                    [
-                                        'text' => 'отчий дом',
-                                    ],
-                                ],
-                            ],
-                        ],
-                        [
-                            'text' => 'жилье',
-                            'pos' => 'noun',
-                            'syn' => [
-                                [
-                                    'text' => 'жилище',
-                                    'pos' => 'noun',
-                                ],
-                            ],
-                            'ex' => [
-                                [
-                                    'text' => 'safe houses',
-                                    [
-                                        'text' => 'безопасное жилье',
-                                    ],
-                                ],
-                                [
-                                    'text' => 'right to housing',
-                                    [
-                                        'text' => 'право на жилище',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'house',
-                    'pos' => 'adjective',
-                    'ts' => 'haʊs',
-                    'tr' => [
-                        [
-                            'text' => 'домашний',
-                            'pos' => 'adjective',
-                            'syn' => [
-                                [
-                                    'text' => 'домовой',
-                                    'pos' => 'adjective',
-                                ],
-                            ],
-                            'ex' => [
-                                [
-                                    'text' => 'house cat',
-                                    [
-                                        'text' => 'домашняя кошка',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        return file_get_contents(__DIR__ . '/data/yandex_translate_response.json');
     }
 
     private function getDictionaryWithAdverbAndUnclear(): array

@@ -66,6 +66,7 @@ class Word
      *     joinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="translation_id", referencedColumnName="id")}
      * )
+     * @ORM\OrderBy({"id" = "ASC"})
      *
      * @var Collection|Word[]
      */
@@ -78,6 +79,7 @@ class Word
      *     joinColumns={@ORM\JoinColumn(name="word_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="synonym_id", referencedColumnName="id")}
      * )
+     * @ORM\OrderBy({"id" = "ASC"})
      *
      * @var Collection|Word[]
      */

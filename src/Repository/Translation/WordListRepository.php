@@ -20,7 +20,36 @@ class WordListRepository extends ServiceEntityRepository
         parent::__construct($registry, WordList::class);
     }
 
-    public function countWords(Chat $chat): int
+    /**
+     * @param Chat $chat
+     * @param int[] $pos
+     * @return int
+     * @throws DBALException
+     */
+    public function countAllWordsForChatAndPos(Chat $chat, array $pos): int
+    {
+        $posPlaceHolder = array_map(fn(string $item) => ':' . $item, $pos);
+        $pos            = array_combine($posPlaceHolder, $pos);
+        $posPlaceHolder = implode(', ', $posPlaceHolder);
+
+        $query = <<<SQL
+SELECT COUNT(w.text) AS cnt
+FROM word_lists wl
+JOIN lists2words l2w ON wl.id = l2w.word_list_id
+JOIN words w on l2w.word_id = w.id AND w.lang_code = 'en'
+WHERE wl.chat_id = :chat_id AND w.pos IN({$posPlaceHolder})
+SQL;
+
+        $stmt = $this->getEntityManager()->getConnection()->prepare($query);
+        $stmt->execute(array_merge(['chat_id' => $chat->getId()], $pos));
+
+        return $stmt->fetch()['cnt'];
+    }
+
+    /**
+     * @throws DBALException
+     */
+    public function countUniqueWords(Chat $chat): int
     {
         $query = <<<SQL
 SELECT COUNT(DISTINCT(w.text)) AS cnt

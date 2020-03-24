@@ -4,6 +4,7 @@ namespace Ig0rbm\Memo\Service\Quiz;
 
 use Doctrine\ORM\NonUniqueResultException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
+use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Service\EntityFlusher;
 use Ig0rbm\Memo\Repository\Quiz\QuizRepository;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
@@ -50,9 +51,8 @@ class AnswerChecker
 
     private function do(QuizStep $step, string $answer): QuizStep
     {
-        $correctTranslation = $step->getCorrectWord()->getTranslations()->first();
-
-        $step->setIsCorrect($correctTranslation->getText() === $answer);
+        $answer = $step->getCorrectWord()->getTranslations()->filter(fn (Word $word) => $word->getText() === $answer);
+        $step->setIsCorrect($answer->count() === 1);
         $step->setIsAnswered(true);
 
         return $step;

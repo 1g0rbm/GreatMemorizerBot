@@ -34,8 +34,29 @@ services:
     env_file: .env
     ports:
       - "54323:5432"
+  memo-redis-stage:
+    image: redis
+    hostname: redis
+    command: ["sh", "-c", "exec redis-server --requirepass ${REDIS_PASSWORD}"]
+    restart: always
+    volumes:
+      - redis-data:/redis-data
+    ports:
+      - '${REDIS_OUTER_PORT}:6379'
+
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_OUTER_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - "8081:8081"
 
 volumes:
   memo-postgres-stage:
   composer:
-
+  redis-data:

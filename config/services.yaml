@@ -162,8 +162,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: 'bot.message.callback_query_handle', method: 'onCallbackQueryHandle'}
 
-    Ig0rbm\Memo\Service\Quiz\QuizStepBuilder: ~
-
     Ig0rbm\Memo\Service\Telegram\TranslationService: ~
 
     ##############################################################################################################

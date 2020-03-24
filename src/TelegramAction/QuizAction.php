@@ -3,6 +3,7 @@
 namespace Ig0rbm\Memo\TelegramAction;
 
 use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
@@ -12,6 +13,7 @@ use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Service\Quiz\QuestionBuilder;
 use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
+use Psr\Cache\InvalidArgumentException;
 
 class QuizAction extends AbstractTelegramAction
 {
@@ -34,7 +36,8 @@ class QuizAction extends AbstractTelegramAction
     /**
      * @throws DBALException
      * @throws ORMException
-     * @throws QuizStepException
+     * @throws NonUniqueResultException
+     * @throws InvalidArgumentException
      */
     public function run(MessageFrom $messageFrom, Command $command): MessageTo
     {

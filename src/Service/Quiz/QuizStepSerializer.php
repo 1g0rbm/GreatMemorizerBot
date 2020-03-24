@@ -26,15 +26,22 @@ class QuizStepSerializer
     public function serialize(QuizStep $quizStep): InlineKeyboard
     {
         /** @var Word[] $words */
-        $words = $quizStep->getWords()->toArray();
+        $words       = $quizStep->getWords()->toArray();
+        $correctWord = $quizStep->getCorrectWord();
         shuffle($words);
 
         $line = [];
         foreach ($words as $word) {
             $line = count($line) % 2 === 0 ? [] : $line;
-            $arr = $word->getTranslations()->toArray();
-            /** @var Word $translation */
-            $translation = reset($arr);
+
+            if ($word->getId() === $correctWord->getId()) {
+                /** @var Word $translation */
+                $translation = $word->getTranslations()->first();
+            } else {
+                $arr = $word->getTranslations()->toArray();
+                /** @var Word $translation */
+                $translation = reset($arr);
+            }
 
             $btnText = $translation->getText() ?? self::WORD_TEXT_ERR;
             $line[]  = new InlineButton(

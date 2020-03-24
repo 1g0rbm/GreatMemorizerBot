@@ -11,6 +11,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Repository\Quiz\QuizRepository;
 use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Service\EntityFlusher;
+use Psr\Cache\InvalidArgumentException;
 
 class QuizBuilder
 {
@@ -37,6 +38,7 @@ class QuizBuilder
     /**
      * @throws DBALException
      * @throws ORMException
+     * @throws InvalidArgumentException
      */
     public function build(Chat $chat, bool $withWordList = false): Quiz
     {

@@ -27,6 +27,16 @@ services:
       DATABASE_URL: pgsql://memo:${POSTGRES_PASSWORD}memo-postgres:5432/memo
     depends_on:
       - memo-postgres
+  memo-redis-stage:
+    image: redis
+    hostname: redis
+    command: ["sh", "-c", "exec redis-server --requirepass ${REDIS_PASSWORD}"]
+    restart: always
+    volumes:
+      - redis-data:/redis-data
+    ports:
+      - '${REDIS_OUTER_PORT}:6379'
 
 volumes:
   memo-postgres:
+  redis-data:

@@ -28,17 +28,24 @@ class WordRepository extends ServiceEntityRepository
 
     /**
      * @param string[] $pos
+     * @param int[] $exclude
      *
      * @return Collection|Word[]
      *
      * @throws DBALException
      */
-    public function getRandomWordsByWordListId(string $langCode, array $pos, int $wordListId, int $limit): Collection
-    {
+    public function getRandomWordsByWordListId(
+        string $langCode,
+        array $pos,
+        int $wordListId,
+        int $limit,
+        array $exclude = []
+    ): Collection {
         $conn           = $this->getConnection();
         $posPlaceHolder = array_map(fn(string $item) => ':' . $item, $pos);
         $pos            = array_combine($posPlaceHolder, $pos);
         $posPlaceHolder = implode(', ', $posPlaceHolder);
+        $excludeSql     = empty($exclude) ? '' : sprintf('AND w.id NOT IN (%s)', implode(', ', $exclude));
 
         $idsQuery = "SELECT DISTINCT ON(text) id, text
                      FROM (
@@ -46,6 +53,7 @@ class WordRepository extends ServiceEntityRepository
                              JOIN lists2words l2w on w.id = l2w.word_id and l2w.word_list_id = :wordListId
                          WHERE w.lang_code = :langCode
                              AND w.pos IN({$posPlaceHolder})
+                             $excludeSql
                          ORDER BY random()
                          LIMIT :limit
                      ) t1";
@@ -77,14 +85,14 @@ class WordRepository extends ServiceEntityRepository
         $posPlaceHolder     = array_map(fn(string $item) => ':' . $item, $pos);
         $pos                = array_combine($posPlaceHolder, $pos);
         $posPlaceHolder     = implode(', ', $posPlaceHolder);
-        $excludePlaceholder = implode(', ', $exclude);
+        $excludeSql     = empty($exclude) ? '' : sprintf('AND w.id NOT IN (%s)', implode(', ', $exclude));
 
         $idsQuery = "SELECT DISTINCT ON(text) id, text 
                      FROM (
                          SELECT * FROM memo.public.words w
                          WHERE w.lang_code = :langCode
                              AND w.pos IN ($posPlaceHolder)
-                             AND w.id NOT IN ($excludePlaceholder)
+                             $excludeSql
                          ORDER BY random()
                          LIMIT :limit
                      ) t1";
@@ -126,20 +134,23 @@ class WordRepository extends ServiceEntityRepository
         return $word;
     }
 
+    /**
+     * @return Word[]|Collection|null
+     */
     public function findWordsCollection(string $text): ?Collection
     {
-        /** @var Word[] $words */
-        $words = $this->findBy(['text' => $text]);
+        $qb = $this->createQueryBuilder('w')
+            ->join('w.translations', 'wt')
+            ->where('w.text = :text')
+            ->orderBy('w.id', 'ASC')
+            ->setParameter('text', $text);
+
+        $words = $qb->getQuery()->getResult();
         if (empty($words)) {
             return null;
         }
 
-        $collection = new ArrayCollection();
-        foreach ($words as $word) {
-            $collection->add($word);
-        }
-
-        return $collection;
+        return new ArrayCollection($words);
     }
 
     /**
