@@ -8,13 +8,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
+use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Word;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepBuilderException;
+use Ig0rbm\Memo\Repository\Translation\WordListRepository;
 use Ig0rbm\Memo\Repository\Translation\WordRepository;
 use Ig0rbm\Memo\Service\Quiz\QuizStepBuilderByWordList;
+use Ig0rbm\Memo\Tests\CacheAdapter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Cache\InvalidArgumentException;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 /**
  * @group unit
@@ -27,16 +32,24 @@ class QuizStepBuilderByWordListUnitTest extends TestCase
     /** @var WordRepository|MockObject */
     private WordRepository $wordRepo;
 
+    /** @var WordListRepository|MockObject  */
+    private WordListRepository $wordListRepo;
+
+    private AdapterInterface $cache;
+
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->wordRepo = $this->createMock(WordRepository::class);
-        $this->service  = new QuizStepBuilderByWordList($this->wordRepo);
+        $this->wordRepo     = $this->createMock(WordRepository::class);
+        $this->wordListRepo = $this->createMock(WordListRepository::class);
+
+        $this->service  = new QuizStepBuilderByWordList($this->wordRepo, $this->wordListRepo, new CacheAdapter());
     }
 
     /**
      * @throws DBALException
+     * @throws InvalidArgumentException
      */
     public function testDoThrowExceptionIfThereIsNoWordListId(): void
     {
@@ -51,13 +64,18 @@ class QuizStepBuilderByWordListUnitTest extends TestCase
 
     /**
      * @throws DBALException
+     * @throws InvalidArgumentException
      */
     public function testDoReturnQuizStepCollection(): void
     {
+        $chat = new Chat();
+        $chat->setId(1);
+
         $quiz = new Quiz();
         $quiz->setId(1);
         $quiz->setLength(5);
         $quiz->setWordListId(1);
+        $quiz->setChat($chat);
 
         $rightWords = $this->createRightWordCollection();
 

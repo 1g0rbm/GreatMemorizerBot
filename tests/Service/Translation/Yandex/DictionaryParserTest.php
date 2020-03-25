@@ -6,13 +6,14 @@ namespace Ig0rbm\Memo\Tests\Service\Yandex;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use PHPUnit\Framework\TestCase;
-use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 use Ig0rbm\Memo\Entity\Translation\Word;
+use Ig0rbm\Memo\Exception\Translation\Yandex\DictionaryParseException;
 use Ig0rbm\Memo\Service\Translation\Yandex\DictionaryParser;
+use PHPUnit\Framework\TestCase;
 
 use function file_get_contents;
+use function json_decode;
 
 class DictionaryParserTest extends TestCase
 {
@@ -30,22 +31,23 @@ class DictionaryParserTest extends TestCase
     public function testParseReturnWordsCollection(): void
     {
         $dictionary = $this->getDictionaryWithNounAndAdjective();
-        $direction = $this->getDirection();
+        $direction  = $this->getDirection();
 
-        $words = $this->service->parse($dictionary, $direction);
+        $words       = $this->service->parse($dictionary, $direction);
+        $dictionary = json_decode($dictionary, true);
 
         $this->assertInstanceOf(Collection::class, $words);
         $this->assertSame(count($dictionary['def']), $words->count());
 
         /** @var Word $noun */
-        $noun = $words->filter(fn(Word $word) => $word->getPos() === 'noun')->first();
+        $noun = $words->filter(fn(Word $word) => $word->getPos() === 'adjective')->first();
         $this->assertSame($dictionary['def'][0]['text'], $noun->getText());
         $this->assertSame($dictionary['def'][0]['pos'], $noun->getPos());
         $this->assertSame($dictionary['def'][0]['ts'], $noun->getTranscription());
         $this->assertSame($direction->getLangFrom(), $noun->getLangCode());
 
         /** @var Word $adjective */
-        $adjective = $words->filter(fn(Word $word) => $word->getPos() === 'adjective')->first();
+        $adjective = $words->filter(fn(Word $word) => $word->getPos() === 'noun')->first();
         $this->assertSame($dictionary['def'][1]['text'], $adjective->getText());
         $this->assertSame($dictionary['def'][1]['pos'], $adjective->getPos());
         $this->assertSame($dictionary['def'][1]['ts'], $adjective->getTranscription());
