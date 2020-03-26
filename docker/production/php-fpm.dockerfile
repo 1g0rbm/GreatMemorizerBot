@@ -1,5 +1,7 @@
 FROM php:7.4-fpm AS builder
-RUN apt-get update && apt-get install -y unzip
+RUN apt-get update && apt-get install -y unzip \
+    && pecl install redis-5.1.1 \
+    && docker-php-ext-enable redis
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin --filename=composer --quiet
 ENV COMPOSER_ALLOW_SUPERUSER 1
 WORKDIR /app
@@ -10,8 +12,6 @@ RUN composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader
 FROM php:7.4-fpm
 
 RUN apt-get update && apt-get install -y libpq-dev libzip-dev libicu-dev g++ \
-    && pecl install redis-5.1.1 \
-    && docker-php-ext-enable redis \
     && docker-php-ext-install opcache \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install pdo_pgsql zip \

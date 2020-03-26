@@ -27,8 +27,8 @@ services:
       DATABASE_URL: pgsql://memo:${POSTGRES_PASSWORD}memo-postgres:5432/memo
     depends_on:
       - memo-postgres
-  memo-redis-stage:
-    image: redis
+  memo-redis:
+image: ${REGISTRY_HOST}/memo-redis:${REGISTRY_PRODUCTION_TAG}
     hostname: redis
     command: ["sh", "-c", "exec redis-server --requirepass ${REDIS_PASSWORD}"]
     restart: always
