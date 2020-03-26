@@ -28,7 +28,7 @@ services:
     depends_on:
       - memo-postgres
   memo-redis:
-image: ${REGISTRY_HOST}/memo-redis:${REGISTRY_PRODUCTION_TAG}
+    image: ${REGISTRY_HOST}/memo-redis:${REGISTRY_PRODUCTION_TAG}
     hostname: redis
     command: ["sh", "-c", "exec redis-server --requirepass ${REDIS_PASSWORD}"]
     restart: always

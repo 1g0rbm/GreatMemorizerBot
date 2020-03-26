@@ -20,6 +20,7 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 use function array_merge;
 use function json_encode;
+use function sprintf;
 
 class QuizStepBuilderByWordList
 {
@@ -55,7 +56,7 @@ class QuizStepBuilderByWordList
             $quiz->getChat(),
             ['noun', 'verb', 'adjective', 'adverb']
         );
-        $item       = $this->cache->getItem('exclude_ids');
+        $item       = $this->cache->getItem(sprintf('%d_exclude_ids', $quiz->getChat()->getId()));
         $excludeIds = $item->isHit() ? json_decode($item->get(), true) : [];
         $excludeIds = count($excludeIds) < $countWords - $quiz->getLength() ? $excludeIds : [];
 
