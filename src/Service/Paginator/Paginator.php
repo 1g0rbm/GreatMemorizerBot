@@ -10,6 +10,8 @@ use function in_array;
 
 class Paginator
 {
+    public const DEFAULT_ITEMS_PER_PAGE = 10;
+
     public const FIRST_PAGE_ACTION = '<<';
     public const LAST_PAGE_ACTION  = '>>';
     public const NEXT_PAGE_ACTION  = '>';

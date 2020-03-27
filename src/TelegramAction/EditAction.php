@@ -16,7 +16,9 @@ use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
 use Ig0rbm\Memo\Service\WordList\WordListCleaner;
 
 use function ceil;
+use function explode;
 use function sprintf;
+use function strpos;
 
 class EditAction extends AbstractTelegramAction
 {
@@ -50,11 +52,12 @@ class EditAction extends AbstractTelegramAction
 
         $chat          = $messageFrom->getChat();
         $callbackQuery = $messageFrom->getCallbackQuery();
+        $perPage       = Paginator::DEFAULT_ITEMS_PER_PAGE;
 
         $page = new Page(
             0,
-            5,
-            (int) ceil($this->repository->countUniqueWords($messageFrom->getChat()) / 5)
+            $perPage,
+            (int) ceil($this->repository->countUniqueWords($messageFrom->getChat()) / $perPage)
         );
 
         if ($callbackQuery) {
@@ -85,6 +88,7 @@ class EditAction extends AbstractTelegramAction
 
         if (empty($wordList)) {
             $to->setText($command->getTextResponse());
+
             return $to;
         }
 

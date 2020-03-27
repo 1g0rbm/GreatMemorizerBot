@@ -22,7 +22,7 @@ final class QuestionBuilder
         return $this->translation->translate(
             'messages.quiz_question',
             $step->getQuiz()->getChat()->getId(),
-            ['text' => $step->getCorrectWord()->getText(), 'pos' => $step->getCorrectWord()->getPos()]
+            ['text' => $step->getCorrectWord()->getText()]
         );
     }
 }

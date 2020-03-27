@@ -45,7 +45,7 @@ messages:
     edit_list: '{command} push button to delete word'
     edit_reminders: '🤖   push button to delete reminder'
     no_reminders_for_edit: 'there are not reminders for deleting'
-    quiz_question: 'what is russian for "{text}" and pos "{pos}"?'
+    quiz_question: 'what is russian for "{text}"?'
     reminder_successfully_set: 'reminder was successfully set for time "{time}"'
     timezone_thanks: 'Your TimeZone is "{timezone}"'
     timezone_set_utc: 'Your timezone was set as "UTC"'
