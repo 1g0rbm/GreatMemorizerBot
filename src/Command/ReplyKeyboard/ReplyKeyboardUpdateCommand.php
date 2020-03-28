@@ -31,7 +31,7 @@ class ReplyKeyboardUpdateCommand extends Command
             ->setHelp('The command allows you to update ReplyKeyboard for all accounts.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $accounts = $this->accountRepository->findAll();
         foreach ($accounts as $account) {
@@ -39,5 +39,7 @@ class ReplyKeyboardUpdateCommand extends Command
         }
 
         $this->flusher->flush();
+
+        return 0;
     }
 }

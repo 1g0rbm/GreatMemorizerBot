@@ -8,7 +8,7 @@ use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandParser;
-use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class CommandParserUnitTest extends TestCase
 {

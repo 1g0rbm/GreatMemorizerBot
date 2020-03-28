@@ -42,7 +42,7 @@ class SaveActionTest extends WebTestCase
         self::bootKernel();
 
         parent::setUp();
-        $this->secret = getenv('TELEGRAM_SECRET');
+        $this->secret = $_ENV['TELEGRAM_SECRET'];
         $this->faker = Factory::create();
 
         $this->wordListRepository = static::$container->get(WordListRepository::class);

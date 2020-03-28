@@ -6,7 +6,7 @@ namespace Ig0rbm\Memo\Tests;
 
 use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Cache\CacheItem;
+use Ig0rbm\Memo\Tests\CacheItem;
 
 class CacheAdapter implements AdapterInterface
 {
@@ -18,11 +18,12 @@ class CacheAdapter implements AdapterInterface
      */
     public function getItem($key)
     {
-        return $this->storage[$key] ?? new CacheItem();
+        return $this->storage[$key] ?? new CacheItem($key);
     }
 
     public function save(CacheItemInterface $item)
     {
+        $item->__construct($item->getKey(), true);
         $this->storage[$item->getKey()] = $item;
     }
 

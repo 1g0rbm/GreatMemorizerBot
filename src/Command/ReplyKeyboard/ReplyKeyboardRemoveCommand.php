@@ -33,7 +33,7 @@ class ReplyKeyboardRemoveCommand extends Command
             ->setHelp('The command allows you to remove ReplyKeyboard from telegram bot');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $chats = $this->chatRepository->findAll();
 
@@ -45,5 +45,7 @@ class ReplyKeyboardRemoveCommand extends Command
 
             $this->telegramApi->sendMessage($to);
         }
+
+        return 0;
     }
 }

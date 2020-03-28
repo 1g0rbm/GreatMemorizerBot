@@ -110,5 +110,7 @@ class RunQuizReminderCommand extends Command
             '   END   ',
             '========='
         ]);
+
+        return 0;
     }
 }

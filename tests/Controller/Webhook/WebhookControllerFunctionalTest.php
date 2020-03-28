@@ -23,8 +23,8 @@ class WebhookControllerFunctionalTest extends WebTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->secret = getenv('TELEGRAM_SECRET');
-        $this->faker = Factory::create();
+        $this->secret = $_ENV['TELEGRAM_SECRET'];
+        $this->faker  = Factory::create();
     }
 
     public function testWebhookTelegramBotReturnStatus401(): void
