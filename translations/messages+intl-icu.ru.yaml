@@ -65,5 +65,7 @@ messages:
     reminder_greetings: 'Привет! Время вспомнить английский!'
     list_actions: 'Хочешь посмотреть весь список, или пройти опрос?'
 label:
+    quiz_verdict: 'вердикт: '
     question_word: 'слово: '
     correct_translation: 'правильный перевод: '
+    user_answer: 'Твой ответ: '

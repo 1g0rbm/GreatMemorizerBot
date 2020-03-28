@@ -63,5 +63,7 @@ messages:
     reminder_greetings: 'Hi! Time to remember English!'
     list_actions: 'Want to see the whole list or take a quiz?'
 label:
+    quiz_verdict: 'verdict: '
     question_word: 'question word: '
     correct_translation: 'correct translation: '
+    user_answer: 'your answer: '

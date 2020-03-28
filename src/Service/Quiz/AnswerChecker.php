@@ -51,9 +51,13 @@ class AnswerChecker
 
     private function do(QuizStep $step, string $answer): QuizStep
     {
-        $answer = $step->getCorrectWord()->getTranslations()->filter(fn (Word $word) => $word->getText() === $answer);
-        $step->setIsCorrect($answer->count() === 1);
+        $cnt = $step->getCorrectWord()
+            ->getTranslations()
+            ->filter(fn (Word $word) => $word->getText() === $answer)
+            ->count();
+        $step->setIsCorrect($cnt === 1);
         $step->setIsAnswered(true);
+        $step->setAnswer($answer);
 
         return $step;
     }

@@ -38,14 +38,24 @@ class ResultantService
         $result = $quiz->getSteps()->map(static function (QuizStep $step) use ($builder, $translator, $chatId) {
             /** @var Word $translation */
             $translation = $step->getCorrectWord()->getTranslations()->first();
-            $builder->appendLn($step->isCorrect() ? '✅' : '❌')
+            $builder
                 ->append($translator->translate('label.question_word', $chatId), MessageBuilder::BOLD)
-                ->appendLn($step->getCorrectWord()->getText())
+                ->appendLn($step->getCorrectWord()->getText());
+
+            if (! $step->isCorrect() && $step->getAnswer()) {
+                $builder
+                    ->append($translator->translate('label.user_answer', $chatId), MessageBuilder::BOLD)
+                    ->appendLn($step->getAnswer() ?? ' - ');
+            }
+
+            $builder
                 ->append(
                     $translator->translate('label.correct_translation', $chatId),
                     MessageBuilder::BOLD
                 )
-                ->appendLn($translation->getText());
+                ->appendLn($translation->getText())
+                ->append($translator->translate('label.quiz_verdict', $chatId), MessageBuilder::BOLD)
+                ->appendLn($step->isCorrect() ? '✅' : '❌');
 
             return $builder->flush();
         });

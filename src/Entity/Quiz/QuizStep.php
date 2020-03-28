@@ -71,6 +71,13 @@ class QuizStep
     private int $length;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     *
+     * @Assert\Type("string")
+     */
+    private ?string $answer = null;
+
+    /**
      * @ORM\Column(type="boolean")
      */
     private bool $isAnswered = false;
@@ -138,6 +145,16 @@ class QuizStep
     public function setLength(int $length): void
     {
         $this->length = $length;
+    }
+
+    public function getAnswer(): ?string
+    {
+        return $this->answer;
+    }
+
+    public function setAnswer(string $answer): void
+    {
+        $this->answer = $answer;
     }
 
     public function isAnswered(): bool
