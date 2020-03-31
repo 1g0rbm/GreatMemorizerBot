@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Ig0rbm\Memo\Entity;
+namespace Ig0rbm\Memo\Entity\Billing;
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Ig0rbm\Memo\Entity\Account;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="licenses")
- * @ORM\Entity(repositoryClass="Ig0rbm\Memo\Repository\LicenseRepository")
+ * @ORM\Entity(repositoryClass="Ig0rbm\Memo\Repository\Billing\LicenseRepository")
  */
 final class License
 {

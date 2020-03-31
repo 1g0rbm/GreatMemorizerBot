@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service;
 
 use DateTimeImmutable;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Account;
-use Ig0rbm\Memo\Entity\License;
+use Ig0rbm\Memo\Entity\Billing\License;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Repository\AccountRepository;
-use Ig0rbm\Memo\Repository\LicenseRepository;
+use Ig0rbm\Memo\Repository\Billing\LicenseRepository;
 use Ig0rbm\Memo\Repository\Telegram\Message\ChatRepository;
 use Ig0rbm\Memo\Repository\Translation\DirectionRepository;
 use Throwable;
