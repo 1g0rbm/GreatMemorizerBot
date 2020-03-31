@@ -59,8 +59,13 @@ final class License
      */
     private Account $account;
 
-    public function __construct(DateTimeImmutable $dateStart, DateTimeImmutable $dateEnd, string $provider)
-    {
+    public function __construct(
+        Account $account,
+        DateTimeImmutable $dateStart,
+        DateTimeImmutable $dateEnd,
+        string $provider
+    ) {
+        $this->account   = $account;
         $this->dateStart = $dateStart;
         $this->dateEnd   = $dateEnd;
         $this->provider  = $provider;
