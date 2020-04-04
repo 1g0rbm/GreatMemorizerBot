@@ -44,7 +44,12 @@ class ShowAction extends AbstractTelegramAction
         $to->setChatId($messageFrom->getChat()->getId());
         $to->setText($this->translator->translate('messages.list_actions', $to->getChatId()));
 
-        $wordList = $this->wordListRepository->getOneByChat($messageFrom->getChat());
+        $wordList = $this->wordListRepository->findOneByChat($messageFrom->getChat());
+        if ($wordList === null) {
+            $to->setText('There is not word list. Start to save words to the list!');
+
+            return $to;
+        }
 
         $this->builder->addLine([
             new UrlButton(

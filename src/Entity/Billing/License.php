@@ -55,7 +55,7 @@ final class License
     private string $provider;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Account")
+     * @ORM\ManyToOne(targetEntity="Ig0rbm\Memo\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
      */
     private Account $account;

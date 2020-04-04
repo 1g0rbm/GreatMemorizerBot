@@ -64,6 +64,10 @@ messages:
         word_exist: 'список уже содержит это слово'
     reminder_greetings: 'Привет! Время вспомнить английский!'
     list_actions: 'Хочешь посмотреть весь список, или пройти опрос?'
+    license:
+        translation_limit_reached: |
+            Ты достиг лимита переводов на сегодня.
+            Купи лицензию или жди до завтра.
 label:
     quiz_verdict: 'вердикт: '
     question_word: 'слово: '

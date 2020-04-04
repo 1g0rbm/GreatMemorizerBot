@@ -13,7 +13,8 @@ class CacheItem implements ItemInterface
 
     private string $key;
 
-    private string $data;
+    /** @var mixed */
+    private $data;
 
     private ?DateTimeImmutable $expires;
 
@@ -23,41 +24,65 @@ class CacheItem implements ItemInterface
         $this->key   = $key;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function expiresAfter($time)
     {
         $this->expires = $time;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function expiresAt($expiration)
     {
         $this->expires = $expiration;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function get()
     {
         return $this->data;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getKey()
     {
         return $this->key;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMetadata(): array
     {
         // TODO: Implement getMetadata() method.
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isHit()
     {
         return $this->isHit;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function set($value)
     {
         $this->data = $value;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function tag($tags): ItemInterface
     {
         // TODO: Implement tag() method.
