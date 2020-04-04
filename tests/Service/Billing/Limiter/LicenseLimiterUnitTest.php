@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Tests\Service\Billing\Limiter;
 
+use DateTimeImmutable;
 use Doctrine\ORM\NonUniqueResultException;
 use Ig0rbm\Memo\Entity\Account;
-use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
-use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Service\Billing\AccountPrivilegesChecker;
-use Ig0rbm\Memo\Service\Billing\Limiter\TranslateWordsLicenseLimiter;
+use Ig0rbm\Memo\Service\Billing\Limiter\LicenseLimiter;
 use Ig0rbm\Memo\Tests\CacheAdapter;
 use Ig0rbm\Memo\Tests\CacheItem;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -19,20 +18,21 @@ use Psr\Cache\InvalidArgumentException;
 
 use function sprintf;
 
-class TranslateWordsLicenseLimiterUnitTest extends TestCase
+/**
+ * @group unit
+ * @group billing
+ * @group limiter
+ */
+class LicenseLimiterUnitTest extends TestCase
 {
-    private TranslateWordsLicenseLimiter $service;
+    private LicenseLimiter $service;
 
     /** @var AccountPrivilegesChecker|MockObject */
     private AccountPrivilegesChecker $accountChecker;
 
-    /** @var AccountRepository|MockObject */
-    private AccountRepository $accountRepository;
-
     public function setUp(): void
     {
-        $this->accountChecker    = $this->createMock(AccountPrivilegesChecker::class);
-        $this->accountRepository = $this->createMock(AccountRepository::class);
+        $this->accountChecker = $this->createMock(AccountPrivilegesChecker::class);
     }
 
     /**
@@ -41,25 +41,19 @@ class TranslateWordsLicenseLimiterUnitTest extends TestCase
      */
     public function testIsLimitReachedReturnFalseIfCacheIsEmpty(): void
     {
-        $chat    = $this->createChat();
+        $key     = 'test_key';
+        $expire  = new DateTimeImmutable('tomorrow midnight');
         $account = new Account();
-        $account->setChat($chat);
-        $account->setChatId($chat->getId());
         $account->setId(11);
 
         $this->createService();
-
-        $this->accountRepository->expects($this->once())
-            ->method('getOneByChatId')
-            ->with($chat->getId())
-            ->willReturn($account);
 
         $this->accountChecker->expects($this->once())
             ->method('isFull')
             ->with($account)
             ->willReturn(false);
 
-        $this->assertFalse($this->service->isLimitReached($chat));
+        $this->assertFalse($this->service->isLimitReached($account, $key, $expire));
     }
 
     /**
@@ -68,29 +62,23 @@ class TranslateWordsLicenseLimiterUnitTest extends TestCase
      */
     public function testIsLimitReachedReturnTrueIfLimitReached(): void
     {
-        $chat    = $this->createChat();
+        $key     = 'test_key';
+        $expire  = new DateTimeImmutable('tomorrow midnight');
         $account = new Account();
-        $account->setChat($chat);
-        $account->setChatId($chat->getId());
         $account->setId(11);
 
-        $cacheKey = sprintf('%d_word_translate_limit', $account->getId());
+        $cacheKey = sprintf('%d_%s', $account->getId(), $key);
         $item     = new CacheItem($cacheKey, true);
         $item->set(21);
 
         $this->createService([$cacheKey => $item]);
-
-        $this->accountRepository->expects($this->once())
-            ->method('getOneByChatId')
-            ->with($chat->getId())
-            ->willReturn($account);
 
         $this->accountChecker->expects($this->once())
             ->method('isFull')
             ->with($account)
             ->willReturn(false);
 
-        $this->assertTrue($this->service->isLimitReached($chat));
+        $this->assertTrue($this->service->isLimitReached($account, $key, $expire, 20));
     }
 
     /**
@@ -99,29 +87,23 @@ class TranslateWordsLicenseLimiterUnitTest extends TestCase
      */
     public function testIsLimitReachedReturnFalseIfLimitNotReached(): void
     {
-        $chat    = $this->createChat();
+        $key     = 'test_key';
+        $expire  = new DateTimeImmutable('tomorrow midnight');
         $account = new Account();
-        $account->setChat($chat);
-        $account->setChatId($chat->getId());
         $account->setId(11);
 
-        $cacheKey = sprintf('%d_word_translate_limit', $account->getId());
+        $cacheKey = sprintf('%d_%s', $account->getId(), $key);
         $item     = new CacheItem($cacheKey, true);
         $item->set(5);
 
         $this->createService([$cacheKey => $item]);
-
-        $this->accountRepository->expects($this->once())
-            ->method('getOneByChatId')
-            ->with($chat->getId())
-            ->willReturn($account);
 
         $this->accountChecker->expects($this->once())
             ->method('isFull')
             ->with($account)
             ->willReturn(false);
 
-        $this->assertFalse($this->service->isLimitReached($chat));
+        $this->assertFalse($this->service->isLimitReached($account, $key, $expire));
     }
 
     /**
@@ -131,23 +113,16 @@ class TranslateWordsLicenseLimiterUnitTest extends TestCase
     public function testIsLimitReachedReturnFalseIfThereIsFullLicense(): void
     {
         $this->createService();
-
-        $chat    = $this->createChat();
         $account = new Account();
-        $account->setChat($chat);
-        $account->setChatId($chat->getId());
-
-        $this->accountRepository->expects($this->once())
-            ->method('getOneByChatId')
-            ->with($chat->getId())
-            ->willReturn($account);
+        $key     = 'test_key';
+        $expire  = new DateTimeImmutable('tomorrow midnight');
 
         $this->accountChecker->expects($this->once())
             ->method('isFull')
             ->with($account)
             ->willReturn(true);
 
-        $this->assertFalse($this->service->isLimitReached($chat));
+        $this->assertFalse($this->service->isLimitReached($account, $key, $expire));
     }
 
     /**
@@ -155,18 +130,6 @@ class TranslateWordsLicenseLimiterUnitTest extends TestCase
      */
     private function createService(array $storage = [])
     {
-        $this->service = new TranslateWordsLicenseLimiter(
-            $this->accountChecker,
-            new CacheAdapter($storage),
-            $this->accountRepository
-        );
-    }
-
-    private function createChat(): Chat
-    {
-        $chat = new Chat();
-        $chat->setId(1);
-
-        return $chat;
+        $this->service = new LicenseLimiter($this->accountChecker, new CacheAdapter($storage));
     }
 }

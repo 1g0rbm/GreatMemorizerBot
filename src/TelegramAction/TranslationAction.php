@@ -11,16 +11,17 @@ use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Repository\AccountRepository;
-use Ig0rbm\Memo\Service\Billing\Limiter\TranslateWordsLicenseLimiter;
+use Ig0rbm\Memo\Service\Billing\Limiter\LicenseLimiter;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
 use Ig0rbm\Memo\Service\Translation\TranslationService;
 use Psr\Cache\InvalidArgumentException;
+use DateTimeImmutable;
 
 class TranslationAction extends AbstractTelegramAction
 {
     private TranslationService $translationService;
 
-    private TranslateWordsLicenseLimiter $limiter;
+    private LicenseLimiter $limiter;
 
     private AccountRepository $accountRepository;
 
@@ -28,7 +29,7 @@ class TranslationAction extends AbstractTelegramAction
 
     public function __construct(
         TranslationService $translationService,
-        TranslateWordsLicenseLimiter $limiter,
+        LicenseLimiter $limiter,
         AccountRepository $accountRepository,
         Builder $builder
     ) {
@@ -45,43 +46,44 @@ class TranslationAction extends AbstractTelegramAction
      */
     public function run(MessageFrom $messageFrom, Command $command): MessageTo
     {
-        $messageTo = new MessageTo();
-        $messageTo->setChatId($messageFrom->getChat()->getId());
+        $to = new MessageTo();
+        $to->setChatId($messageFrom->getChat()->getId());
 
         if (null === $messageFrom->getText()->getText()) {
-            $messageTo->setText(
-                $this->translator->translate('messages.translation_error', $messageTo->getChatId())
+            $to->setText(
+                $this->translator->translate('messages.translation_error', $to->getChatId())
             );
 
-            return $messageTo;
+            return $to;
         }
 
-        $account = $this->accountRepository->findOneByChat($messageFrom->getChat());
+        $account       = $this->accountRepository->findOneByChat($messageFrom->getChat());
+        $limitExpireAt = new DateTimeImmutable('tomorrow midnight');
 
-        if ($this->limiter->isLimitReached($messageFrom->getChat())) {
-            $messageTo->setText(
-                $this->translator->translate('messages.license.translation_limit_reached', $messageTo->getChatId())
+        if ($this->limiter->isLimitReached($account, 'word_translate_limit', $limitExpireAt, 20)) {
+            $to->setText(
+                $this->translator->translate('messages.license.translation_limit_reached', $to->getChatId())
             );
 
-            return $messageTo;
+            return $to;
         }
 
         $message = $this->translationService->translate($account->getDirection(), $messageFrom->getText()->getText());
-        $messageTo->setText($message);
+        $to->setText($message);
 
         if (! $this->isTranslatedWord($message)) {
-            return $messageTo;
+            return $to;
         }
 
         $this->builder->addLine([
             new InlineButton(
-                $this->translator->translate('button.inline.save', $messageTo->getChatId()),
+                $this->translator->translate('button.inline.save', $to->getChatId()),
                 '/save'
             )
         ]);
-        $messageTo->setInlineKeyboard($this->builder->flush());
+        $to->setInlineKeyboard($this->builder->flush());
 
-        return $messageTo;
+        return $to;
     }
 
     private function isTranslatedWord(string $text): bool
