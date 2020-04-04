@@ -35,7 +35,7 @@ class WordListLicenseLimiter
         }
 
         $count = $this->wordListRepository->countUniqueWords($account->getChat());
-        if ($count <= $limit) {
+        if ($count < $limit) {
             return false;
         }
 

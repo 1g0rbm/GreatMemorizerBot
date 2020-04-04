@@ -46,6 +46,6 @@ class WordListManager
         }
 
         $this->em->flush();
-        $this->eventDispatcher->dispatch(new WordListEvent($wordList));
+        $this->eventDispatcher->dispatch(WordListEvent::NAME, new WordListEvent($wordList));
     }
 }

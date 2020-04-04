@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\TelegramAction;
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Exception\WordList\WordListException;
 use Ig0rbm\Memo\Repository\AccountRepository;
+use Ig0rbm\Memo\Service\Billing\Limiter\WordListLicenseLimiter;
 use Ig0rbm\Memo\Service\Translation\MessageTextFinder;
 use Ig0rbm\Memo\Service\Translation\WordTranslationService;
 use Ig0rbm\Memo\Service\WordList\WordListManager;
@@ -24,42 +27,56 @@ class SaveAction extends AbstractTelegramAction
 
     private MessageTextFinder $textFinder;
 
+    private WordListLicenseLimiter $limiter;
+
     public function __construct(
         WordTranslationService $wordTranslation,
         AccountRepository $accountRepository,
         WordListManager $manager,
-        MessageTextFinder $textFinder
+        MessageTextFinder $textFinder,
+        WordListLicenseLimiter $limiter
     ) {
         $this->wordTranslation   = $wordTranslation;
         $this->accountRepository = $accountRepository;
         $this->manager           = $manager;
         $this->textFinder        = $textFinder;
+        $this->limiter = $limiter;
     }
 
     /**
      * @throws ORMException
+     * @throws DBALException
+     * @throws NonUniqueResultException
      */
     public function run(MessageFrom $from, Command $command): MessageTo
     {
-        $messageTo = new MessageTo();
-        $messageTo->setChatId($from->getChat()->getId());
+        $to = new MessageTo();
+        $to->setChatId($from->getChat()->getId());
 
         $account  = $this->accountRepository->getOneByChatId($from->getChat()->getId());
         $wordsBag = $this->wordTranslation->translate($account->getDirection(), $this->textFinder->find($from));
 
-        if ($wordsBag->count() === 0) {
-            $messageTo->setText($this->translator->translate('messages.save.wrong_word', $messageTo->getChatId()));
+        if ($this->limiter->isLimitReached($account)) {
+            $to->setText(
+                $this->translator->translate('messages.license.translation_limit_reached', $to->getChatId())
+            );
 
-            return $messageTo;
+            return $to;
+        }
+
+        if ($wordsBag->count() === 0) {
+            $to->setText($this->translator->translate('messages.save.wrong_word', $to->getChatId()));
+
+            return $to;
         }
 
         try {
             $this->manager->add($from->getChat(), $wordsBag);
-            $messageTo->setText($this->translator->translate('messages.save.success', $messageTo->getChatId()));
+            $to->setText($this->translator->translate('messages.save.success', $to->getChatId()));
         } catch (WordListException $e) {
-            $messageTo->setText($this->translator->translate($e->getMessage(), $messageTo->getChatId()));
+            $to->setText($this->translator->translate($e->getMessage(), $to->getChatId()));
         }
 
-        return $messageTo;
+        return $to;
     }
 }
