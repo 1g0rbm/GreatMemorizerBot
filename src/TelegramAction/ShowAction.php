@@ -54,7 +54,7 @@ class ShowAction extends AbstractTelegramAction
         $this->builder->addLine([
             new UrlButton(
                 $this->translator->translate('button.inline.show_list', $to->getChatId()),
-                $this->createWordListUrl($wordList->getId())
+                $this->createWordListUrl($to->getChatId())
             )
         ]);
         $this->builder->addLine([
@@ -70,8 +70,8 @@ class ShowAction extends AbstractTelegramAction
         return $to;
     }
 
-    private function createWordListUrl(int $wordListId): string
+    private function createWordListUrl(int $chatId): string
     {
-        return sprintf('%s' . self::WORD_LIST_URI, $this->botHost, $wordListId);
+        return sprintf('%s' . self::WORD_LIST_URI, $this->botHost, $chatId);
     }
 }

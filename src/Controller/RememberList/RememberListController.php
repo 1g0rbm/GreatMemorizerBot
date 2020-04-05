@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Controller\RememberList;
 
+use Doctrine\ORM\NonUniqueResultException;
 use Ig0rbm\Memo\Entity\Translation\Word;
+use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Repository\Translation\WordListRepository;
+use Ig0rbm\Memo\Service\Billing\AccountPrivilegesChecker;
 use Ig0rbm\Memo\Service\Telegram\TranslationMessageBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,20 +20,33 @@ class RememberListController extends AbstractController
 {
     private WordListRepository $wordListRepository;
 
+    private AccountRepository $accountRepository;
+
     private TranslationMessageBuilder $messageBuilder;
 
-    public function __construct(WordListRepository $wordListRepository, TranslationMessageBuilder $messageBuilder)
-    {
+    private AccountPrivilegesChecker $checker;
+
+    public function __construct(
+        WordListRepository $wordListRepository,
+        AccountRepository $accountRepository,
+        TranslationMessageBuilder $messageBuilder,
+        AccountPrivilegesChecker $checker
+    ) {
         $this->wordListRepository = $wordListRepository;
+        $this->accountRepository  = $accountRepository;
         $this->messageBuilder     = $messageBuilder;
+        $this->checker            = $checker;
     }
 
     /**
-     * @Route("/bot/{wordListId}/list", name="remember_list", methods={"GET"})
+     * @throws NonUniqueResultException
+     *
+     * @Route("/bot/{chatId}/list", name="remember_list", methods={"GET"})
      */
-    public function showAction(int $wordListId): Response
+    public function showAction(int $chatId): Response
     {
-        $wordList = $this->wordListRepository->getOneById($wordListId);
+        $wordList = $this->wordListRepository->getOneByChatId($chatId);
+        $account  = $this->accountRepository->getOneByChatId($chatId);
 
         $list = [];
         foreach ($wordList->getWords() as $word) {
@@ -54,6 +70,12 @@ class RememberListController extends AbstractController
             ];
         }
 
-        return $this->render('RememberList/show.html.twig', ['list' => $list]);
+        return $this->render(
+            'RememberList/show.html.twig',
+            [
+                'list' => $list,
+                'isFull' => $this->checker->isFull($account)
+            ]
+        );
     }
 }

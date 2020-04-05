@@ -69,6 +69,34 @@ SQL;
     /**
      * @throws NonUniqueResultException
      */
+    public function getOneByChatId(int $chatId): WordList
+    {
+        $list = $this->findOneByChatId($chatId);
+        if ($list === null) {
+            throw WordListException::becauseThereIsNotListForChat($chatId);
+        }
+
+        return $list;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findOneByChatId(int $chatId): ?WordList
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('wl')
+            ->from(WordList::class, 'wl')
+            ->leftJoin('wl.chat', 'c')
+            ->where('c.id = :chat_id')
+            ->setParameter('chat_id', $chatId);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
     public function getOneByChat(Chat $chat): WordList
     {
         $wordList = $this->findOneByChat($chat);

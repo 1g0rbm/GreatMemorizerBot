@@ -19,7 +19,12 @@
         </div>
         <ol class="remember_list">
             {% for item in list %}
-                <li class="remember_word">
+                <li
+                        class="remember_word"
+                        {% if isFull is same as(false) and loop.index > 10 %}
+                            style="text-decoration: line-through"
+                        {% endif %}
+                >
                     <span class="source">{{ item.source }}</span>
                     <span class="transcription">[{{ item.transcription }}]</span>
                     {% for word in item.words %}

@@ -90,6 +90,6 @@ class WordListLicenseLimiterUnitTest extends TestCase
             ->with($chat)
             ->willReturn(10);
 
-        $this->assertFalse($this->limiter->isLimitReached($account, 10));
+        $this->assertTrue($this->limiter->isLimitReached($account, 10));
     }
 }
