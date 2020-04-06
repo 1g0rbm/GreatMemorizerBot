@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Ig0rbm\Memo\Entity\Account;
 use Symfony\Component\Validator\Constraints as Assert;
+use Throwable;
 
 /**
  * @ORM\Entity
@@ -59,6 +60,19 @@ final class License
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
      */
     private Account $account;
+
+    /**
+     * @throws Throwable
+     */
+    public static function createDeafaultForAccount(Account $account): self
+    {
+        return new self(
+            $account,
+            new DateTimeImmutable(),
+            new DateTimeImmutable(sprintf('+ %d months', License::DEFAULT_TERM)),
+            License::PROVIDER_DEFAULT
+        );
+    }
 
     public function __construct(
         Account $account,
