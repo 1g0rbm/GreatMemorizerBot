@@ -19,6 +19,10 @@ button:
         save: '💾 save'
 
 messages:
+    errors:
+        quiz_limit_reached: |
+            Your quiz limit for today is over.
+            Buy the license or wait for the next day.
     start: |
         Hi!
         I'm GreatMemorizer and I can help you to remember enaglish words

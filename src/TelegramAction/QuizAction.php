@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\TelegramAction;
 
 use Doctrine\DBAL\DBALException;
@@ -8,6 +10,7 @@ use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepBuilderException;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Service\Quiz\QuestionBuilder;
@@ -51,6 +54,10 @@ class QuizAction extends AbstractTelegramAction
             $to->setText(sprintf('Error: %s', $e->getMessage()));
 
             return  $to;
+        } catch (LicenseLimitReachedException $e) {
+            $to->setText($this->translator->translate($e->getMessage(), $to->getChatId()));
+
+            return $to;
         }
 
         if (!isset($step)) {

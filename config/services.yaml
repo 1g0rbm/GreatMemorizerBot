@@ -202,9 +202,13 @@ services:
 
     Ig0rbm\Memo\TelegramAction\QuizAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\WordListQuizAction:
         public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\QuizAnswerAction:
         public: true

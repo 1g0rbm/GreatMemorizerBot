@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace Ig0rbm\Memo\TelegramAction;
 
 use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
 use Ig0rbm\Memo\Exception\Quiz\QuizExceptionInterface;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Service\Quiz\QuestionBuilder;
 use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
+use Psr\Cache\InvalidArgumentException;
 
 class WordListQuizAction extends AbstractTelegramAction
 {
@@ -36,7 +39,8 @@ class WordListQuizAction extends AbstractTelegramAction
     /**
      * @throws DBALException
      * @throws ORMException
-     * @throws QuizStepException
+     * @throws NonUniqueResultException
+     * @throws InvalidArgumentException
      */
     public function run(MessageFrom $messageFrom, Command $command): MessageTo
     {
@@ -48,6 +52,10 @@ class WordListQuizAction extends AbstractTelegramAction
             $step = $quiz->getCurrentStep();
         } catch (QuizExceptionInterface $e) {
             $to->setText($e->getMessage());
+
+            return $to;
+        } catch (LicenseLimitReachedException $e) {
+            $to->setText($this->translator->translate($e->getMessage(), $to->getChatId()));
 
             return $to;
         }
