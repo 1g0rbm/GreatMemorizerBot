@@ -70,6 +70,9 @@ messages:
         translation_limit_reached: |
             Your limit for today is over.
             Buy the license or wait for the next day.
+        reminder_limit_reached: |
+            Your limit for reminders is over.
+            Buy the license to create more reminders.
 label:
     quiz_verdict: 'verdict: '
     question_word: 'question word: '
