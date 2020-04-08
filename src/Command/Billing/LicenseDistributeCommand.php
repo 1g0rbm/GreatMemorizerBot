@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Ig0rbm\Memo\Command\Billing;
 
 use Doctrine\ORM\NonUniqueResultException;
+use Ig0rbm\Memo\Entity\Account;
+use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Service\AccountLicenseService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,17 +14,23 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
+use function array_map;
 use function sprintf;
 
 class LicenseDistributeCommand extends Command
 {
     private AccountLicenseService $accountLicenseService;
 
-    public function __construct(AccountLicenseService $accountLicenseService)
-    {
+    private AccountRepository $accountRepository;
+
+    public function __construct(
+        AccountLicenseService $accountLicenseService,
+        AccountRepository $accountRepository
+    ) {
         parent::__construct(null);
 
         $this->accountLicenseService = $accountLicenseService;
+        $this->accountRepository     = $accountRepository;
     }
 
     public function configure(): void
@@ -58,24 +66,37 @@ class LicenseDistributeCommand extends Command
             '',
         ]);
 
-//        $forAll    = $input->getOption('all');
+        $forAll    = $input->getOption('all');
         $accountId = $input->getOption('id') ? (int) $input->getOption('id') : null;
 
-        $license = $this->accountLicenseService->createLicense($accountId);
+        $accountIds = [];
 
-        if ($license === null) {
-            $output->writeln([
-                sprintf('License did not create for account_id = %d', $accountId),
-                '',
-            ]);
+        if ($accountId) {
+            $accountIds[] = $accountId;
+        } elseif ($forAll) {
+            $accountIds = array_map(fn(Account $account) => $account->getId(), $this->accountRepository->findAll());
         } else {
-            $output->writeln([
-                'License created: ',
-                sprintf('Id: %d', $license->getId()),
-                sprintf('End date: %s', $license->getDateEnd()->format('d-m-Y H:i:s')),
-                sprintf('Account id: %d', $license->getAccount()->getId()),
-                '',
-            ]);
+            $output->writeln(['Not found necessary options --id or --all']);
+            die;
+        }
+
+        foreach ($accountIds as $accountId) {
+            $license = $this->accountLicenseService->createLicense($accountId);
+
+            if ($license === null) {
+                $output->writeln([
+                    sprintf('License did not create for account_id = %d', $accountId),
+                    '',
+                ]);
+            } else {
+                $output->writeln([
+                    'License created: ',
+                    sprintf('Id: %d', $license->getId()),
+                    sprintf('End date: %s', $license->getDateEnd()->format('d-m-Y H:i:s')),
+                    sprintf('Account id: %d', $license->getAccount()->getId()),
+                    '',
+                ]);
+            }
         }
 
         $output->writeln([
