@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Account;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Ig0rbm\Memo\Exception\AccountNotFoundException;
 use Ig0rbm\Memo\Exception\Telegram\AccountException;
 
 class AccountRepository extends ServiceEntityRepository
@@ -22,6 +26,31 @@ class AccountRepository extends ServiceEntityRepository
     public function findAll(): array
     {
         return parent::findAll();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getOneById(int $accountId): Account
+    {
+        $account = $this->findOneById($accountId);
+        if ($account === null) {
+            throw AccountNotFoundException::byAccountId($accountId);
+        }
+
+        return $account;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findOneById(int $accountId): ?Account
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->where('a.id = :accountId')
+            ->setParameter('accountId', $accountId);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     public function getOneByChatId(int $chatId): Account

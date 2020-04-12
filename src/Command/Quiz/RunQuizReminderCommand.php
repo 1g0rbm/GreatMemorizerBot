@@ -6,8 +6,12 @@ namespace Ig0rbm\Memo\Command\Quiz;
 
 use DateTime;
 use DateTimeZone;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\ORMException;
 use Exception;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Repository\Quiz\QuizReminderRepository;
 use Ig0rbm\Memo\Service\Quiz\QuestionBuilder;
@@ -16,6 +20,7 @@ use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 use Ig0rbm\Memo\Service\Telegram\MessageBuilder;
 use Ig0rbm\Memo\Service\Telegram\TelegramApiService;
 use Ig0rbm\Memo\Service\Telegram\TranslationService;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -66,6 +71,10 @@ class RunQuizReminderCommand extends Command
     }
 
     /**
+     * @throws DBALException
+     * @throws NonUniqueResultException
+     * @throws ORMException
+     * @throws InvalidArgumentException
      * @throws Exception
      */
     public function execute(InputInterface $input, OutputInterface $output)
@@ -82,8 +91,13 @@ class RunQuizReminderCommand extends Command
         $output->writeln([sprintf('Found reminders for run: %d', count($reminders))]);
 
         foreach ($reminders as $reminder) {
-            $quiz = $this->quizManager->getQuizByChat($reminder->getChat(), true);
-            $step = $quiz->getCurrentStep();
+            try {
+                $quiz = $this->quizManager->getQuizByChat($reminder->getChat(), true);
+                $step = $quiz->getCurrentStep();
+            } catch (LicenseLimitReachedException $e) {
+                echo 'CONTINUE';
+                continue;
+            }
 
             if (!isset($step)) {
                 throw QuizStepException::becauseThereAreNotQuizSteps($quiz->getId());

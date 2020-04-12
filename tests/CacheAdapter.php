@@ -6,12 +6,19 @@ namespace Ig0rbm\Memo\Tests;
 
 use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Ig0rbm\Memo\Tests\CacheItem;
 
 class CacheAdapter implements AdapterInterface
 {
     /** @var CacheItemInterface[] */
     private array $storage = [];
+
+    /**
+     * @param array|CacheItemInterface[] $storage
+     */
+    public function __construct(array $storage = [])
+    {
+        $this->storage = $storage;
+    }
 
     /**
      * @inheritDoc

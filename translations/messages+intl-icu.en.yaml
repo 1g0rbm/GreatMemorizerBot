@@ -19,6 +19,10 @@ button:
         save: '💾 save'
 
 messages:
+    errors:
+        quiz_limit_reached: |
+            Your quiz limit for today is over.
+            Buy the license or wait for the next day.
     start: |
         Hi!
         I'm GreatMemorizer and I can help you to remember enaglish words
@@ -62,6 +66,13 @@ messages:
         word_exist: 'list already has the same word'
     reminder_greetings: 'Hi! Time to remember English!'
     list_actions: 'Want to see the whole list or take a quiz?'
+    license:
+        translation_limit_reached: |
+            Your limit for today is over.
+            Buy the license or wait for the next day.
+        reminder_limit_reached: |
+            Your limit for reminders is over.
+            Buy the license to create more reminders.
 label:
     quiz_verdict: 'verdict: '
     question_word: 'question word: '

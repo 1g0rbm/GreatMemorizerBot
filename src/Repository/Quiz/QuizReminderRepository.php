@@ -17,6 +17,11 @@ class QuizReminderRepository extends ServiceEntityRepository
         parent::__construct($registry, QuizReminder::class);
     }
 
+    public function countRemindersForChat(Chat $chat): int
+    {
+        return $this->count(['chat' => $chat]);
+    }
+
     public function deleteReminderByChatAndTime(Chat $chat, string $time): void
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

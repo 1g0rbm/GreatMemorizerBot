@@ -12,6 +12,7 @@ use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Translation\WordList;
 use Ig0rbm\Memo\Exception\WordList\WordListException;
+use Doctrine\ORM\NonUniqueResultException;
 
 class WordListRepository extends ServiceEntityRepository
 {
@@ -65,15 +66,57 @@ SQL;
         return $stmt->fetch()['cnt'];
     }
 
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getOneByChatId(int $chatId): WordList
+    {
+        $list = $this->findOneByChatId($chatId);
+        if ($list === null) {
+            throw WordListException::becauseThereIsNotListForChat($chatId);
+        }
+
+        return $list;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findOneByChatId(int $chatId): ?WordList
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder()
+            ->select('wl')
+            ->from(WordList::class, 'wl')
+            ->leftJoin('wl.chat', 'c')
+            ->where('c.id = :chat_id')
+            ->setParameter('chat_id', $chatId);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
     public function getOneByChat(Chat $chat): WordList
     {
-        /** @var WordList|null $wordList */
-        $wordList = $this->findOneBy(['chat' => $chat]);
+        $wordList = $this->findOneByChat($chat);
         if ($wordList === null) {
             throw WordListException::becauseThereIsNotListForChat($chat->getId());
         }
 
         return $wordList;
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findOneByChat(Chat $chat): ?WordList
+    {
+        $qb = $this->createQueryBuilder('wl')
+            ->where('wl.chat = :chat')
+            ->setParameter('chat', $chat);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     public function getOneById(int $wordListId): WordList
