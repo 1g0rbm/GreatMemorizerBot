@@ -15,7 +15,7 @@ use Throwable;
  * @ORM\Table(name="licenses")
  * @ORM\Entity(repositoryClass="Ig0rbm\Memo\Repository\Billing\LicenseRepository")
  */
-final class License
+class License
 {
     public const DEFAULT_TERM = 6;
 
