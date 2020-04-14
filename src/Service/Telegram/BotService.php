@@ -9,9 +9,11 @@ use Exception;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Entity\Telegram\Message\Text;
 use Ig0rbm\Memo\Event\Message\CallbackQueryHandleEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeParseRequestEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeSendResponseEvent;
+use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Ig0rbm\Memo\Service\Telegram\Action\ActionInterface;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandActionParser;
@@ -37,6 +39,8 @@ class BotService
 
     private TextParser $textParser;
 
+    private TranslationService $translationService;
+
     private LoggerInterface $logger;
 
     private EventDispatcherInterface $dispatcher;
@@ -47,6 +51,7 @@ class BotService
         CommandActionParser $actionParser,
         TelegramApiService $telegramApiService,
         TextParser $textParser,
+        TranslationService $translationService,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger
     ) {
@@ -55,6 +60,7 @@ class BotService
         $this->actionParser       = $actionParser;
         $this->telegramApiService = $telegramApiService;
         $this->textParser         = $textParser;
+        $this->translationService = $translationService;
         $this->dispatcher         = $dispatcher;
         $this->logger             = $logger;
     }
@@ -77,6 +83,20 @@ class BotService
 
         try {
             $response = $action->run($message, $command);
+        } catch (LicenseLimitReachedException $e) {
+            $text = new Text();
+            $text->setText($e->getTranslationLabel());
+            $text->setCommand('/license_limit_handle');
+
+            $command = $this->defineCommand($message);
+
+            $message->setCallbackQuery(null);
+            $message->setText($text);
+
+            /** @var ActionInterface $action */
+            $action = $actionCollection->get($command->getActionClass());
+
+            $response = $action->run($message, $command);
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
 
@@ -87,6 +107,8 @@ class BotService
 
         $this->dispatcher->dispatch(CallbackQueryHandleEvent::NAME, new CallbackQueryHandleEvent($message));
         $this->dispatcher->dispatch(BeforeSendResponseEvent::NAME, new BeforeSendResponseEvent($response));
+
+        $this->logger->error('UPD', ['upd' => (int) $response->isUpdate()]);
 
         if ($response->isUpdate()) {
             $this->telegramApiService->editMessageText($message->getMessageId(), $response);

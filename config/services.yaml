@@ -97,6 +97,9 @@ parameters:
             action_class: Ig0rbm\Memo\TelegramAction\CloseSettingsAction
             aliases:
                 - '^\❌\s\s\s.+$'
+        /license_limit_handle:
+            text_response: '🤖 limit reached'
+            action_class: Ig0rbm\Memo\TelegramAction\LimitReachedHandler
         default:
             text_response: 'Undefined command'
             action_class: Ig0rbm\Memo\TelegramAction\TranslationAction
@@ -269,6 +272,11 @@ services:
             - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\TelegramAction\StartAction:
+        public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
+
+    Ig0rbm\Memo\TelegramAction\LimitReachedHandler:
         public: true
         calls:
             - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]

@@ -17,6 +17,7 @@ use Ig0rbm\Memo\Service\Quiz\QuestionBuilder;
 use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 use Psr\Cache\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 class QuizAction extends AbstractTelegramAction
 {
@@ -25,15 +26,21 @@ class QuizAction extends AbstractTelegramAction
     private QuizStepSerializer $serializer;
 
     private QuestionBuilder $questionBuilder;
+    /**
+     * @var LoggerInterface
+     */
+    private LoggerInterface $logger;
 
     public function __construct(
         QuizManager $quizManager,
         QuizStepSerializer $serializer,
-        QuestionBuilder $questionBuilder
+        QuestionBuilder $questionBuilder,
+        LoggerInterface $logger
     ) {
         $this->quizManager     = $quizManager;
         $this->serializer      = $serializer;
         $this->questionBuilder = $questionBuilder;
+        $this->logger = $logger;
     }
 
     /**
@@ -46,6 +53,8 @@ class QuizAction extends AbstractTelegramAction
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
+
+        $this->logger->error('HERE');
 
         try {
             $quiz = $this->quizManager->getQuizByChat($messageFrom->getChat());

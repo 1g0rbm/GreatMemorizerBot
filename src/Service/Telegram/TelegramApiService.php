@@ -14,6 +14,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\ReplyKeyboard;
 use Ig0rbm\Memo\Exception\Telegram\SendMessageException;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Serializer as InlineSerializer;
 use Ig0rbm\Memo\Service\Telegram\ReplyKeyboard\Serializer as ReplySerializer;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Throwable;
 
@@ -30,17 +31,23 @@ class TelegramApiService
     private ReplySerializer $replySerializer;
 
     private string $token;
+    /**
+     * @var LoggerInterface
+     */
+    private LoggerInterface $logger;
 
     public function __construct(
         Client $client,
         InlineSerializer $inlineSerializer,
         ReplySerializer $replySerializer,
+        LoggerInterface $logger,
         string $token
     ) {
         $this->client           = $client;
         $this->inlineSerializer = $inlineSerializer;
         $this->replySerializer  = $replySerializer;
         $this->token            = $token;
+        $this->logger = $logger;
     }
 
     public function answerCallbackQuery(AnswerCallbackQuery $answerCallbackQuery): string
@@ -130,6 +137,8 @@ class TelegramApiService
                 sprintf('/bot%s/%s', $this->token, $telegramMethod),
                 ['form_params' => $fields]
             );
+
+            $this->logger->error('MESSAGE', ['fields' => $fields]);
         } catch (Throwable $e) {
             throw SendMessageException::becauseTransportError($e->getMessage());
         }

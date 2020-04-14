@@ -65,6 +65,8 @@ class TranslationAction extends AbstractTelegramAction
                 $this->translator->translate('messages.license.translation_limit_reached', $to->getChatId())
             );
 
+            $to->setInlineKeyboard();
+
             return $to;
         }
 
