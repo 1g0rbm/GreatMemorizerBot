@@ -36,7 +36,7 @@ stop-production-build:
 	docker-compose -f docker-compose-production.yml down --remove-orphans
 
 docker-up-staging:
-	docker-compose -f docker-compose-staging.yml up
+	docker-compose -f docker-compose-staging.yml up -d
 
 docker-down-staging:
 	docker-compose -f docker-compose-staging.yml down --remove-orphans

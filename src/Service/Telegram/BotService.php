@@ -9,13 +9,16 @@ use Exception;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Entity\Telegram\Message\Text;
 use Ig0rbm\Memo\Event\Message\CallbackQueryHandleEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeParseRequestEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeSendResponseEvent;
+use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Ig0rbm\Memo\Service\Telegram\Action\ActionInterface;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandActionParser;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandParser;
+use Ig0rbm\Memo\TelegramAction\LimitReachedHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Throwable;
@@ -76,6 +79,19 @@ class BotService
         $action = $actionCollection->get($command->getActionClass());
 
         try {
+            $response = $action->run($message, $command);
+        } catch (LicenseLimitReachedException $e) {
+            $text = new Text();
+            $text->setCommand('/license_limit_reached');
+            $text->setText($e->getMessage());
+
+
+            $message->setText($text);
+            $message->setCallbackQuery(null);
+
+            $command = $this->defineCommand($message);
+            $action  = $actionCollection->get($command->getActionClass());
+
             $response = $action->run($message, $command);
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
