@@ -17,6 +17,7 @@ button:
         show_list: '👀 посмотреть список'
         run_quiz: '🤓 пройти сейчас'
         save: '💾 сохранить'
+        patreon_subscription: '💸 подписаться через patreon'
 
 messages:
     errors:

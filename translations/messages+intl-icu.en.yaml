@@ -17,6 +17,7 @@ button:
         show_list: '👀 see the whole list'
         run_quiz: '🤓 run'
         save: '💾 save'
+        patreon_subscription: '💸 subscribe on patreon'
 
 messages:
     errors:
