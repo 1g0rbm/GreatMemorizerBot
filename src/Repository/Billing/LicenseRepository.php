@@ -6,7 +6,6 @@ namespace Ig0rbm\Memo\Repository\Billing;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Account;
 use Ig0rbm\Memo\Entity\Billing\License;
@@ -18,9 +17,6 @@ class LicenseRepository extends ServiceEntityRepository
         parent::__construct($registry, License::class);
     }
 
-    /**
-     * @throws NonUniqueResultException
-     */
     public function findLatestLicenseByAccount(Account $account): ?License
     {
         $qb = $this->createQueryBuilder('l')
@@ -28,7 +24,12 @@ class LicenseRepository extends ServiceEntityRepository
             ->orderBy('l.dateEnd', 'ASC')
             ->setParameter('account', $account);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        $licenses = $qb->getQuery()->getResult();
+        if (empty($licenses)) {
+            return null;
+        }
+
+        return $licenses[0];
     }
 
     /**

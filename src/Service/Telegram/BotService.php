@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
+use DateTimeImmutable;
 use Doctrine\ORM\ORMException;
-use Exception;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
@@ -18,15 +18,16 @@ use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Ig0rbm\Memo\Service\Telegram\Action\ActionInterface;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandActionParser;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandParser;
-use Ig0rbm\Memo\TelegramAction\LimitReachedHandler;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Throwable;
-
 use function array_filter;
 use function array_shift;
 use function count;
 use function preg_match;
+use function sprintf;
 
 class BotService
 {
@@ -40,6 +41,8 @@ class BotService
 
     private TextParser $textParser;
 
+    private AdapterInterface $cache;
+
     private LoggerInterface $logger;
 
     private EventDispatcherInterface $dispatcher;
@@ -50,6 +53,7 @@ class BotService
         CommandActionParser $actionParser,
         TelegramApiService $telegramApiService,
         TextParser $textParser,
+        AdapterInterface $cache,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger
     ) {
@@ -58,6 +62,7 @@ class BotService
         $this->actionParser       = $actionParser;
         $this->telegramApiService = $telegramApiService;
         $this->textParser         = $textParser;
+        $this->cache              = $cache;
         $this->dispatcher         = $dispatcher;
         $this->logger             = $logger;
     }
@@ -65,13 +70,21 @@ class BotService
     /**
      * @throws ORMException
      * @throws ParseCommandException
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function handle(string $raw): void
     {
         $this->dispatchBeforeParseRequest($raw);
 
-        $message          = $this->messageParser->createMessage($raw);
+        $message     = $this->messageParser->createMessage($raw);
+        $answerRoute = $this->cache->getItem(sprintf('%d_answer_route', $message->getChat()->getId()));
+
+        if ($answerRoute->isHit()) {
+            $message->getText()->setCommand($answerRoute->get());
+            $answerRoute->expiresAt(new DateTimeImmutable('-5 minute'));
+            $this->cache->save($answerRoute);
+        }
+
         $command          = $this->defineCommand($message);
         $actionCollection = $this->actionParser->createActionList();
 
@@ -99,6 +112,12 @@ class BotService
             $response = new MessageTo();
             $response->setChatId($message->getChat()->getId());
             $response->setText(sprintf('Error during handle message "%s"', $message->getText()->getText()));
+        }
+
+        if ($response->getAnswerRoute()) {
+            $answerRoute->set($response->getAnswerRoute());
+            $answerRoute->expiresAt(new DateTimeImmutable('+5 minute'));
+            $this->cache->save($answerRoute);
         }
 
         $this->dispatcher->dispatch(CallbackQueryHandleEvent::NAME, new CallbackQueryHandleEvent($message));

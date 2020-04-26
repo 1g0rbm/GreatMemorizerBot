@@ -2,34 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Ig0rbm\Memo\Service;
+namespace Ig0rbm\Memo\Service\Billing;
 
 use Doctrine\ORM\NonUniqueResultException;
+use Ig0rbm\Memo\Entity\Account;
 use Ig0rbm\Memo\Entity\Billing\License;
-use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Repository\Billing\LicenseRepository;
-use Ig0rbm\Memo\Service\Billing\AccountPrivilegesChecker;
+use Ig0rbm\Memo\Repository\Billing\Patreon\PledgeRepository;
+use Ig0rbm\Memo\Service\EntityFlusher;
 use Throwable;
 
-class AccountLicenseService
+class PatreonLicenseActivator
 {
-    private AccountRepository $accountRepository;
+    private PledgeRepository $pledgeRepository;
 
     private LicenseRepository $licenseRepository;
-
-    private AccountPrivilegesChecker $checker;
 
     private EntityFlusher $flusher;
 
     public function __construct(
-        AccountRepository $accountRepository,
+        PledgeRepository $pledgeRepository,
         LicenseRepository $licenseRepository,
-        AccountPrivilegesChecker $checker,
         EntityFlusher $flusher
     ) {
-        $this->accountRepository = $accountRepository;
+        $this->pledgeRepository  = $pledgeRepository;
         $this->licenseRepository = $licenseRepository;
-        $this->checker           = $checker;
         $this->flusher           = $flusher;
     }
 
@@ -37,14 +34,20 @@ class AccountLicenseService
      * @throws NonUniqueResultException
      * @throws Throwable
      */
-    public function createLicense(int $accountId): ?License
+    public function activate(Account $account, string $email): ?License
     {
-        $account = $this->accountRepository->getOneById($accountId);
-        if ($this->checker->isFull($account)) {
+        $pledge = $this->pledgeRepository->findOneByEmail($email);
+        if ($pledge === null) {
             return null;
         }
 
-        $license = License::createDefaultForAccount($account);
+        if ($pledge->getAccount()) {
+            return null;
+        }
+
+        $pledge->setAccount($account);
+
+        $license = License::createPatreonLicenseForAccount($account);
 
         $this->licenseRepository->addLicense($license);
         $this->flusher->flush();

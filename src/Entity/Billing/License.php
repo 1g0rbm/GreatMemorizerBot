@@ -20,6 +20,7 @@ class License
     public const DEFAULT_TERM = 6;
 
     public const PROVIDER_DEFAULT = 'memo';
+    public const PROVIDER_PATREON = 'patreon';
 
     /**
      * @ORM\Id
@@ -64,13 +65,26 @@ class License
     /**
      * @throws Throwable
      */
-    public static function createDeafaultForAccount(Account $account): self
+    public static function createDefaultForAccount(Account $account): self
     {
         return new self(
             $account,
             new DateTimeImmutable(),
             new DateTimeImmutable(sprintf('+ %d months', License::DEFAULT_TERM)),
             License::PROVIDER_DEFAULT
+        );
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public static function createPatreonLicenseForAccount(Account $account): self
+    {
+        return new self(
+            $account,
+            new DateTimeImmutable(),
+            new DateTimeImmutable(sprintf('+ %d years', License::DEFAULT_TERM)),
+            License::PROVIDER_PATREON
         );
     }
 

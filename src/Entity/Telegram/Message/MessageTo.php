@@ -24,12 +24,18 @@ class MessageTo
 
     /**
      * @Assert\NotBlank
-     *
-     * @var Collection
      */
-    private $replyMarkup;
+    private Collection $replyMarkup;
 
+    /**
+     * @Assert\Type("bool")
+     */
     private bool $isUpdate;
+
+    /**
+     * @Assert\Type("string")
+     */
+    private ?string $answerRoute = null;
 
     public function __construct()
     {
@@ -105,5 +111,15 @@ class MessageTo
     public function setIsUpdate(bool $isUpdate): void
     {
         $this->isUpdate = $isUpdate;
+    }
+
+    public function getAnswerRoute(): ?string
+    {
+        return $this->answerRoute;
+    }
+
+    public function setAnswerRoute(?string $answerRoute): void
+    {
+        $this->answerRoute = $answerRoute;
     }
 }

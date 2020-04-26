@@ -76,6 +76,11 @@ messages:
         reminder_limit_reached: |
             Ты достиг лимита напоминалок.
             Чтобы устанавливать бесконечное количество напоминалок купи лицензию.
+    patreon:
+        confirm_email: 'Отправь свой email с patreon.com для активации подписки'
+        license_activated: 'Лицензия активирована'
+        license_not_activated: |
+            Лицензия не активирована. Email не найден или уже активирован другим аккаунтом
 label:
     quiz_verdict: 'вердикт: '
     question_word: 'слово: '

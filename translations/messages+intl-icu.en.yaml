@@ -74,6 +74,11 @@ messages:
         reminder_limit_reached: |
             Your limit for reminders is over.
             Buy the license to create more reminders.
+    patreon:
+        confirm_email: 'Send me your patreon email for confirm subscription'
+        license_activated: 'License has been successfully activated'
+        license_not_activated: |
+            License didn't activate beacause there isn't email or email already used
 label:
     quiz_verdict: 'verdict: '
     question_word: 'question word: '
