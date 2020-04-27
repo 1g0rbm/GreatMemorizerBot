@@ -23,7 +23,9 @@ class PledgeDeleteWebhookController
      */
     public function indexAction(Request $request): JsonResponse
     {
+        $content = json_decode($request->getContent(), true);
 
+        return new JsonResponse($content);
     }
 
     public function __construct(LoggerInterface $logger)

@@ -22,6 +22,8 @@ class License
     public const PROVIDER_DEFAULT = 'memo';
     public const PROVIDER_PATREON = 'patreon';
 
+    public const AVAILABLE_PROVIDERS = [self::PROVIDER_PATREON, self::PROVIDER_DEFAULT];
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -61,6 +63,11 @@ class License
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
      */
     private Account $account;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    private bool $isActive = true;
 
     /**
      * @throws Throwable
@@ -147,5 +154,15 @@ class License
     public function setAccount(Account $account): void
     {
         $this->account = $account;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
     }
 }

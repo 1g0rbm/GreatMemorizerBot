@@ -84,7 +84,7 @@ class TelegramApiService
     }
 
     /**
-     * @throws Exception
+     * @throws Throwable
      */
     public function editMessageText(int $messageId, MessageTo $message): string
     {

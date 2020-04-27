@@ -24,6 +24,12 @@ messages:
         quiz_limit_reached: |
             Your quiz limit for today is over.
             Buy the license or wait for the next day.
+        invalid_data: |
+            Has been received invalid data.
+            Further action impossible.
+        internal_error: |
+            An internal error occurred.
+            Please try again later.
     start: |
         Hi!
         I'm GreatMemorizer and I can help you to remember enaglish words

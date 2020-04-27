@@ -6,6 +6,7 @@ namespace Ig0rbm\Memo\Service\Telegram;
 
 use DateTimeImmutable;
 use Doctrine\ORM\ORMException;
+use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
@@ -14,6 +15,7 @@ use Ig0rbm\Memo\Event\Message\CallbackQueryHandleEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeParseRequestEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeSendResponseEvent;
 use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
+use Ig0rbm\Memo\Exception\PublicMessageExceptionInterface;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Ig0rbm\Memo\Service\Telegram\Action\ActionInterface;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandActionParser;
@@ -23,6 +25,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Throwable;
+
 use function array_filter;
 use function array_shift;
 use function count;
@@ -68,9 +71,10 @@ class BotService
     }
 
     /**
+     * @throws InvalidArgumentException
      * @throws ORMException
      * @throws ParseCommandException
-     * @throws InvalidArgumentException
+     * @throws Throwable
      */
     public function handle(string $raw): void
     {
@@ -94,24 +98,26 @@ class BotService
         try {
             $response = $action->run($message, $command);
         } catch (LicenseLimitReachedException $e) {
-            $text = new Text();
-            $text->setCommand('/license_limit_reached');
-            $text->setText($e->getMessage());
-
-
-            $message->setText($text);
-            $message->setCallbackQuery(null);
-
-            $command = $this->defineCommand($message);
-            $action  = $actionCollection->get($command->getActionClass());
-
-            $response = $action->run($message, $command);
+            $response = $this->handleError(
+                '/license_limit_reached',
+                $e->getMessage(),
+                $message,
+                $actionCollection
+            );
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
 
-            $response = new MessageTo();
-            $response->setChatId($message->getChat()->getId());
-            $response->setText(sprintf('Error during handle message "%s"', $message->getText()->getText()));
+            $translationKey = 'messages.errors.internal_error';
+            if ($e instanceof PublicMessageExceptionInterface) {
+                $translationKey = $e->getTranslationKey();
+            }
+
+            $response = $this->handleError(
+                '/translate_and_send',
+                $translationKey,
+                $message,
+                $actionCollection
+            );
         }
 
         if ($response->getAnswerRoute()) {
@@ -128,6 +134,28 @@ class BotService
         } else {
             $this->telegramApiService->sendMessage($response);
         }
+    }
+
+    /**
+     * @throws ParseCommandException
+     */
+    private function handleError(
+        string $errorHandlerName,
+        string $errorPublicMessage,
+        MessageFrom $originMessageFrom,
+        HandyBag $actionCollection
+    ): MessageTo {
+        $text = new Text();
+        $text->setCommand($errorHandlerName);
+        $text->setText($errorPublicMessage);
+
+        $originMessageFrom->setText($text);
+        $originMessageFrom->setCallbackQuery(null);
+
+        $command = $this->defineCommand($originMessageFrom);
+        $action  = $actionCollection->get($command->getActionClass());
+
+        return $action->run($originMessageFrom, $command);
     }
 
     private function dispatchBeforeParseRequest(string $message): void
