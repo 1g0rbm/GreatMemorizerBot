@@ -8,7 +8,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
-class DirectionAvailableLanguagesValidator extends ConstraintValidator
+class DirectionAvailableLanguagesConstraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint): void
     {

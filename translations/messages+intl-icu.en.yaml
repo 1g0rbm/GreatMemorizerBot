@@ -30,6 +30,11 @@ messages:
         internal_error: |
             An internal error occurred.
             Please try again later.
+        reminder:
+            timezone_not_found: |
+                For setting reminders you need to determine your time zone
+                To do this, use settings:
+                settings -> timezone
     start: |
         Hi!
         I'm GreatMemorizer and I can help you to remember enaglish words
