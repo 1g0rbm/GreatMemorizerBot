@@ -42,7 +42,7 @@ class AccountPrivilegesChecker
      */
     private function check(Account $account): string
     {
-        $license = $this->licenseRepository->findLatestLicenseByAccount($account);
+        $license = $this->licenseRepository->findCurrentLicenseForAccount($account);
         if ($license === null) {
             return self::DEMO_PRIVILEGES;
         }
