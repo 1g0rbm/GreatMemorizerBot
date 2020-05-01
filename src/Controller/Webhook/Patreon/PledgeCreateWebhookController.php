@@ -34,7 +34,7 @@ class PledgeCreateWebhookController
     public function indexAction(Request $request): JsonResponse
     {
         if (! $this->isVerifiedRequest($request)) {
-            return $this->handleError($request, 'http_forbiden', JsonResponse::HTTP_FORBIDDEN);
+            return $this->handleError($request, 'http_forbidden', JsonResponse::HTTP_FORBIDDEN);
         }
 
         $content = json_decode($request->getContent(), true);

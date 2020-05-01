@@ -26,7 +26,7 @@ class LicenseRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('l')
             ->where('l.account = :account')
-            ->andWhere('l.dateEnd <= :now')
+            ->andWhere(':now <= l.dateEnd')
             ->setParameters([
                 'account' => $account,
                 'now' => new DateTimeImmutable(),
