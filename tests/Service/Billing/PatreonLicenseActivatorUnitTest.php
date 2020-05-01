@@ -10,15 +10,20 @@ use Ig0rbm\Memo\Entity\Billing\License;
 use Ig0rbm\Memo\Entity\Billing\Patreon\Pledge;
 use Ig0rbm\Memo\Repository\Billing\LicenseRepository;
 use Ig0rbm\Memo\Repository\Billing\Patreon\PledgeRepository;
+use Ig0rbm\Memo\Service\Billing\LicenseCreator;
 use Ig0rbm\Memo\Service\Billing\PatreonLicenseActivator;
 use Ig0rbm\Memo\Service\EntityFlusher;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Throwable;
+use DateTimeImmutable;
 
 class PatreonLicenseActivatorUnitTest extends TestCase
 {
     private PatreonLicenseActivator $service;
+
+    /** @var LicenseCreator|MockObject */
+    private LicenseCreator $licenseCreator;
 
     /** @var PledgeRepository|MockObject  */
     private PledgeRepository $pledgeRepository;
@@ -31,11 +36,17 @@ class PatreonLicenseActivatorUnitTest extends TestCase
 
     public function setUp(): void
     {
+        $this->licenseCreator    = $this->createMock(LicenseCreator::class);
         $this->pledgeRepository  = $this->createMock(PledgeRepository::class);
         $this->licenseRepository = $this->createMock(LicenseRepository::class);
         $this->flusher           = $this->createMock(EntityFlusher::class);
 
-        $this->service = new PatreonLicenseActivator($this->pledgeRepository, $this->licenseRepository, $this->flusher);
+        $this->service = new PatreonLicenseActivator(
+            $this->licenseCreator,
+            $this->pledgeRepository,
+            $this->licenseRepository,
+            $this->flusher
+        );
     }
 
     /**
@@ -84,21 +95,33 @@ class PatreonLicenseActivatorUnitTest extends TestCase
      */
     public function testReturnTrueIfThereIsEmailIdDb(): void
     {
-        $pledge  = new Pledge();
-        $account = new Account();
-        $email   = 'test@mail.com';
+        $pledge          = new Pledge();
+        $account         = new Account();
+        $email           = 'test@mail.com';
+        $expectedLicense = new License(
+            $account,
+            new DateTimeImmutable(),
+            new DateTimeImmutable(),
+            License::PROVIDER_PATREON
+        );
 
         $this->pledgeRepository->expects($this->once())
             ->method('findOneByEmail')
             ->with($email)
             ->willReturn($pledge);
 
-        $this->licenseRepository->expects($this->once())->method('addLicense');
-        $this->flusher->expects($this->once())->method('flush');
+        $this->licenseCreator->expects($this->once())
+            ->method('create')
+            ->with($account)
+            ->willReturn($expectedLicense);
 
-        $license = $this->service->activate($account, $email);
+        $this->licenseRepository->expects($this->once())
+            ->method('addLicense')
+            ->with($expectedLicense);
 
-        $this->assertInstanceOf(License::class, $license);
-        $this->assertEquals(License::PROVIDER_PATREON, $license->getProvider());
+        $this->flusher->expects($this->once())
+            ->method('flush');
+
+        $this->assertSame($expectedLicense, $this->service->activate($account, $email));
     }
 }

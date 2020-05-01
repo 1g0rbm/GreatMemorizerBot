@@ -14,6 +14,8 @@ use Throwable;
 
 class PatreonLicenseActivator
 {
+    private LicenseCreator $licenseCreator;
+
     private PledgeRepository $pledgeRepository;
 
     private LicenseRepository $licenseRepository;
@@ -21,10 +23,12 @@ class PatreonLicenseActivator
     private EntityFlusher $flusher;
 
     public function __construct(
+        LicenseCreator $licenseCreator,
         PledgeRepository $pledgeRepository,
         LicenseRepository $licenseRepository,
         EntityFlusher $flusher
     ) {
+        $this->licenseCreator    = $licenseCreator;
         $this->pledgeRepository  = $pledgeRepository;
         $this->licenseRepository = $licenseRepository;
         $this->flusher           = $flusher;
@@ -47,7 +51,7 @@ class PatreonLicenseActivator
 
         $pledge->setAccount($account);
 
-        $license = License::createPatreonLicenseForAccount($account);
+        $license = $this->licenseCreator->create($account, License::PROVIDER_PATREON);
 
         $this->licenseRepository->addLicense($license);
         $this->flusher->flush();

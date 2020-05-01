@@ -33,7 +33,7 @@ class AccountPrivilegesCheckerTest extends TestCase
         $account = new Account();
 
         $this->licenseRepository->expects($this->once())
-            ->method('findLatestLicenseByAccount')
+            ->method('findCurrentLicenseForAccount')
             ->with($account)
             ->willReturn(null);
 
@@ -54,7 +54,7 @@ class AccountPrivilegesCheckerTest extends TestCase
         );
 
         $this->licenseRepository->expects($this->once())
-            ->method('findLatestLicenseByAccount')
+            ->method('findCurrentLicenseForAccount')
             ->with($account)
             ->willReturn($license);
 
@@ -75,7 +75,7 @@ class AccountPrivilegesCheckerTest extends TestCase
         );
 
         $this->licenseRepository->expects($this->once())
-            ->method('findLatestLicenseByAccount')
+            ->method('findCurrentLicenseForAccount')
             ->with($account)
             ->willReturn($license);
 
