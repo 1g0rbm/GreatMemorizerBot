@@ -22,11 +22,29 @@ class LicenseRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
+    public function findActiveLicenseByAccountAndProvider(Account $account, string $provider): ?License
+    {
+        $qb = $this->createQueryBuilder('l')
+            ->where('l.account = :account')
+            ->andWhere('l.provider = :provider')
+            ->andWhere('l.isActive = true')
+            ->setParameters([
+                'account' => $account,
+                'provider' => $provider
+            ]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
     public function findCurrentLicenseForAccount(Account $account): ?License
     {
         $qb = $this->createQueryBuilder('l')
             ->where('l.account = :account')
             ->andWhere(':now <= l.dateEnd')
+            ->andWhere('l.isActive = true')
             ->setParameters([
                 'account' => $account,
                 'now' => new DateTimeImmutable(),

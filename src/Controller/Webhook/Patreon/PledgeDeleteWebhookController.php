@@ -4,53 +4,53 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Controller\Webhook\Patreon;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Ig0rbm\Memo\Entity\Billing\Patreon\Pledge;
+use Ig0rbm\Memo\Service\Billing\PatreonLicenseDeactivator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\NonUniqueResultException;
 
 /**
  * @Route("/webhook/patreon")
  */
-class PledgeDeleteWebhookController
+class PledgeDeleteWebhookController extends AbstractPatreonWebhookController
 {
-    private LoggerInterface $logger;
+    private PatreonLicenseDeactivator $deactivator;
+
+    private string $secret;
+
+    public function __construct(PatreonLicenseDeactivator $deactivator, LoggerInterface $logger, string $secret)
+    {
+        parent::__construct($logger);
+        $this->deactivator = $deactivator;
+        $this->secret      = $secret;
+    }
 
     /**
      * @Route("/delete", name="webhook_patreon_celete", methods={"POST"})
+     *
+     * @throws NonUniqueResultException
      */
     public function indexAction(Request $request): JsonResponse
     {
+        if (! $this->isVerifiedRequest($request, $this->secret)) {
+            return $this->handleError($request, 'http_forbidden', JsonResponse::HTTP_FORBIDDEN);
+        }
+
         $content = json_decode($request->getContent(), true);
+        $email   = $content['data']['attributes']['email'] ?? null;
 
-        return new JsonResponse($content);
-    }
+        if ($email === null) {
+            return $this->handleError(
+                $request,
+                'create_pledge_email_not_found',
+                JsonResponse::HTTP_BAD_REQUEST
+            );
+        }
 
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
+        $this->deactivator->deactivate($email);
 
-    private function handleError(Request $request, string $error, int $httpStatus)
-    {
-        $this->logger->error(
-            $error,
-            [
-                'request_data'    => $request->getContent(),
-                'request_headers' => $request->headers->all(),
-            ]
-        );
-
-        return new JsonResponse(['ok' => false], $httpStatus);
-    }
-
-    private function isVerifiedRequest(Request $request): bool
-    {
-        $receivedSignature = $request->headers->get('x-patreon-signature');
-        $createdSignature  = hash_hmac('md5', $request->getContent(), $this->secret);
-
-        return $receivedSignature === $createdSignature;
+        return new JsonResponse(['ok' => true]);
     }
 }

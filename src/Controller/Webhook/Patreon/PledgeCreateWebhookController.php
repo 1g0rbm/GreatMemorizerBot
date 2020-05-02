@@ -11,20 +11,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-use function hash_hmac;
-
-class PledgeCreateWebhookController
+class PledgeCreateWebhookController extends AbstractPatreonWebhookController
 {
     private EntityManagerInterface $em;
-
-    private LoggerInterface $logger;
 
     private string $secret;
 
     public function __construct(EntityManagerInterface $em, LoggerInterface $logger, string $secret)
     {
-        $this->em = $em;
-        $this->logger = $logger;
+        parent::__construct($logger);
+        $this->em     = $em;
         $this->secret = $secret;
     }
 
@@ -33,7 +29,7 @@ class PledgeCreateWebhookController
      */
     public function indexAction(Request $request): JsonResponse
     {
-        if (! $this->isVerifiedRequest($request)) {
+        if (! $this->isVerifiedRequest($request, $this->secret)) {
             return $this->handleError($request, 'http_forbidden', JsonResponse::HTTP_FORBIDDEN);
         }
 
@@ -55,26 +51,5 @@ class PledgeCreateWebhookController
         $this->em->flush();
 
         return new JsonResponse(['ok' => true]);
-    }
-
-    private function handleError(Request $request, string $error, int $httpStatus)
-    {
-        $this->logger->error(
-            $error,
-            [
-                'request_data'    => $request->getContent(),
-                'request_headers' => $request->headers->all(),
-            ]
-        );
-
-        return new JsonResponse(['ok' => false], $httpStatus);
-    }
-
-    private function isVerifiedRequest(Request $request): bool
-    {
-        $receivedSignature = $request->headers->get('x-patreon-signature');
-        $createdSignature  = hash_hmac('md5', $request->getContent(), $this->secret);
-
-        return $receivedSignature === $createdSignature;
     }
 }

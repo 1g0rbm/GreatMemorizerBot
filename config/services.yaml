@@ -138,6 +138,11 @@ services:
         arguments:
             $secret: '%env(PATREON_CREATE_WEBHOOK)%'
 
+    Ig0rbm\Memo\Controller\Webhook\Patreon\PledgeDeleteWebhookController:
+        tags: ['controller.service_arguments']
+        arguments:
+            $secret: '%env(PATREON_DELETE_WEBHOOK)%'
+
     # telegram actions
     Ig0rbm\Memo\TelegramAction\:
         resource: '../src/TelegramAction'
