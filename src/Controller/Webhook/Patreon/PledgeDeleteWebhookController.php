@@ -28,7 +28,7 @@ class PledgeDeleteWebhookController extends AbstractPatreonWebhookController
     }
 
     /**
-     * @Route("/delete", name="webhook_patreon_celete", methods={"POST"})
+     * @Route("/delete", name="webhook_patreon_delete", methods={"POST"})
      *
      * @throws NonUniqueResultException
      */

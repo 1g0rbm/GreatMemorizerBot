@@ -23,7 +23,6 @@ class Pledge
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
-     * @Assert\NotBlank
      * @Assert\Type("integer")
      */
     private int $id;
