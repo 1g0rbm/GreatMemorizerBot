@@ -22,7 +22,6 @@ class Word
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      *
-     * @Assert\NotBlank
      * @Assert\Type("integer")
      */
     private int $id;

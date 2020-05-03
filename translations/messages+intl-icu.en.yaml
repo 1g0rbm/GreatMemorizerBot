@@ -17,12 +17,24 @@ button:
         show_list: '👀 see the whole list'
         run_quiz: '🤓 run'
         save: '💾 save'
+        patreon_subscription: '💸 subscribe on patreon'
 
 messages:
     errors:
         quiz_limit_reached: |
             Your quiz limit for today is over.
             Buy the license or wait for the next day.
+        invalid_data: |
+            Has been received invalid data.
+            Further action impossible.
+        internal_error: |
+            An internal error occurred.
+            Please try again later.
+        reminder:
+            timezone_not_found: |
+                For setting reminders you need to determine your time zone
+                To do this, use settings:
+                settings -> timezone
     start: |
         Hi!
         I'm GreatMemorizer and I can help you to remember enaglish words
@@ -73,6 +85,11 @@ messages:
         reminder_limit_reached: |
             Your limit for reminders is over.
             Buy the license to create more reminders.
+    patreon:
+        confirm_email: 'Send me your patreon email for confirm subscription'
+        license_activated: 'License has been successfully activated'
+        license_not_activated: |
+            License didn't activate beacause there isn't email or email already used
 label:
     quiz_verdict: 'verdict: '
     question_word: 'question word: '

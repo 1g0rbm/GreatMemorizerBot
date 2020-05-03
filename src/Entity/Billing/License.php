@@ -20,13 +20,15 @@ class License
     public const DEFAULT_TERM = 6;
 
     public const PROVIDER_DEFAULT = 'memo';
+    public const PROVIDER_PATREON = 'patreon';
+
+    public const AVAILABLE_PROVIDERS = [self::PROVIDER_PATREON, self::PROVIDER_DEFAULT];
 
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
-     * @Assert\NotBlank
      * @Assert\Type("integer")
      */
     private int $id;
@@ -62,15 +64,33 @@ class License
     private Account $account;
 
     /**
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    private bool $isActive = true;
+
+    /**
      * @throws Throwable
      */
-    public static function createDeafaultForAccount(Account $account): self
+    public static function createDefaultForAccount(Account $account): self
     {
         return new self(
             $account,
             new DateTimeImmutable(),
             new DateTimeImmutable(sprintf('+ %d months', License::DEFAULT_TERM)),
             License::PROVIDER_DEFAULT
+        );
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public static function createPatreonLicenseForAccount(Account $account): self
+    {
+        return new self(
+            $account,
+            new DateTimeImmutable(),
+            new DateTimeImmutable(sprintf('+ %d years', License::DEFAULT_TERM)),
+            License::PROVIDER_PATREON
         );
     }
 
@@ -133,5 +153,15 @@ class License
     public function setAccount(Account $account): void
     {
         $this->account = $account;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
     }
 }

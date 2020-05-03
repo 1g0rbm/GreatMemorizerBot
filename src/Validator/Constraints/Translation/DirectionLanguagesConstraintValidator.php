@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 use Ig0rbm\Memo\Entity\Translation\Direction;
 
-class DirectionLanguagesValidator extends ConstraintValidator
+class DirectionLanguagesConstraintValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint): void
     {

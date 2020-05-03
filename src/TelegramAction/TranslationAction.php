@@ -10,6 +10,7 @@ use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
 use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Service\Billing\Limiter\LicenseLimiter;
 use Ig0rbm\Memo\Service\Telegram\InlineKeyboard\Builder;
@@ -61,11 +62,7 @@ class TranslationAction extends AbstractTelegramAction
         $limitExpireAt = new DateTimeImmutable('tomorrow midnight');
 
         if ($this->limiter->isLimitReached($account, 'word_translate_limit', $limitExpireAt, 20)) {
-            $to->setText(
-                $this->translator->translate('messages.license.translation_limit_reached', $to->getChatId())
-            );
-
-            return $to;
+            throw LicenseLimitReachedException::forTranslation();
         }
 
         $message = $this->translationService->translate($account->getDirection(), $messageFrom->getText()->getText());
