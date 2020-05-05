@@ -4,19 +4,25 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Service\Telegram;
 
+use DateTimeImmutable;
 use Doctrine\ORM\ORMException;
-use Exception;
+use Ig0rbm\HandyBag\HandyBag;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Entity\Telegram\Message\Text;
 use Ig0rbm\Memo\Event\Message\CallbackQueryHandleEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeParseRequestEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeSendResponseEvent;
+use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
+use Ig0rbm\Memo\Exception\PublicMessageExceptionInterface;
 use Ig0rbm\Memo\Exception\Telegram\Command\ParseCommandException;
 use Ig0rbm\Memo\Service\Telegram\Action\ActionInterface;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandActionParser;
 use Ig0rbm\Memo\Service\Telegram\Command\CommandParser;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 
@@ -24,6 +30,7 @@ use function array_filter;
 use function array_shift;
 use function count;
 use function preg_match;
+use function sprintf;
 
 class BotService
 {
@@ -37,6 +44,8 @@ class BotService
 
     private TextParser $textParser;
 
+    private AdapterInterface $cache;
+
     private LoggerInterface $logger;
 
     private EventDispatcherInterface $dispatcher;
@@ -47,6 +56,7 @@ class BotService
         CommandActionParser $actionParser,
         TelegramApiService $telegramApiService,
         TextParser $textParser,
+        AdapterInterface $cache,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger
     ) {
@@ -55,20 +65,30 @@ class BotService
         $this->actionParser       = $actionParser;
         $this->telegramApiService = $telegramApiService;
         $this->textParser         = $textParser;
+        $this->cache              = $cache;
         $this->dispatcher         = $dispatcher;
         $this->logger             = $logger;
     }
 
     /**
+     * @throws InvalidArgumentException
      * @throws ORMException
      * @throws ParseCommandException
-     * @throws Exception
+     * @throws Throwable
      */
     public function handle(string $raw): void
     {
         $this->dispatchBeforeParseRequest($raw);
 
-        $message          = $this->messageParser->createMessage($raw);
+        $message     = $this->messageParser->createMessage($raw);
+        $answerRoute = $this->cache->getItem(sprintf('%d_answer_route', $message->getChat()->getId()));
+
+        if ($answerRoute->isHit()) {
+            $message->getText()->setCommand($answerRoute->get());
+            $answerRoute->expiresAt(new DateTimeImmutable('-5 minute'));
+            $this->cache->save($answerRoute);
+        }
+
         $command          = $this->defineCommand($message);
         $actionCollection = $this->actionParser->createActionList();
 
@@ -77,12 +97,33 @@ class BotService
 
         try {
             $response = $action->run($message, $command);
+        } catch (LicenseLimitReachedException $e) {
+            $response = $this->handleError(
+                '/license_limit_reached',
+                $e->getMessage(),
+                $message,
+                $actionCollection
+            );
         } catch (Throwable $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
 
-            $response = new MessageTo();
-            $response->setChatId($message->getChat()->getId());
-            $response->setText(sprintf('Error during handle message "%s"', $message->getText()->getText()));
+            $translationKey = 'messages.errors.internal_error';
+            if ($e instanceof PublicMessageExceptionInterface) {
+                $translationKey = $e->getTranslationKey();
+            }
+
+            $response = $this->handleError(
+                '/translate_and_send',
+                $translationKey,
+                $message,
+                $actionCollection
+            );
+        }
+
+        if ($response->getAnswerRoute()) {
+            $answerRoute->set($response->getAnswerRoute());
+            $answerRoute->expiresAt(new DateTimeImmutable('+5 minute'));
+            $this->cache->save($answerRoute);
         }
 
         $this->dispatcher->dispatch(CallbackQueryHandleEvent::NAME, new CallbackQueryHandleEvent($message));
@@ -93,6 +134,28 @@ class BotService
         } else {
             $this->telegramApiService->sendMessage($response);
         }
+    }
+
+    /**
+     * @throws ParseCommandException
+     */
+    private function handleError(
+        string $errorHandlerName,
+        string $errorPublicMessage,
+        MessageFrom $originMessageFrom,
+        HandyBag $actionCollection
+    ): MessageTo {
+        $text = new Text();
+        $text->setCommand($errorHandlerName);
+        $text->setText($errorPublicMessage);
+
+        $originMessageFrom->setText($text);
+        $originMessageFrom->setCallbackQuery(null);
+
+        $command = $this->defineCommand($originMessageFrom);
+        $action  = $actionCollection->get($command->getActionClass());
+
+        return $action->run($originMessageFrom, $command);
     }
 
     private function dispatchBeforeParseRequest(string $message): void

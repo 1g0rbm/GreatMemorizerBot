@@ -10,6 +10,7 @@ use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
+use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
 use Ig0rbm\Memo\Exception\WordList\WordListException;
 use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Service\Billing\Limiter\WordListLicenseLimiter;
@@ -57,11 +58,7 @@ class SaveAction extends AbstractTelegramAction
         $wordsBag = $this->wordTranslation->translate($account->getDirection(), $this->textFinder->find($from));
 
         if ($this->limiter->isLimitReached($account)) {
-            $to->setText(
-                $this->translator->translate('messages.license.translation_limit_reached', $to->getChatId())
-            );
-
-            return $to;
+            throw LicenseLimitReachedException::forTranslation();
         }
 
         if ($wordsBag->count() === 0) {

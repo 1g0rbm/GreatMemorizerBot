@@ -9,6 +9,7 @@ use Ig0rbm\Memo\Entity\Billing\License;
 use Ig0rbm\Memo\Repository\AccountRepository;
 use Ig0rbm\Memo\Repository\Billing\LicenseRepository;
 use Ig0rbm\Memo\Service\Billing\AccountPrivilegesChecker;
+use Ig0rbm\Memo\Service\Billing\LicenseCreator;
 use Throwable;
 
 class AccountLicenseService
@@ -17,6 +18,8 @@ class AccountLicenseService
 
     private LicenseRepository $licenseRepository;
 
+    private LicenseCreator $licenseCreator;
+
     private AccountPrivilegesChecker $checker;
 
     private EntityFlusher $flusher;
@@ -24,11 +27,13 @@ class AccountLicenseService
     public function __construct(
         AccountRepository $accountRepository,
         LicenseRepository $licenseRepository,
+        LicenseCreator $licenseCreator,
         AccountPrivilegesChecker $checker,
         EntityFlusher $flusher
     ) {
         $this->accountRepository = $accountRepository;
         $this->licenseRepository = $licenseRepository;
+        $this->licenseCreator    = $licenseCreator;
         $this->checker           = $checker;
         $this->flusher           = $flusher;
     }
@@ -44,7 +49,7 @@ class AccountLicenseService
             return null;
         }
 
-        $license = License::createDefaultForAccount($account);
+        $license = $this->licenseCreator->create($account, License::PROVIDER_DEFAULT);
 
         $this->licenseRepository->addLicense($license);
         $this->flusher->flush();

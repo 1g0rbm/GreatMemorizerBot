@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Repository\Billing;
 
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\NonUniqueResultException;
@@ -21,6 +22,37 @@ class LicenseRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
+    public function findActiveLicenseByAccountAndProvider(Account $account, string $provider): ?License
+    {
+        $qb = $this->createQueryBuilder('l')
+            ->where('l.account = :account')
+            ->andWhere('l.provider = :provider')
+            ->andWhere('l.isActive = true')
+            ->setParameters([
+                'account' => $account,
+                'provider' => $provider
+            ]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findCurrentLicenseForAccount(Account $account): ?License
+    {
+        $qb = $this->createQueryBuilder('l')
+            ->where('l.account = :account')
+            ->andWhere(':now <= l.dateEnd')
+            ->andWhere('l.isActive = true')
+            ->setParameters([
+                'account' => $account,
+                'now' => new DateTimeImmutable(),
+            ]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
     public function findLatestLicenseByAccount(Account $account): ?License
     {
         $qb = $this->createQueryBuilder('l')
@@ -28,7 +60,12 @@ class LicenseRepository extends ServiceEntityRepository
             ->orderBy('l.dateEnd', 'ASC')
             ->setParameter('account', $account);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        $licenses = $qb->getQuery()->getResult();
+        if (empty($licenses)) {
+            return null;
+        }
+
+        return $licenses[0];
     }
 
     /**

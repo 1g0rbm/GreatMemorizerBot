@@ -97,6 +97,20 @@ parameters:
             action_class: Ig0rbm\Memo\TelegramAction\CloseSettingsAction
             aliases:
                 - '^\❌\s\s\s.+$'
+        /license_limit_reached:
+            text_response: 'license limit reached'
+            action_class: Ig0rbm\Memo\TelegramAction\LimitReachedHandler
+        /translate_and_send:
+            text_response: ''
+            action_class: Ig0rbm\Memo\TelegramAction\TranslateAndSendMessageAction
+        /match_patreon_license:
+            text_response: 'license has been deleted'
+            action_class: Ig0rbm\Memo\TelegramAction\MatchPatreonLicenseAction
+            aliases:
+                - 'PATRON_FROM_PATREON'
+        /match_patreon_email:
+            text_response: 'license has been deleted'
+            action_class: Ig0rbm\Memo\TelegramAction\MatchPatreonEmailAction
         default:
             text_response: 'Undefined command'
             action_class: Ig0rbm\Memo\TelegramAction\TranslationAction
@@ -118,6 +132,23 @@ services:
     Ig0rbm\Memo\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
+    Ig0rbm\Memo\Controller\Webhook\Patreon\PledgeCreateWebhookController:
+        tags: ['controller.service_arguments']
+        arguments:
+            $secret: '%env(PATREON_CREATE_WEBHOOK)%'
+
+    Ig0rbm\Memo\Controller\Webhook\Patreon\PledgeDeleteWebhookController:
+        tags: ['controller.service_arguments']
+        arguments:
+            $secret: '%env(PATREON_DELETE_WEBHOOK)%'
+
+    # telegram actions
+    Ig0rbm\Memo\TelegramAction\:
+        resource: '../src/TelegramAction'
+        public: true
+        calls:
+            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
 
     Ig0rbm\Memo\Service\Telegram\TokenChecker:
         public: true
@@ -150,6 +181,8 @@ services:
 
     Ig0rbm\Memo\Service\TimeZone\AccountTimeZoneManager: ~
 
+    Ig0rbm\Memo\Service\Telegram\TranslationService: ~
+
     Ig0rbm\Memo\EventListener\WordListEventListener:
         tags:
             - { name: kernel.event_listener, event: 'memo.word_list_event', method: 'onWordListAction'}
@@ -162,113 +195,19 @@ services:
         tags:
             - { name: kernel.event_listener, event: 'bot.message.callback_query_handle', method: 'onCallbackQueryHandle'}
 
-    Ig0rbm\Memo\Service\Telegram\TranslationService: ~
+    Ig0rbm\Memo\EventSubscriber\DoctrineFlushSubscriber:
+        tags:
+            - { name: 'doctrine.event_subscriber' }
 
     ##############################################################################################################
     #∨                                                                                                          ∨#
-    #∨                                         telegram actions is here                                         ∨#
+    #∨                           telegram actions with additional parameters is here                            ∨#
     #∨                                                                                                          ∨#
     ##############################################################################################################
-
-    Ig0rbm\Memo\TelegramAction\TranslationAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\SaveAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\HelloAction:
-        public: true
-
-    Ig0rbm\Memo\TelegramAction\DefaultAction:
-        public: true
 
     Ig0rbm\Memo\TelegramAction\ShowAction:
         arguments:
             $botHost: '%env(BOT_HOST)%'
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-    Ig0rbm\Memo\TelegramAction\EditAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\ShowDirectionButtonAction:
-        public: true
-
-    Ig0rbm\Memo\TelegramAction\QuizAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\WordListQuizAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\QuizAnswerAction:
-        public: true
-
-    Ig0rbm\Memo\TelegramAction\QuizSettingsAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\QuizReminderAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\ChangeDirectionAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\LocationAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\TimezoneAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\QuizSetReminderAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\LocationCancelAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\SettingsAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\CloseSettingsAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\EditQuizReminderAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\AccountLocaleAction:
-        public: true
-        calls:
-            - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]
-
-    Ig0rbm\Memo\TelegramAction\StartAction:
         public: true
         calls:
             - [setTranslator, ['@Ig0rbm\Memo\Service\Telegram\TranslationService']]

@@ -47,18 +47,8 @@ class QuizAction extends AbstractTelegramAction
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
-        try {
-            $quiz = $this->quizManager->getQuizByChat($messageFrom->getChat());
-            $step = $quiz->getCurrentStep();
-        } catch (QuizStepBuilderException $e) {
-            $to->setText(sprintf('Error: %s', $e->getMessage()));
-
-            return  $to;
-        } catch (LicenseLimitReachedException $e) {
-            $to->setText($this->translator->translate($e->getMessage(), $to->getChatId()));
-
-            return $to;
-        }
+        $quiz = $this->quizManager->getQuizByChat($messageFrom->getChat());
+        $step = $quiz->getCurrentStep();
 
         if (!isset($step)) {
             throw QuizStepException::becauseThereAreNotQuizSteps($quiz->getId());

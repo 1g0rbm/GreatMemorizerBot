@@ -12,4 +12,14 @@ class LicenseLimitReachedException extends RuntimeException
     {
         return new self('messages.errors.quiz_limit_reached');
     }
+
+    public static function forTranslation(): self
+    {
+        return new self('messages.license.translation_limit_reached');
+    }
+
+    public static function forReminders(): self
+    {
+        return new self('messages.license.reminder_limit_reached');
+    }
 }
