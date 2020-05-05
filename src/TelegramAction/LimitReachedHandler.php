@@ -28,7 +28,7 @@ class LimitReachedHandler extends AbstractTelegramAction
         $this->builder->addLine([
             new UrlButton(
                 $this->translator->translate('button.inline.patreon_subscription', $to->getChatId()),
-                'http://patreon.com/1g0rbm'
+                'https://www.patreon.com/join/1g0rbm/checkout?rid=4913378'
             ),
         ]);
 
