@@ -66,7 +66,7 @@ class License
     /**
      * @ORM\Column(type="boolean", options={"default": true})
      */
-    private bool $isActive = true;
+    private bool $isActive;
 
     /**
      * @throws Throwable
@@ -98,12 +98,14 @@ class License
         Account $account,
         DateTimeImmutable $dateStart,
         DateTimeImmutable $dateEnd,
-        string $provider
+        string $provider,
+        bool $isActive = true
     ) {
         $this->account   = $account;
         $this->dateStart = $dateStart;
         $this->dateEnd   = $dateEnd;
         $this->provider  = $provider;
+        $this->isActive  = $isActive;
     }
 
     public function getId(): int

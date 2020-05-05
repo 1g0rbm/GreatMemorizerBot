@@ -105,7 +105,7 @@ class BotService
                 $actionCollection
             );
         } catch (Throwable $e) {
-            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            $this->logger->error($e->getMessage(), ['trace' => $e->getTrace()]);
 
             $translationKey = 'messages.errors.internal_error';
             if ($e instanceof PublicMessageExceptionInterface) {

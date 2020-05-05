@@ -29,10 +29,13 @@ class LicenseCreator
      */
     public function create(Account $account, string $provider): License
     {
-        $dateStart = $this->getDateStart($account);
-        $dateEnd   = $this->getDateEnd($provider, $dateStart);
+        $license = $this->licenseRepository->findCurrentLicenseForAccount($account);
 
-        return new License($account, $dateStart, $dateEnd, $provider);
+        $dateStart = $license ? $license->getDateEnd() : new DateTimeImmutable();
+        $dateEnd   = $this->getDateEnd($provider, $dateStart);
+        $isActive  = $license === null;
+
+        return new License($account, $dateStart, $dateEnd, $provider, $isActive);
     }
 
     /**
