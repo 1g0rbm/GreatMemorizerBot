@@ -41,15 +41,21 @@ messages:
 
         How do I do it? Quite simply:
           1) Send to me word and I'll send you translation in response
-          2) Push the button "save" and I'll add that word into remember list
-          3) Push the button "list" and I'll send your remember list
-          4) Push the button "quiz", if you want to take the quiz
-          5) If you want to take the quiz now, push the button "run", but you should to know that you must have at
-        least 4 words
-          6) If you want me to remind you about a quiz, then push the button "reminder" but you should to know that I
-        need to know your location for define your timezone, otherwise I'm going to assume that your timezone is "UTC"
+          2) Push the button "save" under translation and I'll add that word into remember list
+          3) Push the button "list -> see the whole list" and I'll send your remember list
+          4) Push the button "list -> take a quiz", if you want to take the quiz
+          5) If you want to take the quiz now, push the button "list -> take a quiz -> run", but you should to know that
+        you must have at least 2 words
+          6) If you want me to remind you about a quiz, then push the button "list -> take a quiz -> reminder" but you
+        should to know that I need to know your location for define your timezone, otherwise I'm going to assume that
+        your timezone is "UTC"
 
-        For edit your data (remember lsit, interface language, reminders, timezone) you should to use command /settings
+        For edit your data (remember lsit, interface language, reminders, timezone) you should to use command
+        /settings or button "settings"
+
+        Unfortunately the maintenance bot in working condition and its development requires resources, so in the full
+        version only available the first 3 months, after this you will have to subscribe through patreon.com.
+        Subscription costs only $1 a month and opens all possibilities of the bot.
 
         Commands /start and /help will show this message :)
 
