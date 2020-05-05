@@ -26,7 +26,6 @@ class Account
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
      *
-     * @Assert\NotBlank
      * @Assert\Type("integer")
      */
     private int $id;
@@ -93,7 +92,6 @@ class Account
     /**
      * @ORM\Column(type="boolean", options={"default" = 0})
      *
-     * @Assert\NotBlank
      * @Assert\Type("boolean")
      */
     private bool $needKeyboardUpdate = true;

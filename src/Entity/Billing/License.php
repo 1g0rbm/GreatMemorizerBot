@@ -17,7 +17,7 @@ use Throwable;
  */
 class License
 {
-    public const DEFAULT_TERM = 6;
+    public const DEFAULT_TERM = 3;
 
     public const PROVIDER_DEFAULT = 'memo';
 
@@ -64,7 +64,7 @@ class License
     /**
      * @throws Throwable
      */
-    public static function createDeafaultForAccount(Account $account): self
+    public static function createDefaultForAccount(Account $account): self
     {
         return new self(
             $account,

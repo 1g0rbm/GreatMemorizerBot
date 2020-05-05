@@ -44,7 +44,7 @@ class AccountLicenseService
             return null;
         }
 
-        $license = License::createDeafaultForAccount($account);
+        $license = License::createDefaultForAccount($account);
 
         $this->licenseRepository->addLicense($license);
         $this->flusher->flush();
