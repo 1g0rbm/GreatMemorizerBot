@@ -20,6 +20,19 @@ class LicenseRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return License[]
+     */
+    public function findActiveExpiredLicenses(): array
+    {
+        $qb = $this->createQueryBuilder('l')
+            ->where('l.isActive = true')
+            ->andWhere('l.dateEnd < :now')
+            ->setParameter('now', new DateTimeImmutable());
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @throws NonUniqueResultException
      */
     public function findActiveLicenseByAccountAndProvider(Account $account, string $provider): ?License
