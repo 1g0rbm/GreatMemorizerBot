@@ -31,7 +31,7 @@ class LicenseCreator
     {
         $license = $this->licenseRepository->findCurrentLicenseForAccount($account);
 
-        $dateStart = $license ? $license->getDateEnd() : new DateTimeImmutable();
+        $dateStart = $license ? $license->getDateEnd() : new DateTimeImmutable('today');
         $dateEnd   = $this->getDateEnd($provider, $dateStart);
         $isActive  = $license === null;
 

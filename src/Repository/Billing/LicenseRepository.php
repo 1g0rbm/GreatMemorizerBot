@@ -20,6 +20,23 @@ class LicenseRepository extends ServiceEntityRepository
     }
 
     /**
+     * @throws NonUniqueResultException
+     */
+    public function findFutureInactiveLicenseByAccount(Account $account, DateTimeImmutable $date): ?License
+    {
+        $qb = $this->createQueryBuilder('l')
+            ->where('l.isActive = false')
+            ->andWhere('l.account = :account')
+            ->andWhere('l.dateStart = :date')
+            ->setParameters([
+                'today' => $date,
+                'account' => $account,
+            ]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
      * @return License[]
      */
     public function findActiveExpiredLicenses(): array
