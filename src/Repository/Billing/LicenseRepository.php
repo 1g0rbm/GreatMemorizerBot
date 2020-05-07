@@ -29,7 +29,7 @@ class LicenseRepository extends ServiceEntityRepository
             ->andWhere('l.account = :account')
             ->andWhere('l.dateStart = :date')
             ->setParameters([
-                'today' => $date,
+                'date' => $date,
                 'account' => $account,
             ]);
 
