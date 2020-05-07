@@ -12,6 +12,7 @@ use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
 use Ig0rbm\Memo\Entity\Telegram\Message\Text;
 use Ig0rbm\Memo\Event\Message\CallbackQueryHandleEvent;
+use Ig0rbm\Memo\Event\Telegram\AfterParseRequestEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeParseRequestEvent;
 use Ig0rbm\Memo\Event\Telegram\BeforeSendResponseEvent;
 use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
@@ -82,6 +83,8 @@ class BotService
 
         $message     = $this->messageParser->createMessage($raw);
         $answerRoute = $this->cache->getItem(sprintf('%d_answer_route', $message->getChat()->getId()));
+
+        $this->dispatcher->dispatch(AfterParseRequestEvent::NAME, new AfterParseRequestEvent($message));
 
         if ($answerRoute->isHit()) {
             $message->getText()->setCommand($answerRoute->get());
