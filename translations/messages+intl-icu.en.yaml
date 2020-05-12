@@ -84,6 +84,11 @@ messages:
         word_exist: 'list already has the same word'
     reminder_greetings: 'Hi! Time to remember English!'
     list_actions: 'Want to see the whole list or take a quiz?'
+    list_empty: |
+        There aren't words in your list
+        Add word to the list very simply:
+            1. Translate word form English to Russian
+            2. Push the "save" button under the translation
     license:
         translation_limit_reached: |
             Your limit for today is over.
