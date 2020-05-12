@@ -21,13 +21,15 @@ class AfterParseRequestEventListener
     {
         $form = $event->getFrom();
 
-        $log = new ClientActionLog(
-            $form->getChat(),
-            $form->getCallbackCommand() ?? $form->getText()->getCommand(),
-            $form->getCallbackQuery() ?
-                $form->getCallbackQuery()->getData()->getText() :
-                $form->getText()->getText()
-        );
+        $command = $form->getCallbackCommand() ?? $form->getText()->getCommand();
+        $text    = $form->getCallbackQuery() ?
+            $form->getCallbackQuery()->getData()->getText() :
+            $form->getText()->getText();
+        if ($text) {
+            $text = substr($text, 0, 200);
+        }
+
+        $log = new ClientActionLog($form->getChat(), $command, $text);
 
         $this->em->persist($log);
         $this->em->flush();
