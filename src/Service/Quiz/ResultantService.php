@@ -42,10 +42,10 @@ class ResultantService
                 ->append($translator->translate('label.question_word', $chatId), MessageBuilder::BOLD)
                 ->appendLn($step->getCorrectWord()->getText());
 
-            if (! $step->isCorrect() && $step->getAnswer()) {
+            if (! $step->isCorrect() && $step->getAnswerWord()) {
                 $builder
                     ->append($translator->translate('label.user_answer', $chatId), MessageBuilder::BOLD)
-                    ->appendLn($step->getAnswer() ?? ' - ');
+                    ->appendLn($step->getAnswerWord()->getText() ?? ' - ');
             }
 
             $builder

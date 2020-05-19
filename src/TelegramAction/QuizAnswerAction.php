@@ -48,10 +48,7 @@ class QuizAnswerAction extends AbstractTelegramAction
         $to->setIsUpdate(true);
 
         try {
-            $quiz = $this->answerChecker->check(
-                $messageFrom->getChat(),
-                $messageFrom->getCallbackQuery()->getData()->getText()
-            );
+            $quiz = $this->answerChecker->check($messageFrom->getChat(), $messageFrom->getCallbackQuery()->getData());
 
             if ($quiz->isComplete()) {
                 $to->setText($this->resultant->create($quiz));
