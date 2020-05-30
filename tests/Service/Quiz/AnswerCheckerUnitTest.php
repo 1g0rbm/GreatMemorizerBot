@@ -8,8 +8,8 @@ use Doctrine\ORM\NonUniqueResultException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Quiz\QuizStep;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Ig0rbm\Memo\Entity\Telegram\Message\Text;
 use Ig0rbm\Memo\Entity\Translation\Word;
-use Ig0rbm\Memo\Exception\Quiz\QuizException;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Repository\Quiz\QuizRepository;
 use Ig0rbm\Memo\Service\EntityFlusher;
@@ -17,20 +17,16 @@ use Ig0rbm\Memo\Service\Quiz\AnswerChecker;
 use Ig0rbm\Memo\Service\Quiz\Rotator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionMethod;
 
 class AnswerCheckerUnitTest extends TestCase
 {
-    /** @var AnswerChecker */
-    private $service;
+    private AnswerChecker $service;
 
     /** @var QuizRepository|MockObject */
-    private $quizRepository;
+    private QuizRepository $quizRepository;
 
     /** @var EntityFlusher|MockObject */
-    private $flusher;
+    private EntityFlusher $flusher;
 
     public function setUp(): void
     {
@@ -44,182 +40,106 @@ class AnswerCheckerUnitTest extends TestCase
 
     /**
      * @throws NonUniqueResultException
-     * @throws QuizStepException
      */
-    public function testCheckThrowExceptionIfThereIsNotQuiz(): void
+    public function testThrowExceptionIfThereIsAnsweredStep(): void
     {
-        $answer = 'answer';
-        $chat   = $this->getChat();
-
-        $this->quizRepository->expects($this->once())
-            ->method('getIncompleteQuizByChat')
-            ->with($chat)
-            ->willThrowException(QuizException::becauseThereIsNoQuizForChat($chat->getId()));
-
-        $this->flusher->expects($this->never())
-            ->method('flush');
-
-        $this->expectException(QuizException::class);
-
-        $this->service->check($chat, $answer);
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws QuizStepException
-     */
-    public function testThrowExceptionIfThereAreNotUnansweredQuizSteps(): void
-    {
-        $answer = 'answer';
-        $chat   = $this->getChat();
-        $quiz   = $this->getQuiz();
-        $quiz->getSteps()->add($this->getStep($answer, true, $quiz));
-        $quiz->setCurrentStep($quiz->getSteps()->first());
+        $chat = $this->getChat();
+        $text = $this->getText();
+        $quiz = $this->getQuiz();
+        $step = $this->getStep($text->getCommand(), true, $quiz);
+        $quiz->getSteps()->add($step);
+        $quiz->setCurrentStep($step);
 
         $this->quizRepository->expects($this->once())
             ->method('getIncompleteQuizByChat')
             ->with($chat)
             ->willReturn($quiz);
-
-        $this->flusher->expects($this->never())
-            ->method('flush');
 
         $this->expectException(QuizStepException::class);
 
-        $this->service->check($chat, $answer);
+        $this->service->check($chat, $text);
     }
 
     /**
      * @throws NonUniqueResultException
-     * @throws QuizStepException
      */
-    public function testCheckAndSwipeReturnStepIfThereIsAnotherStep(): void
+    public function testReturnIncompleteTestIfThereIsUnanswered(): void
     {
-        $answer1 = 'answer1';
-        $answer2 = 'answer2';
-        $answer3 = 'answer3';
-        $chat    = $this->getChat();
-        $quiz    = $this->getQuiz();
-
-        $step2 = $this->getStep($answer2, false, $quiz);
-        $quiz->getSteps()->add($this->getStep($answer1, true, $quiz));
-        $quiz->getSteps()->add($step2);
-        $quiz->getSteps()->add($this->getStep($answer3, false, $quiz));
-
-        $quiz->setCurrentStep($this->getStep($answer2, false, $quiz));
+        $chat = $this->getChat();
+        $text = $this->getText();
+        $quiz = $this->getQuiz();
+        $step = $this->getStep($text->getCommand(), false, $quiz);
+        $quiz->getSteps()->add($step);
+        $quiz->getSteps()->add($this->getStep($text->getCommand(), false, $quiz));
+        $quiz->setCurrentStep($step);
 
         $this->quizRepository->expects($this->once())
             ->method('getIncompleteQuizByChat')
             ->with($chat)
             ->willReturn($quiz);
 
-        $this->flusher->expects($this->once())
-            ->method('flush');
+        $quiz = $this->service->check($chat, $text);
 
-        $quiz = $this->service->check($chat, $answer2);
-        $step = $quiz->getCurrentStep();
-
-        /** @var Word $word */
-        $word = $step->getCorrectWord()->getTranslations()->first();
-
-        $this->assertEquals($answer2, $word->getText());
         $this->assertFalse($quiz->isComplete());
     }
 
     /**
      * @throws NonUniqueResultException
-     * @throws QuizStepException
      */
-    public function testCheckAndSwipeReturnNullIfThereIsNotAnotherStep(): void
+    public function testReturnCompleteTestIfThereIsNotUnansweredSteps(): void
     {
-        $answer1 = 'answer1';
-        $answer2 = 'answer2';
-        $answer3 = 'answer3';
-        $chat    = $this->getChat();
-        $quiz    = $this->getQuiz();
-
-        $quiz->getSteps()->add($this->getStep($answer1, true, $quiz));
-        $quiz->getSteps()->add($this->getStep($answer2, true, $quiz));
-        $quiz->getSteps()->add($this->getStep($answer3, false, $quiz));
-
-        $quiz->setCurrentStep($quiz->getSteps()->last());
+        $chat = $this->getChat();
+        $text = $this->getText();
+        $quiz = $this->getQuiz();
+        $step = $this->getStep($text->getCommand(), false, $quiz);
+        $quiz->getSteps()->add($step);
+        $quiz->getSteps()->add($this->getStep($text->getCommand(), true, $quiz));
+        $quiz->setCurrentStep($step);
 
         $this->quizRepository->expects($this->once())
             ->method('getIncompleteQuizByChat')
             ->with($chat)
             ->willReturn($quiz);
 
-        $this->flusher->expects($this->once())
-            ->method('flush');
-
-        $quiz = $this->service->check($chat, $answer1);
+        $quiz = $this->service->check($chat, $text);
 
         $this->assertTrue($quiz->isComplete());
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    public function testDoReturnStepWithCorrectAnswerIfAnswerIsCorrect(): void
+    private function getText(): Text
     {
-        $answer = 'answer';
-        $method = $this->createDoMethod();
-        $step   = $this->getStep($answer, false, $this->getQuiz());
+        $text = new Text();
+        $text->setCommand('/command');
+        $text->setParameter('w', '10');
 
-        /** @var QuizStep $resultStep */
-        $resultStep = $method->invoke($this->service, $step, $answer);
-
-        $this->assertTrue($resultStep->isAnswered());
-        $this->assertTrue($resultStep->isCorrect());
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    public function testDoReturnStepWithWrongAnswerIfAnswerDoesNotCorrect(): void
-    {
-        $answer = 'answer';
-        $wrong  = 'wrong';
-        $method = $this->createDoMethod();
-        $step   = $this->getStep($answer, false, $this->getQuiz());
-
-        /** @var QuizStep $resultStep */
-        $resultStep = $method->invoke($this->service, $step, $wrong);
-
-        $this->assertTrue($resultStep->isAnswered());
-        $this->assertFalse($resultStep->isCorrect());
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    private function createDoMethod(): ReflectionMethod
-    {
-        $class  = new ReflectionClass(AnswerChecker::class);
-        $method = $class->getMethod('do');
-
-        $method->setAccessible(true);
-
-        return $method;
+        return $text;
     }
 
     private function getWord(string $text): Word
     {
         $translation = new Word();
         $translation->setText($text);
+        $translation->setId(10);
+
+        $translation2 = new Word();
+        $translation2->setText($text);
+        $translation2->setId(20);
 
         $word = new Word();
         $word->setText($text);
         $word->getTranslations()->add($translation);
+        $word->getTranslations()->add($translation2);
 
         return $word;
     }
 
     private function getStep(string $answer, bool $isAnswered, ?Quiz $quiz = null): QuizStep
     {
+        $word = $this->getWord($answer);
         $step = new QuizStep($quiz);
         $step->setIsAnswered($isAnswered);
         $step->setCorrectWord($this->getWord($answer));
+        $step->getWords()->add($word);
 
         if ($quiz) {
             $step->setQuiz($quiz);

@@ -72,6 +72,6 @@ class ShowAction extends AbstractTelegramAction
 
     private function createWordListUrl(int $chatId): string
     {
-        return sprintf('%s' . self::WORD_LIST_URI, $this->botHost, $chatId);
+        return sprintf('%s'.self::WORD_LIST_URI, $this->botHost, $chatId);
     }
 }

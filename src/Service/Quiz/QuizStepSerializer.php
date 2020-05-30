@@ -46,7 +46,7 @@ class QuizStepSerializer
             $btnText = $translation->getText() ?? self::WORD_TEXT_ERR;
             $line[]  = new InlineButton(
                 $btnText,
-                mb_strcut(sprintf('/quiz_answer %s', $btnText), 0, 64)
+                mb_strcut(sprintf('/quiz_answer?w=%s', $translation->getId()), 0, 64)
             );
 
             if (count($line) === 2) {

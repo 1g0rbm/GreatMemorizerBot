@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Service\Telegram;
 
-use Ig0rbm\Memo\Entity\Telegram\Message\Location;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Telegram\Message\From;
+use Ig0rbm\Memo\Entity\Telegram\Message\Location;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Exception\Telegram\Message\ParseMessageException;
 use Ig0rbm\Memo\Service\InitializeAccountService;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MessageParser
 {
@@ -20,14 +22,18 @@ class MessageParser
 
     private InitializeAccountService $initializeAccount;
 
+    private CallbackDataParser $callbackDataParser;
+
     public function __construct(
         ValidatorInterface $validator,
         TextParser $textParser,
-        InitializeAccountService $initializeAccount
+        InitializeAccountService $initializeAccount,
+        CallbackDataParser $callbackDataParser
     ) {
-        $this->validator         = $validator;
-        $this->textParser        = $textParser;
-        $this->initializeAccount = $initializeAccount;
+        $this->validator          = $validator;
+        $this->textParser         = $textParser;
+        $this->initializeAccount  = $initializeAccount;
+        $this->callbackDataParser = $callbackDataParser;
     }
 
     /**
@@ -114,7 +120,7 @@ class MessageParser
     private function createChat(array $chatRaw): Chat
     {
         $chat = new Chat();
-        $chat->setId($chatRaw['id']);
+        $chat->setId((int) $chatRaw['id']);
         $chat->setType($chatRaw['type']);
         $chat->setFirstName($chatRaw['first_name'] ?? null);
         $chat->setLastName($chatRaw['last_name'] ?? null);
@@ -128,7 +134,7 @@ class MessageParser
     private function createFrom(array $fromRaw): From
     {
         $from = new From();
-        $from->setId($fromRaw['id']);
+        $from->setId((int) $fromRaw['id']);
         $from->setIsBot($fromRaw['is_bot']);
         $from->setFirstName($fromRaw['first_name'] ?? null);
         $from->setLastName($fromRaw['last_name'] ?? null);
@@ -143,7 +149,7 @@ class MessageParser
     public function createCallbackQuery(array $rawCallbackQuery): CallbackQuery
     {
         $query = new CallbackQuery();
-        $query->setId($rawCallbackQuery['id']);
+        $query->setId((int) $rawCallbackQuery['id']);
         $query->setFrom($this->createFrom($rawCallbackQuery['from']));
         $query->setChatInstance($rawCallbackQuery['chat_instance']);
         $query->setData($this->textParser->parse($rawCallbackQuery['data']));

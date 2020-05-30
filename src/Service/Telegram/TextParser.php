@@ -9,6 +9,13 @@ use function preg_match;
 
 class TextParser
 {
+    private CallbackDataParser $callbackDataParser;
+
+    public function __construct(CallbackDataParser $callbackDataParser)
+    {
+        $this->callbackDataParser = $callbackDataParser;
+    }
+
     public function parse(string $rawText): Text
     {
         $text = new Text();
@@ -23,6 +30,8 @@ class TextParser
         if ($textStr) {
             $text->setText(trim($textStr));
         }
+
+        $text->setParameters($this->callbackDataParser->parse($rawText));
 
         return $text;
     }

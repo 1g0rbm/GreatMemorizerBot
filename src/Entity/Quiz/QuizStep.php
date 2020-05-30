@@ -77,6 +77,12 @@ class QuizStep
     private ?string $answer = null;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Ig0rbm\Memo\Entity\Translation\Word")
+     * @ORM\JoinColumn(name="answer_word_id", referencedColumnName="id")
+     */
+    private ?Word $answerWord;
+
+    /**
      * @ORM\Column(type="boolean")
      */
     private bool $isAnswered = false;
@@ -154,6 +160,16 @@ class QuizStep
     public function setAnswer(string $answer): void
     {
         $this->answer = $answer;
+    }
+
+    public function getAnswerWord(): ?Word
+    {
+        return $this->answerWord;
+    }
+
+    public function setAnswerWord(?Word $answerWord): void
+    {
+        $this->answerWord = $answerWord;
     }
 
     public function isAnswered(): bool
