@@ -120,7 +120,7 @@ class MessageParser
     private function createChat(array $chatRaw): Chat
     {
         $chat = new Chat();
-        $chat->setId($chatRaw['id']);
+        $chat->setId((int) $chatRaw['id']);
         $chat->setType($chatRaw['type']);
         $chat->setFirstName($chatRaw['first_name'] ?? null);
         $chat->setLastName($chatRaw['last_name'] ?? null);
@@ -134,7 +134,7 @@ class MessageParser
     private function createFrom(array $fromRaw): From
     {
         $from = new From();
-        $from->setId($fromRaw['id']);
+        $from->setId((int) $fromRaw['id']);
         $from->setIsBot($fromRaw['is_bot']);
         $from->setFirstName($fromRaw['first_name'] ?? null);
         $from->setLastName($fromRaw['last_name'] ?? null);
@@ -149,7 +149,7 @@ class MessageParser
     public function createCallbackQuery(array $rawCallbackQuery): CallbackQuery
     {
         $query = new CallbackQuery();
-        $query->setId($rawCallbackQuery['id']);
+        $query->setId((int) $rawCallbackQuery['id']);
         $query->setFrom($this->createFrom($rawCallbackQuery['from']));
         $query->setChatInstance($rawCallbackQuery['chat_instance']);
         $query->setData($this->textParser->parse($rawCallbackQuery['data']));
