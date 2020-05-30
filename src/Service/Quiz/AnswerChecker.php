@@ -42,7 +42,7 @@ class AnswerChecker
             throw QuizStepException::becauseThereAreNotUnansweredSteps($quiz->getId());
         }
 
-        $this->do($step, (int)$text->getParameters()->get('w'));
+        $this->do($step, (int) $text->getParameters()->get('w'));
 
         $step = $this->rotator->rotate($step->getQuiz());
         $step === null ? $quiz->setIsComplete(true) : $quiz->setCurrentStep($step);

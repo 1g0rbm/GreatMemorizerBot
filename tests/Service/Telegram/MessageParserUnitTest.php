@@ -1,36 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
-use ReflectionMethod;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Doctrine\ORM\ORMException;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Faker\Factory;
+use Faker\Generator;
 use Ig0rbm\Memo\Entity\Telegram\Message\CallbackQuery;
+use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
+use Ig0rbm\Memo\Entity\Telegram\Message\From;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\Text;
 use Ig0rbm\Memo\Service\InitializeAccountService;
-use Ig0rbm\Memo\Service\Telegram\TextParser;
-use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
-use Ig0rbm\Memo\Entity\Telegram\Message\From;
+use Ig0rbm\Memo\Service\Telegram\CallbackDataParser;
 use Ig0rbm\Memo\Service\Telegram\MessageParser;
-use Faker\Factory;
-use Faker\Generator;
+use Ig0rbm\Memo\Service\Telegram\TextParser;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MessageParserUnitTest extends TestCase
 {
-    /** @var MessageParser */
-    private $service;
+    private MessageParser $service;
 
     /** @var MockObject|ValidatorInterface */
-    private $validator;
+    private ValidatorInterface $validator;
 
     /** @var MockObject|InitializeAccountService */
-    private $initializeAccountService;
+    private InitializeAccountService $initializeAccountService;
 
-    /** @var Generator */
-    private $faker;
+    private Generator $faker;
 
     public function setUp(): void
     {
@@ -39,7 +40,12 @@ class MessageParserUnitTest extends TestCase
         $this->initializeAccountService = $this->createMock(InitializeAccountService::class);
         $this->faker = Factory::create();
 
-        $this->service = new MessageParser($this->validator, new TextParser(), $this->initializeAccountService);
+        $this->service = new MessageParser(
+            $this->validator,
+            new TextParser(new CallbackDataParser()),
+            $this->initializeAccountService,
+            new CallbackDataParser()
+        );
     }
 
     public function testCreateChatReturnValidChat(): void

@@ -1,20 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ig0rbm\Memo\Tests\Service\Telegram;
 
 use Ig0rbm\Memo\Entity\Telegram\Message\Text;
+use Ig0rbm\Memo\Service\Telegram\CallbackDataParser;
 use Ig0rbm\Memo\Service\Telegram\TextParser;
 use PHPUnit\Framework\TestCase;
 
 class TextParserTest extends TestCase
 {
-    /** @var TextParser */
-    private $service;
+    private TextParser $service;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->service = new TextParser();
+        $this->service = new TextParser(new CallbackDataParser());
     }
 
     public function testParseReturnText(): void

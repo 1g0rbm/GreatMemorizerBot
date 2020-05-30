@@ -57,7 +57,7 @@ class Quiz
      * @ORM\OneToOne(targetEntity="QuizStep")
      * @ORM\JoinColumn(name="current_step_id", referencedColumnName="id")
      */
-    private QuizStep $currentStep;
+    private ?QuizStep $currentStep = null;
 
     /**
      * @ORM\Column(type="boolean")
@@ -123,12 +123,12 @@ class Quiz
         $this->steps = $steps;
     }
 
-    public function getCurrentStep(): QuizStep
+    public function getCurrentStep(): ?QuizStep
     {
         return $this->currentStep;
     }
 
-    public function setCurrentStep(QuizStep $currentStep): void
+    public function setCurrentStep(?QuizStep $currentStep): void
     {
         $this->currentStep = $currentStep;
     }
