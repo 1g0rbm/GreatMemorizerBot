@@ -49,6 +49,7 @@ class QuizBuilder
             $wordList = $this->wordListRepository->getOneByChat($chat);
             $quiz->setWordListId($wordList->getId());
             $quiz->setWordList($wordList);
+            $quiz->setType(Quiz::FROM_WORD_LIST);
         }
 
         $quiz->setSteps($this->quizStepBuilderByWordList->do($quiz));

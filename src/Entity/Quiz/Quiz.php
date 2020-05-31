@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
 use Ig0rbm\Memo\Entity\Translation\WordList;
+use Ig0rbm\Memo\Exception\Quiz\CreateQuizException;
 use Ig0rbm\Memo\Validator\Constraints\Telegram\Message as TelegramMessageAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -19,6 +20,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Quiz
 {
+    public const FROM_WORD_LIST = 'from_word_list';
+    public const FROM_ALL       = 'from_all';
+
+    public const TYPES = [
+        self::FROM_WORD_LIST,
+        self::FROM_ALL,
+    ];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -75,9 +84,17 @@ class Quiz
      */
     private ?int $wordListId = null;
 
+    /**
+     * @ORM\Column(type="string", length=50, options={"default": Quiz::FROM_WORD_LIST})
+     *
+     * @Assert\Type("string")
+     */
+    private string $type;
+
     public function __construct()
     {
         $this->steps = new ArrayCollection();
+        $this->type  = self::FROM_ALL;
     }
 
     public function getId(): int
@@ -161,5 +178,19 @@ class Quiz
     public function setWordList(?WordList $wordList): void
     {
         $this->wordList = $wordList;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): void
+    {
+        if (!in_array($type, self::TYPES)) {
+            throw CreateQuizException::wrongType($type);
+        }
+
+        $this->type = $type;
     }
 }
