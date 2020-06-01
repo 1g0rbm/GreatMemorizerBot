@@ -2,6 +2,9 @@
 
 namespace Ig0rbm\Memo;
 
+use App\DependencyInjection\Compiler\FieldTypeCreatorTypePass;
+use App\DependencyInjection\Compiler\FormWidgetPass;
+use Ig0rbm\Memo\DependencyInjection\Compiler\QuizCreatorPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -23,6 +26,11 @@ class Kernel extends BaseKernel
                 yield new $class();
             }
         }
+    }
+
+    protected function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new QuizCreatorPass());
     }
 
     public function getProjectDir(): string

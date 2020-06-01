@@ -22,6 +22,21 @@ class QuizRepository extends ServiceEntityRepository
     /**
      * @throws NonUniqueResultException
      */
+    public function findIncompleteByChatAndType(Chat $chat, string $type): ?Quiz
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin('c.steps', 'cs')
+            ->where('c.chat = :chat')
+            ->andWhere('c.type = :type')
+            ->andWhere('c.isComplete = :isComplete')
+            ->setParameters(['chat' => $chat, 'type' => $type, 'isComplete' => false]);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
     public function getIncompleteQuizByChat(Chat $chat): Quiz
     {
         $quiz = $this->findIncompleteQuizByChat($chat);

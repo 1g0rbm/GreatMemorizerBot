@@ -203,6 +203,9 @@ services:
         tags:
             - { name: 'doctrine.event_subscriber' }
 
+    Ig0rbm\Memo\Service\Quiz\Creator\WordListQuizCreator:
+        tags: ['service.quiz.create']
+
     ##############################################################################################################
     #∨                                                                                                          ∨#
     #∨                           telegram actions with additional parameters is here                            ∨#

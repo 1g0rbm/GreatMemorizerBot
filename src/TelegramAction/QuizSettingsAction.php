@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\TelegramAction;
 
+use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\InlineButton;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
@@ -27,7 +28,7 @@ class QuizSettingsAction extends AbstractTelegramAction
         $this->builder->addLine([
             new InlineButton(
                 $this->translator->translate('button.inline.run_quiz', $to->getChatId()),
-                '/word_list_quiz'
+                sprintf('/word_list_quiz?t=%s', Quiz::FROM_WORD_LIST)
             ),
             new InlineButton(
                 $this->translator->translate('button.inline.reminder', $to->getChatId()),

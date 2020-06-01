@@ -35,17 +35,15 @@ class WordListQuizAction extends AbstractTelegramAction
     }
 
     /**
-     * @throws DBALException
-     * @throws ORMException
      * @throws NonUniqueResultException
-     * @throws InvalidArgumentException
      */
     public function run(MessageFrom $messageFrom, Command $command): MessageTo
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
 
-        $quiz = $this->quizManager->getQuizByChat($messageFrom->getChat(), true);
+        $type = $messageFrom->getCallbackQuery()->getData()->getParameters()->get('t');
+        $quiz = $this->quizManager->get($messageFrom->getChat(), $type);
         $step = $quiz->getCurrentStep();
 
         if (!isset($step)) {

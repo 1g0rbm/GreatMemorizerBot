@@ -10,13 +10,12 @@ use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Telegram\Command\Command;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageFrom;
 use Ig0rbm\Memo\Entity\Telegram\Message\MessageTo;
-use Ig0rbm\Memo\Exception\Billing\LicenseLimitReachedException;
-use Ig0rbm\Memo\Exception\Quiz\QuizStepBuilderException;
 use Ig0rbm\Memo\Exception\Quiz\QuizStepException;
 use Ig0rbm\Memo\Service\Quiz\QuestionBuilder;
 use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use Ig0rbm\Memo\Service\Quiz\QuizStepSerializer;
 use Psr\Cache\InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 class QuizAction extends AbstractTelegramAction
 {
@@ -26,14 +25,18 @@ class QuizAction extends AbstractTelegramAction
 
     private QuestionBuilder $questionBuilder;
 
+    private LoggerInterface $logger;
+
     public function __construct(
         QuizManager $quizManager,
         QuizStepSerializer $serializer,
-        QuestionBuilder $questionBuilder
+        QuestionBuilder $questionBuilder,
+        LoggerInterface $logger
     ) {
         $this->quizManager     = $quizManager;
         $this->serializer      = $serializer;
         $this->questionBuilder = $questionBuilder;
+        $this->logger          = $logger;
     }
 
     /**
@@ -46,6 +49,8 @@ class QuizAction extends AbstractTelegramAction
     {
         $to = new MessageTo();
         $to->setChatId($messageFrom->getChat()->getId());
+
+        $this->logger->error('PARAMS', $messageFrom->getText()->getParameters()->getAll());
 
         $quiz = $this->quizManager->getQuizByChat($messageFrom->getChat());
         $step = $quiz->getCurrentStep();
