@@ -4,19 +4,14 @@ declare(strict_types=1);
 
 namespace Ig0rbm\Memo\Tests\Service\Quiz;
 
-use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\ORMException;
 use Ig0rbm\Memo\Entity\Quiz\Quiz;
 use Ig0rbm\Memo\Entity\Telegram\Message\Chat;
-use Ig0rbm\Memo\Repository\AccountRepository;
+use Ig0rbm\Memo\Registry\QuizCreatorRegistry;
 use Ig0rbm\Memo\Repository\Quiz\QuizRepository;
-use Ig0rbm\Memo\Service\Billing\Limiter\LicenseLimiter;
-use Ig0rbm\Memo\Service\Quiz\QuizBuilder;
 use Ig0rbm\Memo\Service\Quiz\QuizManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Cache\InvalidArgumentException;
 
 /**
  * @group unit
@@ -24,84 +19,61 @@ use Psr\Cache\InvalidArgumentException;
  */
 class QuizManagerUnitTest extends TestCase
 {
-    /** @var QuizManager */
-    private $service;
-
-    /** @var QuizBuilder|MockObject */
-    private QuizBuilder $quizBuilder;
+    private QuizManager $service;
 
     /** @var QuizRepository|MockObject */
     private QuizRepository $quizRepository;
-
-    /** @var AccountRepository|MockObject */
-    private AccountRepository $accountRepository;
-
-    /** @var LicenseLimiter|MockObject */
-    private LicenseLimiter $limiter;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->quizBuilder       = $this->createMock(QuizBuilder::class);
-        $this->quizRepository    = $this->createMock(QuizRepository::class);
-        $this->accountRepository = $this->createMock(AccountRepository::class);
-        $this->limiter           = $this->createMock(LicenseLimiter::class);
+        $this->quizRepository  = $this->createMock(QuizRepository::class);
 
-        $this->service = new QuizManager(
-            $this->quizBuilder,
-            $this->quizRepository,
-            $this->accountRepository,
-            $this->limiter
-        );
+        $registry = new QuizCreatorRegistry();
+        $registry->addCreator(new QuizCreatorMock(Quiz::FROM_ALL));
+
+        $this->service = new QuizManager($this->quizRepository, $registry);
     }
 
     /**
-     * @throws DBALException
-     * @throws ORMException
      * @throws NonUniqueResultException
-     * @throws InvalidArgumentException
      */
-    public function testGetQuizByChatReturnExistedIncompleteQuiz(): void
+    public function testReturnQuizIfThereIsIncompleteQuiz(): void
     {
-        $expectedQuiz = $this->createQuiz();
+        $type       = Quiz::FROM_ALL;
+        $chat       = $this->createChat();
+        $sourceQuiz = $this->createQuiz();
 
-        $this->quizRepository->expects($this->once())
-            ->method('findIncompleteQuizByChat')
-            ->with($expectedQuiz->getChat())
-            ->willReturn($expectedQuiz);
+        $this->quizRepository
+            ->expects($this->once())
+            ->method('findIncompleteByChatAndType')
+            ->with($chat, $type)
+            ->willReturn($sourceQuiz);
 
-        $this->quizBuilder->expects($this->never())
-            ->method('build');
+        $quiz = $this->service->get($chat, $type);
 
-        $quiz = $this->service->getQuizByChat($expectedQuiz->getChat());
-
-        $this->assertEquals($expectedQuiz, $quiz);
+        $this->assertEquals($sourceQuiz, $quiz);
     }
 
     /**
-     * @throws DBALException
-     * @throws InvalidArgumentException
      * @throws NonUniqueResultException
-     * @throws ORMException
      */
-    public function testGetQuizByChatReturnNewQuiz(): void
+    public function testCreateNewQuizIfThereIsNoQuiz()
     {
-        $expectedQuiz = $this->createQuiz();
+        $type    = Quiz::FROM_ALL;
+        $chat    = $this->createChat();
 
-        $this->quizRepository->expects($this->once())
-            ->method('findIncompleteQuizByChat')
-            ->with($expectedQuiz->getChat())
+        $this->quizRepository
+            ->expects($this->once())
+            ->method('findIncompleteByChatAndType')
+            ->with($chat, $type)
             ->willReturn(null);
 
-        $this->quizBuilder->expects($this->once())
-            ->method('build')
-            ->with($expectedQuiz->getChat())
-            ->willReturn($expectedQuiz);
+        $quiz = $this->service->get($chat, $type);
 
-        $quiz = $this->service->getQuizByChat($expectedQuiz->getChat());
-
-        $this->assertEquals($expectedQuiz, $quiz);
+        $this->assertEquals($quiz->getChat(), $chat);
+        $this->assertEquals($quiz->getType(), $type);
     }
 
     private function createChat(): Chat
